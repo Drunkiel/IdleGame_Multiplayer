@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Zarządzania Graczami</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .status {
+            text-transform: capitalize;
+        }
+        .btn-disconnect {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn-disconnect:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Panel Zarządzania Graczami</h1>
+    <p><strong>Liczba graczy połączonych:</strong> <span id="playerCount">0</span></p>
+    <table id="playersTable">
+        <thead>
+            <tr>
+                <th>ID Gracza</th>
+                <th>Status</th>
+                <th>Pozycja (X, Y, Z)</th>
+                <th>Akcja</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Gracze będą dynamicznie dodawani tutaj -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    let positionsMap = {};
+
+    async function fetchPositions() {
+        try {
+            const res = await fetch('http://localhost:3000/positions');
+            const data = await res.json();
+            positionsMap = {};
+            data.forEach(p => {
+                positionsMap[p.player_id] = p.position;
+            });
+        } catch (err) {
+            console.error('Błąd pobierania pozycji:', err);
+        }
+    }
+
+    async function disconnectPlayer(playerId) {
+        if (!confirm(`Czy na pewno chcesz rozłączyć gracza ${playerId}?`)) return;
+
+        try {
+            const res = await fetch(`http://localhost:3000/player/${playerId}`, {
+                method: 'DELETE'
+            });
+
+            if (res.ok) {
+                alert('Gracz rozłączony.');
+                await fetchPlayers(); // odśwież listę
+            } else {
+                alert('Nie udało się rozłączyć gracza.');
+            }
+        } catch (err) {
+            console.error('Błąd przy rozłączaniu gracza:', err);
+        }
+    }
+
+    async function fetchPlayers() {
+        try {
+            await fetchPositions(); // najpierw pozycje
+            const response = await fetch('http://localhost:3000/players');
+            const players = await response.json();
+            document.getElementById('playerCount').innerText = players.length;
+
+            const tableBody = document.getElementById('playersTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+
+            players.forEach(player => {
+                const row = tableBody.insertRow();
+                const cellId = row.insertCell(0);
+                const cellStatus = row.insertCell(1);
+                const cellPosition = row.insertCell(2);
+                const cellAction = row.insertCell(3);
+
+                cellId.textContent = player.player_id;
+                cellStatus.textContent = player.status;
+                cellStatus.classList.add('status');
+
+                const pos = positionsMap[player.player_id];
+                cellPosition.textContent = pos
+                    ? `${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}, ${pos.z.toFixed(2)}`
+                    : 'Brak danych';
+
+                const btn = document.createElement('button');
+                btn.textContent = 'Rozłącz';
+                btn.className = 'btn-disconnect';
+                btn.onclick = () => disconnectPlayer(player.player_id);
+                cellAction.appendChild(btn);
+            });
+        } catch (error) {
+            console.error('Błąd podczas pobierania graczy:', error);
+        }
+    }
+
+    setInterval(fetchPlayers, 5000);
+    fetchPlayers();
+</script>
+
+</body>
+</html>
