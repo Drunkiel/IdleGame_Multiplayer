@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class PositionEntry
 {
     public string player_id;
     public PositionData position;
+    public string scene;
 }
 
 [System.Serializable]
@@ -21,6 +23,7 @@ public class PlayerData
 {
     public string player_id;
     public PlayerStatus status;
+    public string scene;
 }
 
 [System.Serializable]
@@ -33,7 +36,6 @@ public class PlayerSpawner : MonoBehaviour
 {
     public GameObject playerPrefab;
     public GameObject ghostPrefab;
-    public Transform spawnPoint;
 
     private Dictionary<string, PlayerGhost> ghosts = new();
 
@@ -47,9 +49,10 @@ public class PlayerSpawner : MonoBehaviour
     void OnConnected(string myId)
     {
         //Create local player
-        GameObject player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
+        GameObject player = Instantiate(playerPrefab, transform.position, Quaternion.identity);
         PlayerController controller = player.GetComponent<PlayerController>();
         controller.Initialize(myId);
+        GameController.instance.ChangeScene(SceneManager.GetActiveScene().name);
     }
 
     IEnumerator PollOtherPlayers()
@@ -71,12 +74,25 @@ public class PlayerSpawner : MonoBehaviour
                     if (player.player_id == ServerConnector.instance.playerId)
                         continue;
 
-                    //If ghost exists update status
+                    // SprawdŸ, czy gracz jest w tej samej scenie
+                    if (player.scene != SceneManager.GetActiveScene().name)
+                    {
+                        // Usuñ ghosta, jeœli ju¿ istnieje, ale zmieni³ scenê
+                        if (ghosts.ContainsKey(player.player_id))
+                        {
+                            if (ghosts[player.player_id] == null)
+                                continue;
+
+                            Destroy(ghosts[player.player_id].gameObject);
+                            ghosts.Remove(player.player_id);
+                        }
+                        continue;
+                    }
+
                     if (ghosts.ContainsKey(player.player_id))
                         ghosts[player.player_id].SetStatus(player.status);
                     else
                     {
-                        // Nowy ghost
                         GameObject ghost = Instantiate(ghostPrefab);
                         var ghostScript = ghost.GetComponent<PlayerGhost>();
                         ghostScript.playerId = player.player_id;
@@ -109,6 +125,9 @@ public class PlayerSpawner : MonoBehaviour
                     if (entry.player_id == ServerConnector.instance.playerId)
                         continue;
 
+                    if (entry.scene != SceneManager.GetActiveScene().name)
+                        continue;
+
                     updatedPlayerIds.Add(entry.player_id);
 
                     if (ghosts.ContainsKey(entry.player_id))
@@ -137,6 +156,9 @@ public class PlayerSpawner : MonoBehaviour
 
                 foreach (string id in toRemove)
                 {
+                    if (ghosts[id] == null)
+                        continue;
+
                     Destroy(ghosts[id].gameObject);
                     ghosts.Remove(id);
                 }

@@ -63,6 +63,7 @@
                 <th>ID Gracza</th>
                 <th>Status</th>
                 <th>Pozycja (X, Y, Z)</th>
+                <th>Scena</th>
                 <th>Akcja</th>
             </tr>
         </thead>
@@ -109,9 +110,9 @@
 
     async function fetchPlayers() {
         try {
-            await fetchPositions(); // najpierw pozycje
             const response = await fetch('http://localhost:3000/players');
             const players = await response.json();
+            
             document.getElementById('playerCount').innerText = players.length;
 
             const tableBody = document.getElementById('playersTable').getElementsByTagName('tbody')[0];
@@ -122,20 +123,25 @@
                 const cellId = row.insertCell(0);
                 const cellStatus = row.insertCell(1);
                 const cellPosition = row.insertCell(2);
-                const cellAction = row.insertCell(3);
+                const cellScene = row.insertCell(3);
+                const cellAction = row.insertCell(4);
 
                 cellId.textContent = player.player_id;
                 cellStatus.textContent = player.status;
                 cellStatus.classList.add('status');
 
                 const pos = positionsMap[player.player_id];
-                cellPosition.textContent = pos
-                    ? `${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}, ${pos.z.toFixed(2)}`
-                    : 'Brak danych';
+                if (pos) {
+                    cellPosition.textContent = `(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}, ${pos.z.toFixed(1)})`;
+                } else {
+                    cellPosition.textContent = "brak danych";
+                }
+
+                cellScene.textContent = player.scene;
 
                 const btn = document.createElement('button');
-                btn.textContent = 'Rozłącz';
-                btn.className = 'btn-disconnect';
+                btn.textContent = "Rozłącz";
+                btn.className = "btn-disconnect";
                 btn.onclick = () => disconnectPlayer(player.player_id);
                 cellAction.appendChild(btn);
             });
@@ -144,8 +150,13 @@
         }
     }
 
-    setInterval(fetchPlayers, 5000);
-    fetchPlayers();
+    async function refreshPanel() {
+        await fetchPositions();
+        await fetchPlayers();
+    }
+
+    setInterval(refreshPanel, 5000);
+    refreshPanel();
 </script>
 
 </body>

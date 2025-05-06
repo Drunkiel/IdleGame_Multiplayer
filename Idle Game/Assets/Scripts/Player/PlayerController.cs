@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 public class PositionData
 {
     public float x, y, z;
+
     public PositionData(Vector3 pos)
     {
         x = pos.x;
@@ -24,16 +25,18 @@ public enum PlayerStatus
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private string playerId;
-    [SerializeField] private TMP_Text ala;
+    [SerializeField] private TMP_Text idText;
+    [SerializeField] private Rigidbody2D rgBody;
     private PlayerStatus currentStatus;
 
     public void Initialize(string id)
     {
         playerId = id;
-        ala.text = playerId;
+        idText.text = playerId;
         StartCoroutine(UpdatePositionOnce());
         StartCoroutine(UpdatePositionLoop());
         StartCoroutine(HeartbeatLoop());
+        GameController.instance.objectsToTeleportMust.Add(gameObject);
     }
 
     void Update()
@@ -43,28 +46,30 @@ public class PlayerController : MonoBehaviour
 
         //Basic movement
         float move = Input.GetAxis("Horizontal");
-        transform.Translate(5f * move * Time.deltaTime * Vector3.right);
+        transform.Translate(new(5f * move * Time.deltaTime, 0, 0));
         if (move != 0)
             transform.GetChild(1).localScale = new(Mathf.Sign(move) * 1, 1, 1);
 
         //Example of how to update player status
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    currentStatus = "jumping";
-        //    StartCoroutine(UpdateStatus(currentStatus));
-        //}
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GameController.instance.ChangeScene("Test");
+            //currentStatus = PlayerStatus.Idle;
+            //StartCoroutine(UpdateStatus(currentStatus));
+        }
 
         //if (Input.GetKeyUp(KeyCode.Space))
         //{
-        //    currentStatus = "idle";
-        //    StartCoroutine(UpdateStatus(currentStatus));
+        //    GameController.instance.ChangeScene();
+        //    currentStatus = PlayerStatus.Idle;
+        //    //StartCoroutine(UpdateStatus(currentStatus));
         //}
     }
 
     IEnumerator UpdateStatus(PlayerStatus newStatus)
     {
-        string url = ServerConnector.instance.GetServerUrl() + "/update_status/" + playerId;
-        string jsonData = "{\"status\":\"" + newStatus.ToString() + "\"}";
+        string url = ServerConnector.instance.GetServerUrl() + "/update_scene/" + playerId;
+        string jsonData = "{\"scene\":\"" + newStatus.ToString() + "\"}";
 
         UnityWebRequest request = UnityWebRequest.Put(url, jsonData);
         request.method = UnityWebRequest.kHttpVerbPOST;

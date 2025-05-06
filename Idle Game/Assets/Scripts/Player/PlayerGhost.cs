@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerGhost : MonoBehaviour
 {
     public string playerId;
-    [SerializeField] private TMP_Text ala;
+    [SerializeField] private TMP_Text idText;
     private PlayerStatus currentStatus;
 
     private Vector3 targetPosition;
@@ -24,7 +24,7 @@ public class PlayerGhost : MonoBehaviour
     public void SetStatus(PlayerStatus status)
     {
         currentStatus = status;
-        ala.text = playerId;
+        idText.text = playerId;
     }
 
     public void SetPosition(Vector3 pos)

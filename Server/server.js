@@ -5,53 +5,50 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 const port = 3000;
 
-// Baza danych graczy (słownik przechowujący ID i status)
 const players = {};
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Endpoint do połączenia z serwerem i przypisania ID
+//Connection to server
 app.post('/connect', (req, res) => {
-    // Generowanie unikalnego ID dla nowego gracza
     const playerId = uuidv4();
     
-    // Dodawanie gracza do bazy danych (obiekt)
     players[playerId] = {
         status: "connected",
         position: { x: 0, y: 0, z: 0 },
-        lastSeen: Date.now()
+        lastSeen: Date.now(),
+        scene: "unknown"
     }; 
 
     res.json({
         message: "Succesfully connected to server.",
         player_id: playerId,
-        status: "connected"
+        status: "connected",
+        lastSeen: Date.now(),
+        scene: "unknown"
     });
 });
 
 app.post('/update_position/:player_id', (req, res) => {
     const playerId = req.params.player_id;
-    const pos = req.body;
+    const { x, y, z } = req.body;
 
     if (players[playerId]) {
+        players[playerId].position = { x, y, z };
         players[playerId].lastSeen = Date.now();
-        players[playerId].position = {
-            x: pos.x,
-            y: pos.y,
-            z: pos.z
-        };
-        res.json({ message: "Position updated", player_id: playerId });
+        res.json({ success: true });
     } else {
-        res.status(404).json({ error: "Player: " + playerId + " does not exist" });
+        res.status(404).json({ error: 'Player not found' });
     }
 });
 
-// Gracz potwierdza, że nadal żyje
+//Check if player is still active
 app.post('/heartbeat/:player_id', (req, res) => {
     const playerId = req.params.player_id;
     if (players[playerId]) {
-        players[playerId].lastSeen = Date.now(); // aktualizuj czas ostatniego kontaktu
+        players[playerId].lastSeen = Date.now(); 
         res.json({ status: 'ok' });
     } else {
         res.status(404).json({ error: 'Player not found' });
@@ -59,14 +56,33 @@ app.post('/heartbeat/:player_id', (req, res) => {
 });
 
 app.get('/positions', (req, res) => {
-    const positions = Object.entries(players).map(([id, data]) => ({
-        player_id: id,
-        position: data.position
-    }));
-    res.json(positions);
+    const requesterId = req.query.player_id;
+
+    if (!requesterId) {
+        const all = Object.entries(players).map(([id, data]) => ({
+            player_id: id,
+            position: data.position,
+            scene: data.scene
+        }));
+        return res.json(all);
+    }
+
+    const requester = players[requesterId];
+    if (!requester) {
+        return res.status(404).json({ error: 'Invalid requester' });
+    }
+
+    const sameScenePlayers = Object.entries(players)
+        .filter(([id, data]) => id !== requesterId && data.scene === requester.scene)
+        .map(([id, data]) => ({
+            player_id: id,
+            position: data.position,
+            scene: data.scene
+        }));
+
+    res.json(sameScenePlayers);
 });
 
-// Endpoint do sprawdzenia statusu gracza
 app.get('/status/:player_id', (req, res) => {
     const playerId = req.params.player_id;
 
@@ -83,7 +99,6 @@ app.get('/status/:player_id', (req, res) => {
     }
 });
 
-// Endpoint do zmiany statusu gracza
 app.post('/update_status/:player_id', (req, res) => {
     const playerId = req.params.player_id;
     const newStatus = req.body.status;
@@ -102,17 +117,52 @@ app.post('/update_status/:player_id', (req, res) => {
     }
 });
 
-// Endpoint do pobrania listy graczy
+app.get('/scene/:player_id', (req, res) => {
+    const playerId = req.params.player_id;
+
+    if (players[playerId]) {
+        players[playerId].lastSeen = Date.now();
+        res.json({
+            player_id: playerId,
+            scene: players[playerId].scene
+        });
+    } else {
+        res.status(404).json({
+            error: "Player: " + playerId + " does not exist"
+        });        
+    }
+});
+
+app.post('/update_scene/:player_id', (req, res) => {
+    const playerId = req.params.player_id;
+    const newScene = req.body.scene;
+
+    if (players[playerId]) {
+        players[playerId].lastSeen = Date.now();
+        players[playerId].scene = newScene;
+        res.json({
+            player_id: playerId,
+            scene: newScene
+        });
+    } else {
+        res.status(404).json({
+            error: "Player: " + {playerId} + " does not exists"
+        });
+    }
+});
+
+//Get ALL players
 app.get('/players', (req, res) => {
     const playerList = Object.keys(players).map(playerId => ({
         player_id: playerId,
-        status: players[playerId].status
+        status: players[playerId].status,
+        scene: players[playerId].scene
     }));
 
     res.json(playerList);
 });
 
-// Usunięcie gracza z serwera
+//Delete player from server
 app.delete('/player/:player_id', (req, res) => {
     const playerId = req.params.player_id;
     if (players[playerId]) {
@@ -123,14 +173,14 @@ app.delete('/player/:player_id', (req, res) => {
     }
 });
 
-// Startowanie serwera
+//Start server
 app.listen(port, () => {
     console.log(`Server runs on port: ${port}`);
 });
 
 setInterval(() => {
     const now = Date.now();
-    const timeout = 300000; // 5 minut braku sygnału
+    const timeout = 300000;
 
     for (const playerId in players) {
         if (now - players[playerId].lastSeen > timeout) {
