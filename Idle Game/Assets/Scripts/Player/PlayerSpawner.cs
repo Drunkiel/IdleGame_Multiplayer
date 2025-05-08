@@ -74,10 +74,10 @@ public class PlayerSpawner : MonoBehaviour
                     if (player.player_id == ServerConnector.instance.playerId)
                         continue;
 
-                    // SprawdŸ, czy gracz jest w tej samej scenie
+                    //Check if player is in the same scene
                     if (player.scene != SceneManager.GetActiveScene().name)
                     {
-                        // Usuñ ghosta, jeœli ju¿ istnieje, ale zmieni³ scenê
+                        //Destroy ghosts
                         if (ghosts.ContainsKey(player.player_id))
                         {
                             if (ghosts[player.player_id] == null)
@@ -141,7 +141,7 @@ public class PlayerSpawner : MonoBehaviour
                         var ghostScript = ghost.GetComponent<PlayerGhost>();
                         ghostScript.playerId = entry.player_id;
                         ghostScript.SetStatus(PlayerStatus.Connected);
-                        ghostScript.SetPosition(new(entry.position.x, entry.position.y, entry.position.z));
+                        ghostScript.SetPosition(new(entry.position.x, entry.position.y, entry.position.z), true);
                         ghosts.Add(entry.player_id, ghostScript);
                     }
                 }

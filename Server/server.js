@@ -180,7 +180,7 @@ app.listen(port, () => {
 
 setInterval(() => {
     const now = Date.now();
-    const timeout = 300000;
+    const timeout = 300000; //5 minutes
 
     for (const playerId in players) {
         if (now - players[playerId].lastSeen > timeout) {
@@ -189,4 +189,3 @@ setInterval(() => {
         }
     }
 }, 10000);
-

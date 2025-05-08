@@ -58,6 +58,13 @@ public class PlayerController : MonoBehaviour
             //StartCoroutine(UpdateStatus(currentStatus));
         }
 
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            UIController.instance.OpenClose(0);
+            //currentStatus = PlayerStatus.Idle;
+            //StartCoroutine(UpdateStatus(currentStatus));
+        }
+
         //if (Input.GetKeyUp(KeyCode.Space))
         //{
         //    GameController.instance.ChangeScene();

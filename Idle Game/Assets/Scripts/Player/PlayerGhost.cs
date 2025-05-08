@@ -7,7 +7,7 @@ public class PlayerGhost : MonoBehaviour
     [SerializeField] private TMP_Text idText;
     private PlayerStatus currentStatus;
 
-    private Vector3 targetPosition;
+    [SerializeField] private Vector3 targetPosition;
     private float lerpSpeed = 5f;
 
     void Start()
@@ -27,8 +27,11 @@ public class PlayerGhost : MonoBehaviour
         idText.text = playerId;
     }
 
-    public void SetPosition(Vector3 pos)
+    public void SetPosition(Vector3 pos, bool force = false)
     {
         targetPosition = pos;
+
+        if (force)
+            transform.position = pos - new Vector3(Mathf.Sign(pos.x) * 0.05f, 0f, 0f);
     }
 }
