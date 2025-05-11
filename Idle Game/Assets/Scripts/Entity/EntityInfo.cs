@@ -1,13 +1,22 @@
-using System;
-using UnityEngine;
+using System;using UnityEngine;
 
-public class EntityInfo : MonoBehaviour
+[Serializable]
+public class EntityInfo
 {
     public HeroClass heroClass;
     public string nickname;
-    public int currentLevel;
-    public int expPoint;
-    public int goldCoins;
+    [SerializeField] private int currentLevel;
+    [SerializeField] private int expPoints;
+    [SerializeField] private int expToNextLvl;
+    [SerializeField] private int goldCoins;
+
+    [Header("Stats")]
+    public int hitPoints;
+    public int protection;
+    public int damage;
+    public int criticalChancePercentage;
+    public int dodgePercentage;
+    public int damageReductionPercentage;
 
     [Header("Attributes")]
     public int strengthPoints;
@@ -19,10 +28,11 @@ public class EntityInfo : MonoBehaviour
 
     public StatisticsUI _statisticsUI;
 
-    public EntityInfo(int currentLevel, int expPoint, int goldCoins, int strengthPoints, int dexterityPoints, int intelligencePoints, int durablityPoints, int luckPoints, int armorPoints)
+    public EntityInfo(int currentLevel, int expPoints, int goldCoins, int strengthPoints, int dexterityPoints, int intelligencePoints, int durablityPoints, int luckPoints, int armorPoints, StatisticsUI _statisticsUI = null)
     {
         this.currentLevel = currentLevel;
-        this.expPoint = expPoint;
+        this.expPoints = expPoints;
+        expToNextLvl = Mathf.CeilToInt(100 * Mathf.Pow(currentLevel, 1.5f));
         this.goldCoins = goldCoins;
         this.strengthPoints = strengthPoints;
         this.dexterityPoints = dexterityPoints;
@@ -30,6 +40,88 @@ public class EntityInfo : MonoBehaviour
         this.durablityPoints = durablityPoints;
         this.luckPoints = luckPoints;
         this.armorPoints = armorPoints;
+        this._statisticsUI = _statisticsUI;
+
+        if (_statisticsUI != null)
+        {
+            _statisticsUI.strengthPointsText.text = strengthPoints.ToString();
+            _statisticsUI.dexterityPointsText.text = dexterityPoints.ToString();
+            _statisticsUI.intelligencePointsText.text = intelligencePoints.ToString();
+            _statisticsUI.durabilityPointsText.text = durablityPoints.ToString();
+            _statisticsUI.luckPointsText.text = luckPoints.ToString();
+            _statisticsUI.armorPointsText.text = armorPoints.ToString();
+        }
+
+        UpdateStats();
+    }
+
+    public void GiveEXP(int value)
+    {
+        expPoints += value;
+
+        if (CheckIfCanLvlUp())
+            LvlUp();
+    }
+
+    private bool CheckIfCanLvlUp()
+    {
+        if (expPoints >= expToNextLvl)
+            return true;
+
+        return false;
+    }
+
+    private void LvlUp()
+    {
+        currentLevel += 1;
+        expPoints -= expToNextLvl;
+        expToNextLvl = Mathf.CeilToInt(100 * Mathf.Pow(currentLevel, 1.5f));
+
+        if (CheckIfCanLvlUp())
+            LvlUp();
+    }
+
+    private void UpdateStats()
+    {
+        if (currentLevel <= 0)
+            return;
+
+        switch (heroClass)
+        {
+            case HeroClass.Mage:
+                hitPoints = durablityPoints * 2 * (currentLevel + 1);
+                protection = strengthPoints / currentLevel;
+                damage = Mathf.RoundToInt(1.25f * (1 + intelligencePoints / 10));
+                criticalChancePercentage = Mathf.Clamp(luckPoints * 5 / ((currentLevel + 1) * 2), 0, 50);
+                dodgePercentage = Mathf.Clamp(dexterityPoints / currentLevel, 0, 10);
+                damageReductionPercentage = Mathf.Clamp(armorPoints / (currentLevel + 1), 0, 10);
+                break;
+
+            case HeroClass.Warrior:
+                hitPoints = durablityPoints * 6 * (currentLevel + 1);
+                protection = intelligencePoints / currentLevel;
+                damage = Mathf.RoundToInt(0.83f * (1 + strengthPoints / 10));
+                criticalChancePercentage = Mathf.Clamp(luckPoints * 5 / ((currentLevel + 1) * 2), 0, 50);
+                dodgePercentage = Mathf.Clamp(Mathf.RoundToInt(intelligencePoints / (1.2f * currentLevel)), 0, 25);
+                damageReductionPercentage = Mathf.Clamp(armorPoints / (currentLevel + 1), 0, 50);
+                break;
+
+            case HeroClass.Scout:
+                hitPoints = durablityPoints * 4 * (currentLevel + 1);
+                protection = strengthPoints / currentLevel;
+                damage = Mathf.RoundToInt(1 * (1 + dexterityPoints / 10));
+                criticalChancePercentage = Mathf.Clamp(luckPoints * 5 / ((currentLevel + 1) * 2), 0, 50);
+                dodgePercentage = Mathf.Clamp(Mathf.RoundToInt(intelligencePoints / (1.1f * currentLevel)), 0, 50);
+                damageReductionPercentage = Mathf.Clamp(armorPoints / (currentLevel + 1), 0, 25);
+                break;
+        }
+
+        _statisticsUI.hitPointsText.text = $"Hit points: {hitPoints}";
+        _statisticsUI.protectionText.text = $"Protection: {protection}";
+        _statisticsUI.damageText.text = $"Damage: ~{damage}";
+        _statisticsUI.criticalChanceText.text = $"Critical chance: {criticalChancePercentage}%";
+        _statisticsUI.dodgeText.text = $"Dodge chance: {dodgePercentage}%";
+        _statisticsUI.damageReductionText.text = $"Damage reduction: {damageReductionPercentage}%";
     }
 
     public void AddPoint(int index)
@@ -63,5 +155,7 @@ public class EntityInfo : MonoBehaviour
                 _statisticsUI.luckPointsText.text = luckPoints.ToString();
                 break;
         }
+
+        UpdateStats();
     }
 }

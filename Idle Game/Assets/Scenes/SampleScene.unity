@@ -348,7 +348,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &101381581
 RectTransform:
   m_ObjectHideFlags: 0
@@ -388,7 +388,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Dodge = Dexterity /  2 (max 10%)
+  m_text: 'Dodge = Dexterity /  2 '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1190,7 +1190,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 224369057}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 430821106}
+        m_TargetAssemblyTypeName: StatisticsUI, Assembly-CSharp
+        m_MethodName: AddAttributePoint
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &224369057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1774,7 +1786,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 447538842}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 430821106}
+        m_TargetAssemblyTypeName: StatisticsUI, Assembly-CSharp
+        m_MethodName: AddAttributePoint
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &447538842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1941,7 +1965,6 @@ GameObject:
   - component: {fileID: 487973863}
   - component: {fileID: 487973861}
   - component: {fileID: 487973860}
-  - component: {fileID: 487973864}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -2010,30 +2033,6 @@ MonoBehaviour:
   - {fileID: 879017245}
   - {fileID: 619394800}
   objectsToTeleportAdditional: []
---- !u!114 &487973864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 487973859}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71a4108fd2be33d4cbb4f7cdfb0c13c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  heroClass: 0
-  nickname: 
-  currentLevel: 0
-  expPoint: 0
-  goldCoins: 0
-  strengthPoints: 0
-  dexterityPoints: 0
-  intelligencePoints: 0
-  durablityPoints: 0
-  luckPoints: 0
-  armorPoints: 0
-  _statisticsUI: {fileID: 430821106}
 --- !u!1 &512911446
 GameObject:
   m_ObjectHideFlags: 0
@@ -4044,9 +4043,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 487973864}
-        m_TargetAssemblyTypeName: EntityStatistics, Assembly-CSharp
-        m_MethodName: AddPoint
+      - m_Target: {fileID: 430821106}
+        m_TargetAssemblyTypeName: StatisticsUI, Assembly-CSharp
+        m_MethodName: AddAttributePoint
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4111,7 +4110,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1034436094
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4568,7 +4567,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1239368456
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5056,7 +5055,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Critical chance: 0%'
+  m_text: 'Critical chance: 0% (max 100%)'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5587,7 +5586,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Damage reduction: 0%'
+  m_text: 'Damage reduction: 0% (max 10%)'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5836,7 +5835,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1655633831
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5876,7 +5875,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Damage reduction = Armor / Level (max 10%)
+  m_text: Damage reduction = Armor / Level
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5903,8 +5902,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 11
-  m_fontSizeBase: 11
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -6185,7 +6184,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1747338794}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 430821106}
+        m_TargetAssemblyTypeName: StatisticsUI, Assembly-CSharp
+        m_MethodName: AddAttributePoint
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1747338794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6642,7 +6653,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1907177200
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6776,7 +6787,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1911309902
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6816,7 +6827,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Critical chance = Luck * 5 / Level (max 100%)
+  m_text: 'Critical chance = Luck * 5 / (Level * 2) '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6843,8 +6854,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 11
-  m_fontSizeBase: 11
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -7366,7 +7377,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Dodge: 1%'
+  m_text: 'Dodge: 1% (max 10%)'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7659,7 +7670,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2130840047}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 430821106}
+        m_TargetAssemblyTypeName: StatisticsUI, Assembly-CSharp
+        m_MethodName: AddAttributePoint
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2130840047
 MonoBehaviour:
   m_ObjectHideFlags: 0

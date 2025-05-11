@@ -1,22 +1,6 @@
 using TMPro;
 using UnityEngine;
 
-public enum Attributes
-{
-    Strength,
-    Dexterity,
-    Intelligence,
-    Durability,
-    Luck
-}
-
-public enum HeroClass
-{
-    Mage,
-    Warrior,
-    Scout
-}
-
 public class StatisticsUI : MonoBehaviour
 {
     public TMP_Text hitPointsText;
@@ -33,4 +17,9 @@ public class StatisticsUI : MonoBehaviour
     public TMP_Text durabilityPointsText;
     public TMP_Text luckPointsText;
     public TMP_Text armorPointsText;
+
+    public void AddAttributePoint(int index)
+    {
+        PlayerController.instance._entityInfo.AddPoint(index);
+    }
 }

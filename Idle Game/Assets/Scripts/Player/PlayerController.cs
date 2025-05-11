@@ -24,10 +24,18 @@ public enum PlayerStatus
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance;
+
     [SerializeField] private string playerId;
+    public EntityInfo _entityInfo;
     [SerializeField] private TMP_Text idText;
     [SerializeField] private Rigidbody2D rgBody;
     private PlayerStatus currentStatus;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     public void Initialize(string id)
     {
@@ -37,6 +45,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(UpdatePositionLoop());
         StartCoroutine(HeartbeatLoop());
         GameController.instance.objectsToTeleportMust.Add(gameObject);
+        _entityInfo._statisticsUI = UIController.instance.panelObjects[0].panelObject.GetComponent<StatisticsUI>();
     }
 
     void Update()

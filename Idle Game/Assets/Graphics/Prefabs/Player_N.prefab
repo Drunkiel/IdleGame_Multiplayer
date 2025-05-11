@@ -151,6 +151,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerId: 
+  _entityInfo:
+    heroClass: 0
+    nickname: 
+    currentLevel: 1
+    expPoints: 0
+    expToNextLvl: 100
+    goldCoins: 0
+    hitPoints: 0
+    protection: 0
+    damage: 0
+    criticalChancePercentage: 0
+    dodgePercentage: 0
+    damageReductionPercentage: 0
+    strengthPoints: 0
+    dexterityPoints: 0
+    intelligencePoints: 0
+    durablityPoints: 0
+    luckPoints: 0
+    armorPoints: 0
+    _statisticsUI: {fileID: 0}
   idText: {fileID: 7692736644264565311}
   rgBody: {fileID: 8719082443075187836}
 --- !u!50 &8719082443075187836

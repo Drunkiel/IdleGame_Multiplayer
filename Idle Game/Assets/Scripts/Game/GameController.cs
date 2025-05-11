@@ -4,6 +4,22 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
+public enum Attributes
+{
+    Strength,
+    Dexterity,
+    Intelligence,
+    Durability,
+    Luck
+}
+
+public enum HeroClass
+{
+    Mage,
+    Warrior,
+    Scout
+}
+
 public class GameController : MonoBehaviour
 {
     public static GameController instance;
