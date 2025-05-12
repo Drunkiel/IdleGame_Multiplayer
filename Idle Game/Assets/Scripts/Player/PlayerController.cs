@@ -25,6 +25,7 @@ public enum PlayerStatus
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController instance;
+    public bool isStopped;
 
     [SerializeField] private string playerId;
     public EntityInfo _entityInfo;
