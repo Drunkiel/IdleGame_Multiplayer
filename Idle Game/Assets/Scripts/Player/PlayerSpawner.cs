@@ -51,7 +51,7 @@ public class PlayerSpawner : MonoBehaviour
         //Create local player
         GameObject player = Instantiate(playerPrefab, transform.position, Quaternion.identity);
         PlayerController controller = player.GetComponent<PlayerController>();
-        controller.Initialize(myId);
+        controller.Initialize(myId, ServerConnector.instance.playerUsername);
         GameController.instance.ChangeScene(SceneManager.GetActiveScene().name);
     }
 

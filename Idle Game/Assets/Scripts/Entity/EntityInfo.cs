@@ -5,7 +5,7 @@ using UnityEngine;
 public class EntityInfo
 {
     public HeroClass heroClass;
-    public string nickname;
+    public string username;
     [SerializeField] private int currentLevel;
     [SerializeField] private int expPoints;
     [SerializeField] private int expToNextLvl;

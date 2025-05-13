@@ -38,10 +38,11 @@ public class PlayerController : MonoBehaviour
         instance = this;
     }
 
-    public void Initialize(string id)
+    public void Initialize(string id, string username)
     {
         playerId = id;
-        idText.text = playerId;
+        _entityInfo.username = username;
+        idText.text = _entityInfo.username;
         StartCoroutine(UpdatePositionOnce());
         StartCoroutine(UpdatePositionLoop());
         StartCoroutine(HeartbeatLoop());

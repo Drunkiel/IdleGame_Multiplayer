@@ -8,37 +8,69 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
         }
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+        .layout {
+            display: flex;
+            height: 100vh;
         }
-        h1 {
+
+        .left-panel {
+            width: 20%;
+            min-width: 200px;
+            background-color: #ffffff;
+            border-right: 2px solid #ddd;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .right-panel {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .user-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-card h4 {
+            margin: 0 0 5px;
+            color: #333;
+        }
+
+        .container h1 {
             text-align: center;
             color: #333;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
+
         th, td {
             padding: 12px;
             border: 1px solid #ddd;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         .status {
             text-transform: capitalize;
         }
+
         .btn-disconnect {
             background-color: #e74c3c;
             color: white;
@@ -47,6 +79,7 @@
             cursor: pointer;
             border-radius: 4px;
         }
+
         .btn-disconnect:hover {
             background-color: #c0392b;
         }
@@ -54,23 +87,22 @@
 </head>
 <body>
 
-<div class="container">
-    <h1>Panel Zarządzania Graczami</h1>
-    <p><strong>Liczba graczy połączonych:</strong> <span id="playerCount">0</span></p>
-    <table id="playersTable">
-        <thead>
-            <tr>
-                <th>ID Gracza</th>
-                <th>Status</th>
-                <th>Pozycja (X, Y, Z)</th>
-                <th>Scena</th>
-                <th>Akcja</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Gracze będą dynamicznie dodawani tutaj -->
-        </tbody>
-    </table>
+<div class="layout">
+    <div class="left-panel" id="registeredUsersPanel">
+        <h3>Zarejestrowani gracze</h3>
+        <!-- Kafelki będą dodawane dynamicznie -->
+    </div>
+
+    <div class="right-panel">
+        <div class="container">
+            <h1>Panel Zarządzania Graczami</h1>
+            <p><strong>Liczba graczy połączonych:</strong> <span id="playerCount">0</span></p>
+            <table id="playersTable">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -99,7 +131,7 @@
 
             if (res.ok) {
                 alert('Gracz rozłączony.');
-                await fetchPlayers(); // odśwież listę
+                await refreshPanel();
             } else {
                 alert('Nie udało się rozłączyć gracza.');
             }
@@ -108,51 +140,106 @@
         }
     }
 
+    function createHeader(keys) {
+        const thead = document.getElementById('playersTable').querySelector('thead');
+        thead.innerHTML = '';
+        const row = thead.insertRow();
+        keys.forEach(key => {
+            const th = document.createElement('th');
+            th.textContent = key;
+            row.appendChild(th);
+        });
+
+        const thAction = document.createElement('th');
+        thAction.textContent = 'Akcja';
+        row.appendChild(thAction);
+    }
+
+    function createRow(player, keys) {
+        const tbody = document.getElementById('playersTable').querySelector('tbody');
+        const row = tbody.insertRow();
+        
+        keys.forEach(key => {
+            const cell = row.insertCell();
+            if (key === 'position') {
+                const pos = positionsMap[player.player_id];
+                cell.textContent = pos
+                    ? `(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}, ${pos.z.toFixed(1)})`
+                    : "brak danych";
+            } else {
+                cell.textContent = player[key] !== undefined ? player[key] : '';
+                if (key === 'status') {
+                    cell.classList.add('status');
+                }
+            }
+        });
+
+        const actionCell = row.insertCell();
+        const btn = document.createElement('button');
+        btn.textContent = "Rozłącz";
+        btn.className = "btn-disconnect";
+        btn.onclick = () => disconnectPlayer(player.player_id);
+        actionCell.appendChild(btn);
+    }
+
     async function fetchPlayers() {
         try {
             const response = await fetch('http://localhost:3000/players');
             const players = await response.json();
-            
+
             document.getElementById('playerCount').innerText = players.length;
 
-            const tableBody = document.getElementById('playersTable').getElementsByTagName('tbody')[0];
-            tableBody.innerHTML = '';
+            const tbody = document.getElementById('playersTable').querySelector('tbody');
+            tbody.innerHTML = '';
+
+            if (players.length === 0) {
+                createHeader([]);
+                return;
+            }
+
+            const samplePlayer = players[0];
+            const keys = Object.keys(samplePlayer);
+            const index = keys.indexOf('position');
+            if (index !== -1) keys.splice(index, 1); 
+
+            if (!keys.includes('position')) keys.splice(2, 0, 'position'); 
+
+            createHeader(keys);
 
             players.forEach(player => {
-                const row = tableBody.insertRow();
-                const cellId = row.insertCell(0);
-                const cellStatus = row.insertCell(1);
-                const cellPosition = row.insertCell(2);
-                const cellScene = row.insertCell(3);
-                const cellAction = row.insertCell(4);
-
-                cellId.textContent = player.player_id;
-                cellStatus.textContent = player.status;
-                cellStatus.classList.add('status');
-
-                const pos = positionsMap[player.player_id];
-                if (pos) {
-                    cellPosition.textContent = `(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}, ${pos.z.toFixed(1)})`;
-                } else {
-                    cellPosition.textContent = "brak danych";
-                }
-
-                cellScene.textContent = player.scene;
-
-                const btn = document.createElement('button');
-                btn.textContent = "Rozłącz";
-                btn.className = "btn-disconnect";
-                btn.onclick = () => disconnectPlayer(player.player_id);
-                cellAction.appendChild(btn);
+                createRow(player, keys);
             });
         } catch (error) {
             console.error('Błąd podczas pobierania graczy:', error);
         }
     }
 
+    async function fetchRegisteredUsers() {
+        try {
+            const res = await fetch('http://localhost:3000/users'); // <- endpoint musisz mieć
+            const users = await res.json();
+            const panel = document.getElementById('registeredUsersPanel');
+            panel.innerHTML = `<h3>Zarejestrowani gracze: ${users.length}</h3>`;
+
+            users.forEach(user => {
+                const card = document.createElement('div');
+                card.className = 'user-card';
+                card.innerHTML = `
+                    <p><strong>Player ID:</strong> ${user.playerId}</p>
+                    <p><strong>Username:</strong> ${user.username}</p>
+                    <p><strong>Password:</strong> ${user.password}</p>
+                `;
+                panel.appendChild(card);
+            });
+        } catch (err) {
+            console.error('Błąd podczas pobierania zarejestrowanych użytkowników:', err);
+        }
+    }
+
     async function refreshPanel() {
         await fetchPositions();
         await fetchPlayers();
+        await fetchRegisteredUsers();
     }
 
     setInterval(refreshPanel, 5000);

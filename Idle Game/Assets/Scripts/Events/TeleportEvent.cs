@@ -15,8 +15,8 @@ public class TeleportEvent : MonoBehaviour
     {
         PortalController _portalController = PortalController.instance;
 
-        //if (_portalController.IsOnCooldown() || PlayerController.instance.GetComponent<EntityCombat>().inCombat)
-        //    return;
+        if (_portalController.IsOnCooldown())
+            return;
 
         StartCoroutine(PauseBeforeTeleport(() =>
         {
@@ -30,8 +30,8 @@ public class TeleportEvent : MonoBehaviour
     {
         PortalController _portalController = PortalController.instance;
 
-        //if (_portalController.IsOnCooldown() || PlayerController.instance.GetComponent<EntityCombat>().inCombat)
-        //    return;
+        if (_portalController.IsOnCooldown())
+            return;
 
         StartCoroutine(PauseBeforeTeleport(() =>
         {
@@ -46,8 +46,8 @@ public class TeleportEvent : MonoBehaviour
     {
         PortalController _portalController = PortalController.instance;
 
-        //if (_portalController.IsOnCooldown() || PlayerController.instance.GetComponent<EntityCombat>().inCombat)
-        //    return;
+        if (_portalController.IsOnCooldown())
+            return;
 
         StartCoroutine(PauseBeforeTeleport(() =>
         {
@@ -72,8 +72,8 @@ public class TeleportEvent : MonoBehaviour
     {
         PortalController _portalController = PortalController.instance;
 
-        //if (_portalController.IsOnCooldown() || PlayerController.instance.GetComponent<EntityCombat>().inCombat)
-        //    return;
+        if (_portalController.IsOnCooldown())
+            return;
 
         StartCoroutine(PauseBeforeTeleport(() =>
         {
@@ -88,7 +88,7 @@ public class TeleportEvent : MonoBehaviour
         yield return new WaitForSeconds(cooldownToTeleport * 0.1f);
         if (anim != null)
             anim.Play("Teleport");
-        //PlayerController.instance.isStopped = true;
+        PlayerController.instance.isStopped = true;
         yield return new WaitForSeconds(cooldownToTeleport * 0.9f);
         action();
     }
