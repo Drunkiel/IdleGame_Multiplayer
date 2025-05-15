@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -19,6 +20,8 @@ public class PositionData
 public enum PlayerStatus
 {
     Connected,
+    Disconnected,
+    Afk,
     Idle,
 }
 
@@ -27,27 +30,41 @@ public class PlayerController : MonoBehaviour
     public static PlayerController instance;
     public bool isStopped;
 
-    [SerializeField] private string playerId;
+    public string playerId;
     public EntityInfo _entityInfo;
-    [SerializeField] private TMP_Text idText;
+    [SerializeField] private TMP_Text nameText;
     [SerializeField] private Rigidbody2D rgBody;
-    private PlayerStatus currentStatus;
+    [SerializeField] private PlayerStatus currentStatus;
 
     private void Awake()
     {
         instance = this;
     }
 
-    public void Initialize(string id, string username)
+    public void Initialize(ConnectResponse _response)
     {
-        playerId = id;
-        _entityInfo.username = username;
-        idText.text = _entityInfo.username;
+        playerId = _response.player_id;
+        currentStatus = (PlayerStatus)Enum.Parse(typeof(PlayerStatus), _response.status);
+        _entityInfo = new EntityInfo(
+            _response.heroClass,
+            _response.username,
+            _response.currentLevel,
+            _response.expPoints,
+            _response.goldCoins, 
+            _response.strengthPoints, 
+            _response.dexterityPoints,
+            _response.intelligencePoints, 
+            _response.durablityPoints, 
+            _response.luckPoints, 
+            UIController.instance.panelObjects[0].panelObject.GetComponent<StatisticsUI>()
+        );
+
+        nameText.text = _entityInfo.username;
+        StartCoroutine(UpdateStatus(PlayerStatus.Connected));
         StartCoroutine(UpdatePositionOnce());
         StartCoroutine(UpdatePositionLoop());
         StartCoroutine(HeartbeatLoop());
         GameController.instance.objectsToTeleportMust.Add(gameObject);
-        _entityInfo._statisticsUI = UIController.instance.panelObjects[0].panelObject.GetComponent<StatisticsUI>();
     }
 
     void Update()
@@ -61,37 +78,21 @@ public class PlayerController : MonoBehaviour
         if (move != 0)
             transform.GetChild(1).localScale = new(Mathf.Sign(move) * 1, 1, 1);
 
-        //Example of how to update player status
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            GameController.instance.ChangeScene("Test");
-            //currentStatus = PlayerStatus.Idle;
-            //StartCoroutine(UpdateStatus(currentStatus));
-        }
-
         if (Input.GetKeyDown(KeyCode.I))
         {
             UIController.instance.OpenClose(0);
-            //currentStatus = PlayerStatus.Idle;
-            //StartCoroutine(UpdateStatus(currentStatus));
         }
-
-        //if (Input.GetKeyUp(KeyCode.Space))
-        //{
-        //    GameController.instance.ChangeScene();
-        //    currentStatus = PlayerStatus.Idle;
-        //    //StartCoroutine(UpdateStatus(currentStatus));
-        //}
     }
 
     IEnumerator UpdateStatus(PlayerStatus newStatus)
     {
-        string url = ServerConnector.instance.GetServerUrl() + "/update_scene/" + playerId;
-        string jsonData = "{\"scene\":\"" + newStatus.ToString() + "\"}";
+        string url = ServerConnector.instance.GetServerUrl() + "/update_status/" + playerId;
+        string jsonData = "{\"status\":\"" + newStatus.ToString() + "\"}";
 
         UnityWebRequest request = UnityWebRequest.Put(url, jsonData);
         request.method = UnityWebRequest.kHttpVerbPOST;
         request.SetRequestHeader("Content-Type", "application/json");
+        currentStatus = newStatus;
 
         yield return request.SendWebRequest();
 
@@ -116,7 +117,8 @@ public class PlayerController : MonoBehaviour
         {
             yield return new WaitForSeconds(0.1f);
 
-            if (string.IsNullOrEmpty(playerId)) continue;
+            if (string.IsNullOrEmpty(playerId)) 
+                continue;
 
             Vector3 pos = transform.position;
             string jsonData = JsonUtility.ToJson(new PositionData(pos));
@@ -142,5 +144,10 @@ public class PlayerController : MonoBehaviour
         request.method = "POST";
         request.SetRequestHeader("Content-Type", "application/json");
         yield return request.SendWebRequest();
+    }
+
+    private void OnApplicationQuit()
+    {
+        StartCoroutine(UpdateStatus(PlayerStatus.Disconnected));
     }
 }

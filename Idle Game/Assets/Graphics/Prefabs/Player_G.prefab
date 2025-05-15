@@ -151,7 +151,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerId: 
-  idText: {fileID: 5945548453042810749}
+  username: 
+  nameText: {fileID: 5945548453042810749}
+  currentStatus: 0
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!50 &-3458161395892823088
 Rigidbody2D:
   serializedVersion: 4

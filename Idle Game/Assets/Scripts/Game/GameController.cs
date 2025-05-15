@@ -67,7 +67,7 @@ public class GameController : MonoBehaviour
 
     private IEnumerator UpdateScene(string sceneName)
     {
-        string url = ServerConnector.instance.GetServerUrl() + "/update_scene/" + ServerConnector.instance.playerId;
+        string url = ServerConnector.instance.GetServerUrl() + "/update_scene/" + PlayerController.instance.playerId;
         string jsonData = "{\"scene\":\"" + sceneName + "\"}";
 
         UnityWebRequest request = UnityWebRequest.Put(url, jsonData);

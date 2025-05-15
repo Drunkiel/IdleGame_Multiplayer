@@ -15,6 +15,16 @@ public class ConnectResponse
 {
     public string player_id;
     public string status;
+    public HeroClass heroClass;
+    public string username;
+    public int currentLevel;
+    public int expPoints;
+    public int goldCoins;
+    public int strengthPoints;
+    public int dexterityPoints;
+    public int intelligencePoints;
+    public int durablityPoints;
+    public int luckPoints;
 }
 
 [Serializable]
@@ -22,7 +32,7 @@ public class RegisterRequest
 {
     public string username;
     public string password;
-    public int heroClass;
+    public string heroClass;
 }
 
 [Serializable]
@@ -34,12 +44,11 @@ public class RegisterResponse
 public class ServerConnector : MonoBehaviour
 {
     public static ServerConnector instance;
-    [HideInInspector] public string playerId;
-    [HideInInspector] public string playerUsername;
+    public string playerId;
     [SerializeField] private string serverUrl = "http://localhost:3000";
     public LoginUI _loginUI;
 
-    public Action<string> OnConnected;
+    public Action<ConnectResponse> OnConnected;
 
     void Awake()
     {
@@ -80,11 +89,10 @@ public class ServerConnector : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            ConnectResponse response = JsonUtility.FromJson<ConnectResponse>(request.downloadHandler.text);
-            playerId = response.player_id;
-            playerUsername = loginRequest.username;
-            Debug.Log("Connected to server with ID: " + playerId);
-            OnConnected?.Invoke(playerId);
+            ConnectResponse _response = JsonUtility.FromJson<ConnectResponse>(request.downloadHandler.text);
+            playerId = _response.player_id;
+            Debug.Log("Connected to server with ID: " + _response.player_id);
+            OnConnected?.Invoke(_response);
         }
         else
         {
@@ -100,7 +108,7 @@ public class ServerConnector : MonoBehaviour
         {
             username = _loginUI.registerUsernameInput.text,
             password = _loginUI.registerPasswordInput.text,
-            heroClass = _loginUI.dropdownHeroClass.value // lub inna zmienna reprezentuj¹ca wybran¹ klasê
+            heroClass = _loginUI.dropdownHeroClass.value.ToString(),
         };
 
         string jsonData = JsonUtility.ToJson(registerData);

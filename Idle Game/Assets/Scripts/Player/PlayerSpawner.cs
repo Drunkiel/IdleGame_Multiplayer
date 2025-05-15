@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class PositionEntry
 {
     public string player_id;
+    public string username;
     public PositionData position;
     public string scene;
 }
@@ -22,6 +23,7 @@ public class PositionListWrapper
 public class PlayerData
 {
     public string player_id;
+    public string username;
     public PlayerStatus status;
     public string scene;
 }
@@ -46,12 +48,12 @@ public class PlayerSpawner : MonoBehaviour
         StartCoroutine(PollOtherPositions());
     }
 
-    void OnConnected(string myId)
+    void OnConnected(ConnectResponse _response)
     {
         //Create local player
         GameObject player = Instantiate(playerPrefab, transform.position, Quaternion.identity);
-        PlayerController controller = player.GetComponent<PlayerController>();
-        controller.Initialize(myId, ServerConnector.instance.playerUsername);
+        PlayerController _controller = player.GetComponent<PlayerController>();
+        _controller.Initialize(_response);
         GameController.instance.ChangeScene(SceneManager.GetActiveScene().name);
     }
 
@@ -71,7 +73,7 @@ public class PlayerSpawner : MonoBehaviour
 
                 foreach (var player in list.players)
                 {
-                    if (player.player_id == ServerConnector.instance.playerId)
+                    if (player.player_id.Equals(ServerConnector.instance.playerId))
                         continue;
 
                     //Check if player is in the same scene
@@ -96,6 +98,7 @@ public class PlayerSpawner : MonoBehaviour
                         GameObject ghost = Instantiate(ghostPrefab);
                         var ghostScript = ghost.GetComponent<PlayerGhost>();
                         ghostScript.playerId = player.player_id;
+                        ghostScript.username = player.username;
                         ghostScript.SetStatus(player.status);
                         ghosts.Add(player.player_id, ghostScript);
                     }
@@ -122,7 +125,7 @@ public class PlayerSpawner : MonoBehaviour
 
                 foreach (var entry in list.positions)
                 {
-                    if (entry.player_id == ServerConnector.instance.playerId)
+                    if (entry.player_id.Equals(ServerConnector.instance.playerId))
                         continue;
 
                     if (entry.scene != SceneManager.GetActiveScene().name)
@@ -140,6 +143,7 @@ public class PlayerSpawner : MonoBehaviour
                         GameObject ghost = Instantiate(ghostPrefab);
                         var ghostScript = ghost.GetComponent<PlayerGhost>();
                         ghostScript.playerId = entry.player_id;
+                        ghostScript.username = entry.username;
                         ghostScript.SetStatus(PlayerStatus.Connected);
                         ghostScript.SetPosition(new(entry.position.x, entry.position.y, entry.position.z), true);
                         ghosts.Add(entry.player_id, ghostScript);

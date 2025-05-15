@@ -151,10 +151,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a06fa44b28f65024b98ae9aed367d873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isStopped: 0
   playerId: 
   _entityInfo:
     heroClass: 0
-    nickname: 
+    username: 
     currentLevel: 1
     expPoints: 0
     expToNextLvl: 100
@@ -172,8 +173,9 @@ MonoBehaviour:
     luckPoints: 0
     armorPoints: 0
     _statisticsUI: {fileID: 0}
-  idText: {fileID: 7692736644264565311}
+  nameText: {fileID: 7692736644264565311}
   rgBody: {fileID: 8719082443075187836}
+  currentStatus: 0
 --- !u!50 &8719082443075187836
 Rigidbody2D:
   serializedVersion: 4

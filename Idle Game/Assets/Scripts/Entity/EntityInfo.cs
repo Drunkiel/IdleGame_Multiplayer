@@ -29,8 +29,10 @@ public class EntityInfo
 
     public StatisticsUI _statisticsUI;
 
-    public EntityInfo(int currentLevel, int expPoints, int goldCoins, int strengthPoints, int dexterityPoints, int intelligencePoints, int durablityPoints, int luckPoints, int armorPoints, StatisticsUI _statisticsUI = null)
+    public EntityInfo(HeroClass heroClass, string username, int currentLevel, int expPoints, int goldCoins, int strengthPoints, int dexterityPoints, int intelligencePoints, int durablityPoints, int luckPoints, StatisticsUI _statisticsUI = null)
     {
+        this.heroClass = heroClass;
+        this.username = username;
         this.currentLevel = currentLevel;
         this.expPoints = expPoints;
         expToNextLvl = Mathf.CeilToInt(100 * Mathf.Pow(currentLevel, 1.5f));
@@ -40,7 +42,6 @@ public class EntityInfo
         this.intelligencePoints = intelligencePoints;
         this.durablityPoints = durablityPoints;
         this.luckPoints = luckPoints;
-        this.armorPoints = armorPoints;
         this._statisticsUI = _statisticsUI;
 
         if (_statisticsUI != null)
@@ -117,12 +118,15 @@ public class EntityInfo
                 break;
         }
 
-        _statisticsUI.hitPointsText.text = $"Hit points: {hitPoints}";
-        _statisticsUI.protectionText.text = $"Protection: {protection}";
-        _statisticsUI.damageText.text = $"Damage: ~{damage}";
-        _statisticsUI.criticalChanceText.text = $"Critical chance: {criticalChancePercentage}%";
-        _statisticsUI.dodgeText.text = $"Dodge chance: {dodgePercentage}%";
-        _statisticsUI.damageReductionText.text = $"Damage reduction: {damageReductionPercentage}%";
+        if (_statisticsUI != null)
+        {
+            _statisticsUI.hitPointsText.text = $"Hit points: {hitPoints}";
+            _statisticsUI.protectionText.text = $"Protection: {protection}";
+            _statisticsUI.damageText.text = $"Damage: ~{damage}";
+            _statisticsUI.criticalChanceText.text = $"Critical chance: {criticalChancePercentage}%";
+            _statisticsUI.dodgeText.text = $"Dodge chance: {dodgePercentage}%";
+            _statisticsUI.damageReductionText.text = $"Damage reduction: {damageReductionPercentage}%";
+        }
     }
 
     public void AddPoint(int index)

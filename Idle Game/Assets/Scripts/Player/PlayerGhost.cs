@@ -4,8 +4,9 @@ using UnityEngine;
 public class PlayerGhost : MonoBehaviour
 {
     public string playerId;
-    [SerializeField] private TMP_Text idText;
-    private PlayerStatus currentStatus;
+    public string username;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private PlayerStatus currentStatus;
 
     [SerializeField] private Vector3 targetPosition;
     private float lerpSpeed = 5f;
@@ -24,7 +25,7 @@ public class PlayerGhost : MonoBehaviour
     public void SetStatus(PlayerStatus status)
     {
         currentStatus = status;
-        idText.text = playerId;
+        nameText.text = username;
     }
 
     public void SetPosition(Vector3 pos, bool force = false)

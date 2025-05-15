@@ -11,6 +11,26 @@ app.use(express.urlencoded({ extended: true }));
 
 // In-memory database of users
 const testDB = {};
+testDB["a"] = {
+    password: "a",
+    playerId: uuidv4(),
+    playerData: {
+        username: "Denis",
+        status: "Disconnected",
+        position: { x: 0, y: 0, z: 0 },
+        lastSeen: Date.now(),
+        scene: "unknown",
+        heroClass: 1,
+        currentLevel: 69,
+        expPoints: 1,
+        goldCoins: 1,
+        strengthPoints: 1,
+        dexterityPoints: 1,
+        intelligencePoints: 1,
+        durablityPoints: 1,
+        luckPoints: 1,
+    }
+};
 //Actual in game players
 const users = {};
 
@@ -28,14 +48,29 @@ app.post('/login', (req, res) => {
     if (user && user.password === password) {
         users[user.playerId] = user;
 
-        res.json({ player_id: user.playerId });
+        const data = user.playerData;
+
+        res.json({
+            player_id: user.playerId,
+            status: data.status,
+            heroClass: data.heroClass,
+            username: data.username,
+            currentLevel: data.currentLevel,
+            expPoints: data.expPoints,
+            goldCoins: data.goldCoins,
+            strengthPoints: data.strengthPoints,
+            dexterityPoints: data.dexterityPoints,
+            intelligencePoints: data.intelligencePoints,
+            durablityPoints: data.durablityPoints,
+            luckPoints: data.luckPoints
+        });
     } else {
         res.status(401).json({ error: "Invalid username or password" });
     }
 });
 
 app.post('/register', (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, heroClass } = req.body;
 
     if (testDB[username]) {
         return res.status(400).json({ error: 'Username already exists' });
@@ -47,11 +82,11 @@ app.post('/register', (req, res) => {
         playerId,
         playerData: {
             username,
-            status: "connected",
+            status: "Disconnected",
             position: { x: 0, y: 0, z: 0 },
             lastSeen: Date.now(),
             scene: "unknown",
-            heroClass: 0,
+            heroClass: heroClass,
             currentLevel: 1,
             expPoints: 0,
             goldCoins: 0,
@@ -153,6 +188,7 @@ app.get('/positions', (req, res) => {
     if (!requesterId) {
         const all = Object.values(users).map(u => ({
             player_id: u.playerId,
+            username: u.playerData.username,
             position: u.playerData.position,
             scene: u.playerData.scene
         }));
@@ -243,6 +279,7 @@ setInterval(() => {
     for (const username in users) {
         const player = users[username];
         if (now - player.playerData.lastSeen > timeout) {
+            player.playerData.status = "Disconnected";
             console.log(`Removing inactive player: ${player.playerId}`);
             delete users[username];
         }
