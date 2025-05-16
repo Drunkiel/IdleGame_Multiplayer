@@ -6,10 +6,22 @@ public class EntityInfo
 {
     public HeroClass heroClass;
     public string username;
-    [SerializeField] private int currentLevel;
-    [SerializeField] private int expPoints;
+    public int currentLevel
+    {
+        get;
+        private set;
+    }
+    public int expPoints
+    {
+        get;
+        private set;
+    }
     [SerializeField] private int expToNextLvl;
-    [SerializeField] private int goldCoins;
+    public int goldCoins
+    {
+        get;
+        private set;
+    }
 
     [Header("Stats")]
     public int hitPoints;

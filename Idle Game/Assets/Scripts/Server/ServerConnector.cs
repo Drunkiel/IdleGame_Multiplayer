@@ -53,6 +53,7 @@ public class ServerConnector : MonoBehaviour
     void Awake()
     {
         instance = this;
+        _loginUI.gameObject.SetActive(true);
     }
 
     public void JoinServer()
@@ -93,6 +94,7 @@ public class ServerConnector : MonoBehaviour
             playerId = _response.player_id;
             Debug.Log("Connected to server with ID: " + _response.player_id);
             OnConnected?.Invoke(_response);
+            _loginUI.gameObject.SetActive(false);
         }
         else
         {

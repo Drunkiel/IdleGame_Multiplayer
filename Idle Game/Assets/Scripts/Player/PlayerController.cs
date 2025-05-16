@@ -2,9 +2,10 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 
-[System.Serializable]
+[Serializable]
 public class PositionData
 {
     public float x, y, z;
@@ -15,6 +16,21 @@ public class PositionData
         y = pos.y;
         z = pos.z;
     }
+}
+
+[Serializable]
+public class PlayerStatsPayload
+{
+    public HeroClass heroClass;
+    public int currentLevel;
+    public int expPoints;
+    public int goldCoins;
+    public int strengthPoints;
+    public int dexterityPoints;
+    public int intelligencePoints;
+    public int durablityPoints;
+    public int luckPoints;
+    public int armorPoints;
 }
 
 public enum PlayerStatus
@@ -35,6 +51,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private Rigidbody2D rgBody;
     [SerializeField] private PlayerStatus currentStatus;
+
+    private bool isFlipped;
+    public float speedForce;
+    private Vector2 movement;
+    private Vector2 newVelocityXZ;
+    private float newVelocityY;
 
     private void Awake()
     {
@@ -69,19 +91,50 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (string.IsNullOrEmpty(playerId)) 
+        //anim.SetFloat("Movement", isStopped ? 0 : movement.magnitude);
+
+        if (string.IsNullOrEmpty(playerId) || isStopped || GameController.isPaused)
             return;
 
-        //Basic movement
-        float move = Input.GetAxis("Horizontal");
-        transform.Translate(new(5f * move * Time.deltaTime, 0, 0));
-        if (move != 0)
-            transform.GetChild(1).localScale = new(Mathf.Sign(move) * 1, 1, 1);
+        //Clamping movement speed
+        newVelocityXZ = new(rgBody.velocity.x, 0);
+        newVelocityY = rgBody.velocity.y;
 
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            UIController.instance.OpenClose(0);
-        }
+        if (newVelocityXZ.magnitude > 1f)
+            newVelocityXZ = Vector3.ClampMagnitude(newVelocityXZ, 1f);
+
+        if (newVelocityY < -10)
+            newVelocityY = -10;
+
+        rgBody.velocity = new(newVelocityXZ.x, newVelocityY);
+    }
+
+    private void FixedUpdate()
+    {
+        if (string.IsNullOrEmpty(playerId) || isStopped || GameController.isPaused)
+            return;
+
+        //Make movement depend on direction player is facing
+        Vector2 move = new Vector2(movement.x, 0).normalized;
+
+        //Move player
+        rgBody.AddForce(move * speedForce);
+    }
+
+    public void MovementInput(InputAction.CallbackContext context)
+    {
+        Vector2 inputValue = context.ReadValue<Vector2>();
+
+        //Flipping player to direction they are going
+        if (inputValue.x < 0 && !isFlipped)
+            isFlipped = true;
+        else if (inputValue.x > 0 && isFlipped)
+            isFlipped = false;
+
+        //Flipping player to direction they are going
+        transform.GetChild(1).localScale = new(isFlipped ? -1 : 1 * 1, 1, 1);
+
+        movement = new Vector2(inputValue.x, inputValue.y);
     }
 
     IEnumerator UpdateStatus(PlayerStatus newStatus)
@@ -99,6 +152,46 @@ public class PlayerController : MonoBehaviour
         if (request.result != UnityWebRequest.Result.Success)
             Debug.LogError("Status update failed: " + request.error);
     }
+
+    public void UpdateStats()
+    {
+        StartCoroutine(UpdateStats(_entityInfo));
+    }
+
+    private IEnumerator UpdateStats(EntityInfo _entityInfo)
+    {
+        string url = ServerConnector.instance.GetServerUrl() + "/update_stats/" + playerId;
+
+        PlayerStatsPayload payload = new()
+        {
+            heroClass = _entityInfo.heroClass,
+            currentLevel = _entityInfo.currentLevel,
+            expPoints = _entityInfo.expPoints,
+            goldCoins = _entityInfo.goldCoins,
+            strengthPoints = _entityInfo.strengthPoints,
+            dexterityPoints = _entityInfo.dexterityPoints,
+            intelligencePoints = _entityInfo.intelligencePoints,
+            durablityPoints = _entityInfo.durablityPoints,
+            luckPoints = _entityInfo.luckPoints,
+            armorPoints = _entityInfo.armorPoints
+        };
+
+        string jsonData = JsonUtility.ToJson(payload);
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+
+        UnityWebRequest request = new(url, "POST")
+        {
+            uploadHandler = new UploadHandlerRaw(bodyRaw),
+            downloadHandler = new DownloadHandlerBuffer()
+        };
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+            Debug.LogError("Stats update failed: " + request.error);
+    }
+
 
     IEnumerator HeartbeatLoop()
     {

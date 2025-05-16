@@ -21,5 +21,6 @@ public class StatisticsUI : MonoBehaviour
     public void AddAttributePoint(int index)
     {
         PlayerController.instance._entityInfo.AddPoint(index);
+        PlayerController.instance.UpdateStats();
     }
 }
