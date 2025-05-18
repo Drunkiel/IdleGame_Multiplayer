@@ -19,7 +19,7 @@ testDB["a"] = {
         status: "Disconnected",
         position: { x: 0, y: 0, z: 0 },
         lastSeen: Date.now(),
-        scene: "unknown",
+        scene: "SampleScene",
         heroClass: 1,
         currentLevel: 69,
         expPoints: 1,
@@ -40,7 +40,7 @@ app.post('/login', (req, res) => {
     const user = testDB[username];
 
     //Check if player is logged in
-    if (users[user.playerId] === user) {
+    if (user && users[user.playerId] === user) {
         return res.status(403).json({ error: "Player already logged in" });
     }
 
@@ -52,6 +52,7 @@ app.post('/login', (req, res) => {
 
         res.json({
             player_id: user.playerId,
+            scene: data.scene,
             status: data.status,
             heroClass: data.heroClass,
             username: data.username,
@@ -85,7 +86,7 @@ app.post('/register', (req, res) => {
             status: "Disconnected",
             position: { x: 0, y: 0, z: 0 },
             lastSeen: Date.now(),
-            scene: "unknown",
+            scene: "SampleScene",
             heroClass: heroClass,
             currentLevel: 1,
             expPoints: 0,

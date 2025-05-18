@@ -29,6 +29,7 @@ public class GameController : MonoBehaviour
 
     public List<GameObject> objectsToTeleportMust = new();
     public List<GameObject> objectsToTeleportAdditional = new();
+    public List<Vector2> sceneSpawnPositions = new();
 
     private void Awake()
     {
@@ -46,6 +47,7 @@ public class GameController : MonoBehaviour
         if (currentScene.name.Equals(sceneName))
         {
             StartCoroutine(UpdateScene(currentScene.name));
+            PlayerController.instance.transform.position = sceneSpawnPositions[currentScene.buildIndex];
             yield break;
         }
 
@@ -61,6 +63,8 @@ public class GameController : MonoBehaviour
         //Move objects to other scene
         for (int i = 0; i < objectsToTeleportMust.Count; i++)
             SceneManager.MoveGameObjectToScene(objectsToTeleportMust[i], nextScene);
+
+        PlayerController.instance.transform.position = sceneSpawnPositions[nextScene.buildIndex];
 
         SceneManager.UnloadSceneAsync(currentScene);
     }

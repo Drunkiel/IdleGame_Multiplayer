@@ -54,7 +54,7 @@ public class PlayerSpawner : MonoBehaviour
         GameObject player = Instantiate(playerPrefab, transform.position, Quaternion.identity);
         PlayerController _controller = player.GetComponent<PlayerController>();
         _controller.Initialize(_response);
-        GameController.instance.ChangeScene(SceneManager.GetActiveScene().name);
+        GameController.instance.ChangeScene(_response.scene);
     }
 
     IEnumerator PollOtherPlayers()

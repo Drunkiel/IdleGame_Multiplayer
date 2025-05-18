@@ -14,6 +14,7 @@ public class LoginRequest
 public class ConnectResponse
 {
     public string player_id;
+    public string scene;
     public string status;
     public HeroClass heroClass;
     public string username;
