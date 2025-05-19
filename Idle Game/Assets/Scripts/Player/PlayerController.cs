@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private Rigidbody2D rgBody;
     [SerializeField] private PlayerStatus currentStatus;
+    public HoldingController _holdingController;
 
     private bool isFlipped;
     public float speedForce;

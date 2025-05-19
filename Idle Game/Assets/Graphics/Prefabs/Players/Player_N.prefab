@@ -111,10 +111,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6673564104573524165}
-  - component: {fileID: 4167481583208683684}
   - component: {fileID: 8719082443075187836}
   - component: {fileID: 6766339354730744107}
   - component: {fileID: 8346007687823548256}
+  - component: {fileID: 4167481583208683684}
+  - component: {fileID: 6762414381914347804}
   - component: {fileID: 8872444235796146396}
   m_Layer: 7
   m_Name: Player_N
@@ -140,41 +141,6 @@ Transform:
   - {fileID: 4463239540927553341}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4167481583208683684
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8837236290967611691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a06fa44b28f65024b98ae9aed367d873, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isStopped: 0
-  playerId: 
-  _entityInfo:
-    heroClass: 0
-    username: 
-    expToNextLvl: 100
-    hitPoints: 0
-    protection: 0
-    damage: 0
-    criticalChancePercentage: 0
-    dodgePercentage: 0
-    damageReductionPercentage: 0
-    strengthPoints: 0
-    dexterityPoints: 0
-    intelligencePoints: 0
-    durablityPoints: 0
-    luckPoints: 0
-    armorPoints: 0
-    _statisticsUI: {fileID: 0}
-  nameText: {fileID: 7692736644264565311}
-  rgBody: {fileID: 8719082443075187836}
-  currentStatus: 0
-  speedForce: 100
 --- !u!50 &8719082443075187836
 Rigidbody2D:
   serializedVersion: 4
@@ -272,6 +238,69 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: -0.2}
   m_Size: {x: 0.15, y: 1.6}
   m_Direction: 0
+--- !u!114 &4167481583208683684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8837236290967611691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a06fa44b28f65024b98ae9aed367d873, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isStopped: 0
+  playerId: 
+  _entityInfo:
+    heroClass: 0
+    username: 
+    expToNextLvl: 100
+    hitPoints: 0
+    protection: 0
+    damage: 0
+    criticalChancePercentage: 0
+    dodgePercentage: 0
+    damageReductionPercentage: 0
+    strengthPoints: 0
+    dexterityPoints: 0
+    intelligencePoints: 0
+    durablityPoints: 0
+    luckPoints: 0
+    armorPoints: 0
+    _statisticsUI: {fileID: 0}
+  nameText: {fileID: 7692736644264565311}
+  rgBody: {fileID: 8719082443075187836}
+  currentStatus: 0
+  _holdingController:
+    _itemController: {fileID: 6762414381914347804}
+  speedForce: 100
+--- !u!114 &6762414381914347804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8837236290967611691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba24c4a1c5c037647ae8f0abcdd73e06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gearHolder:
+    rightHandTransform: {fileID: 487270151830541494}
+    leftHandTransform: {fileID: 487270151528720940}
+    bothHandTransform: {fileID: 487270152007033256}
+    headTransform: {fileID: 487270153002909083}
+    bodyTransform: {fileID: 487270152007033256}
+    rightFeetTransform: {fileID: 487270152146776683}
+    leftFeetTransform: {fileID: 487270153007983802}
+    _weaponRight: {fileID: 0}
+    _weaponLeft: {fileID: 0}
+    _weaponBoth: {fileID: 0}
+    _armorHead: {fileID: 0}
+    _armorChestplate: {fileID: 0}
+    _armorBoots: {fileID: 0}
 --- !u!114 &8872444235796146396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -521,6 +550,36 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+--- !u!4 &487270151528720940 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6906864689160330638, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+  m_PrefabInstance: {fileID: 6420230124155844514}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &487270151830541494 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6906864688857916180, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+  m_PrefabInstance: {fileID: 6420230124155844514}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &487270152007033256 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6906864688648525322, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+  m_PrefabInstance: {fileID: 6420230124155844514}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &487270152146776683 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6906864688786163145, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+  m_PrefabInstance: {fileID: 6420230124155844514}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &487270153002909083 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6906864690114153017, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+  m_PrefabInstance: {fileID: 6420230124155844514}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &487270153007983802 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6906864690100624152, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+  m_PrefabInstance: {fileID: 6420230124155844514}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4463239540927553341 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7271521190741862559, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
