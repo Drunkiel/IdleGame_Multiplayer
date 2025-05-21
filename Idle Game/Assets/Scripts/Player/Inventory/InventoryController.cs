@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class InventoryController : MonoBehaviour
@@ -26,22 +25,8 @@ public class InventoryController : MonoBehaviour
 
         _inventorySlots[slotIndex]._itemID = _itemID;
         GameObject slot = Instantiate(_inventorySlots[slotIndex].itemPlacePrefab, _inventorySlots[slotIndex].transform);
+        slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;  
         _inventorySlots[slotIndex]._itemID.transform.SetParent(slot.transform, false);
-
-        switch (_itemID._itemData.itemType)
-        {
-            case ItemType.Weapon:
-                slot.GetComponent<DragDropSlot>().image.sprite = _itemID._weaponItem.iconSprite;
-                break;
-
-            case ItemType.Armor:
-                slot.GetComponent<DragDropSlot>().image.sprite = _itemID._armorItem.iconSprite;
-                break;
-
-            case ItemType.Collectable:
-                slot.GetComponent<DragDropSlot>().image.sprite = _itemID._collectableItem.iconSprite;
-                break;
-        }
 
         //QuestController.instance.InvokeCollectEvent(_itemID._itemData.ID);
     }
@@ -54,8 +39,6 @@ public class InventoryController : MonoBehaviour
         switch (_itemID._itemData.itemType)
         {
             case ItemType.Weapon:
-                slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID._weaponItem.iconSprite;
-
                 if (!_itemController.CanPickWeapon(_itemID._weaponItem.holdingType))
                     _itemController.ReplaceItem(_itemID);
 
@@ -63,8 +46,6 @@ public class InventoryController : MonoBehaviour
                 break;
 
             case ItemType.Armor:
-                slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID._armorItem.iconSprite;
-
                 if (!_itemController.CanPickArmor(_itemID._armorItem.armorType))
                     _itemController.ReplaceItem(_itemID);
 

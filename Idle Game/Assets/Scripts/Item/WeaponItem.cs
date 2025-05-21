@@ -17,9 +17,8 @@ public enum WeaponType
 
 public class WeaponItem : MonoBehaviour
 {
+    public HeroClass classReserved;
     public WeaponType weaponType;
     public WeaponHoldingType holdingType;
     public bool resizable = true;
-    public Sprite itemSprite;
-    public Sprite iconSprite;
 }

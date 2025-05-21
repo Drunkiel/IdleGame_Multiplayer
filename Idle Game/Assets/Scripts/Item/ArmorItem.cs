@@ -9,7 +9,6 @@ public enum ArmorType
 
 public class ArmorItem : MonoBehaviour
 {
+    public HeroClass classReserved;
     public ArmorType armorType;
-    public Sprite itemSprite;
-    public Sprite iconSprite;
 }

@@ -1,5 +1,26 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+
+public enum BaseStats
+{
+    Damage,
+    Protection,
+}
+
+[Serializable]
+public class AdditionalStats
+{
+    public BaseStats baseStats;
+    public int value;
+}
+
+[Serializable]
+public class AdditionalAttributeStats
+{
+    public Attributes attribute;
+    public int value;
+}
 
 public class ItemContainer : MonoBehaviour
 {

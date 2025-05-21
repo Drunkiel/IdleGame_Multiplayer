@@ -74,7 +74,7 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
         if (lockedUp)
             return;
 
-        rectTransform.anchoredPosition += eventData.delta / 1.5f;
+        rectTransform.anchoredPosition += eventData.delta;
     }
 
     public void OnEndDrag(PointerEventData eventData)
