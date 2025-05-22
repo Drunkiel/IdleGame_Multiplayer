@@ -9,6 +9,14 @@ public class ItemData : ScriptableObject
     public string displayedName;
     public ItemType itemType;
     public Sprite spriteIcon;
-    public AdditionalStats additionalStat;
+    public BaseStat baseStat;
     public List<AdditionalAttributeStats> additionalAttributeStats;
+
+    public ItemData(short iD, string displayedName, ItemType itemType, Sprite spriteIcon)
+    {
+        ID = iD;
+        this.displayedName = displayedName;
+        this.itemType = itemType;
+        this.spriteIcon = spriteIcon;
+    }
 }

@@ -16,7 +16,7 @@ MonoBehaviour:
   displayedName: FuckYou
   itemType: 1
   spriteIcon: {fileID: 21300000, guid: e32dfaf1cc69f8646b678fdb3f0eb593, type: 3}
-  additionalStat:
+  baseStat:
     baseStats: 0
     value: 0
   additionalAttributeStats: []

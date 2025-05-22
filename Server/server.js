@@ -21,7 +21,7 @@ testDB["a"] = {
         lastSeen: Date.now(),
         scene: "SampleScene",
         heroClass: 1,
-        currentLevel: 69,
+        currentLevel: 400,
         expPoints: 1,
         goldCoins: 1,
         strengthPoints: 1,
