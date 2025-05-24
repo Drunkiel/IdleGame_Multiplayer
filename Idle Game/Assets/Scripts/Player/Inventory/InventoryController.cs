@@ -10,6 +10,7 @@ public class InventoryController : MonoBehaviour
     public List<InventorySlot> _gearSlots = new();
     public List<InventorySlot> _inventorySlots = new();
     public Transform slotParent;
+    [SerializeField] private InventoryAPI _inventoryAPI;
 
     public bool isMovingItem;
 
@@ -27,6 +28,7 @@ public class InventoryController : MonoBehaviour
         GameObject slot = Instantiate(_inventorySlots[slotIndex].itemPlacePrefab, _inventorySlots[slotIndex].transform);
         slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;  
         _inventorySlots[slotIndex]._itemID.transform.SetParent(slot.transform, false);
+        _inventoryAPI.GetInventory();
 
         //QuestController.instance.InvokeCollectEvent(_itemID._itemData.ID);
     }

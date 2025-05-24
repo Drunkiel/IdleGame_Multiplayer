@@ -29,8 +29,49 @@ testDB["a"] = {
         intelligencePoints: 1,
         durablityPoints: 1,
         luckPoints: 1,
+        inventory: Array.from({ length: 26 }, (_, i) => {
+            if (i === 0) {
+                return {
+                    slotId: i,
+                    itemID: {
+                        ID: 101,
+                        baseStat: { baseStats: "Strength", value: 10 },
+                        additionalAttributeStats: [
+                            { attribute: "Dexterity", value: 2 },
+                            { attribute: "Luck", value: 1 }
+                        ]
+                    }
+                };
+            } else if (i === 5) {
+                return {
+                    slotId: i,
+                    itemID: {
+                        ID: 202,
+                        baseStat: { baseStats: "Intelligence", value: 12 },
+                        additionalAttributeStats: [
+                            { attribute: "Strength", value: 3 }
+                        ]
+                    }
+                };
+            } else if (i === 12) {
+                return {
+                    slotId: i,
+                    itemID: {
+                        ID: 303,
+                        baseStat: { baseStats: "Durability", value: 8 },
+                        additionalAttributeStats: []
+                    }
+                };
+            } else {
+                return {
+                    slotId: i,
+                    itemID: null
+                };
+            }
+        })
     }
 };
+
 //Actual in game players
 const users = {};
 
@@ -63,7 +104,11 @@ app.post('/login', (req, res) => {
             dexterityPoints: data.dexterityPoints,
             intelligencePoints: data.intelligencePoints,
             durablityPoints: data.durablityPoints,
-            luckPoints: data.luckPoints
+            luckPoints: data.luckPoints,
+            inventory: Array.from({ length: 26 }, (_, i) => ({
+                slotId: i,
+                itemData: null
+            }))
         });
     } else {
         res.status(401).json({ error: "Invalid username or password" });
@@ -96,7 +141,11 @@ app.post('/register', (req, res) => {
             intelligencePoints: 0,
             durablityPoints: 0,
             luckPoints: 0,
-            armorPoints: 0
+            armorPoints: 0,
+            inventory: Array.from({ length: 26 }, (_, i) => ({
+                slotId: i,
+                itemData: null
+            }))
         }
     };
 
@@ -261,6 +310,59 @@ app.delete('/player/:player_id', (req, res) => {
     } else {
         res.status(404).json({ error: 'Player not found' });
     }
+});
+
+//==INVENTORY==
+app.get('/inventory/:player_id', (req, res) => {
+  const playerId = req.params.player_id;
+  const user = Object.values(users).find(u => u.playerId === playerId);
+
+  if (!user) {
+    return res.status(404).json({ error: 'Player not found' });
+  }
+
+  if (!user.playerData.inventory) {
+    return res.status(500).json({ error: 'Inventory not initialized for this player' });
+  }
+
+  const inventoryData = user.playerData.inventory.map(slot => ({
+    slotId: slot.slotId,
+    itemID: slot.itemID
+      ? {
+          itemData: {
+            ID: slot.itemID.itemData.ID,
+            displayedName: slot.itemID.itemData.displayedName,
+            itemType: slot.itemID.itemData.itemType,
+            baseStat: {
+              baseStats: slot.itemID.itemData.baseStat?.baseStats || "None",
+              value: slot.itemID.itemData.baseStat?.value || 0
+            },
+            additionalAttributeStats:
+              slot.itemID.itemData.additionalAttributeStats || []
+          }
+        }
+      : null
+  }));
+
+  res.json(inventoryData);
+});
+
+
+app.post('/inventory/:player_id', (req, res) => {
+    const playerId = req.params.player_id;
+    const updatedInventory = req.body;
+
+    const user = Object.values(users).find(u => u.playerId === playerId);
+    if (!user) {
+        return res.status(404).json({ error: 'Player not found' });
+    }
+
+    if (!Array.isArray(updatedInventory) || updatedInventory.length !== 26) {
+        return res.status(400).json({ error: 'Invalid inventory data' });
+    }
+
+    user.playerData.inventory = updatedInventory;
+    res.json({ message: 'Inventory updated' });
 });
 
 app.get('/users', (req, res) => {

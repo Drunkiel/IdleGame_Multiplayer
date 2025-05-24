@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 [System.Serializable]
 public class GearHolder
@@ -14,21 +16,32 @@ public class GearHolder
     public Transform leftFeetTransform;
 
     [Header("Currently holden Items")]
-    public WeaponItem _weaponRight;
-    public WeaponItem _weaponLeft;
-    public WeaponItem _weaponBoth;
+    public ItemID _weaponRight;
+    public ItemID _weaponLeft;
+    public ItemID _weaponBoth;
 
-    public ArmorItem _armorHead;
-    public ArmorItem _armorChestplate;
-    public ArmorItem _armorBoots;
+    public ItemID _armorHead;
+    public ItemID _armorChestplate;
+    public ItemID _armorBoots;
 
-    public WeaponItem GetHoldingWeapon(WeaponHoldingType holdingType)
+    public ItemID GetHoldingWeapon(WeaponHoldingType holdingType)
     {
         return holdingType switch
         {
             WeaponHoldingType.Right_Hand => _weaponRight,
             WeaponHoldingType.Left_Hand => _weaponLeft,
             WeaponHoldingType.Both_Hands => _weaponBoth,
+            _ => null,
+        };
+    }
+
+    public ItemID GetHoldingArmor(ArmorType holdingType)
+    {
+        return holdingType switch
+        {
+            ArmorType.Helmet => _armorHead,
+            ArmorType.Chestplate => _armorChestplate,
+            ArmorType.Boots => _armorBoots,
             _ => null,
         };
     }
@@ -44,14 +57,85 @@ public class GearHolder
         };
     }
 
-    public ArmorItem GetHoldingArmor(ArmorType holdingType)
+    public int GetWeaponDamage()
     {
-        return holdingType switch
+        int total = 0;
+
+        List<ItemID> equippedItems = new()
         {
-            ArmorType.Helmet => _armorHead,
-            ArmorType.Chestplate => _armorChestplate,
-            ArmorType.Boots => _armorBoots,
-            _ => null,
+            _weaponRight,
+            _weaponLeft,
+            _weaponBoth
         };
+
+        foreach (var item in equippedItems)
+        {
+            if (item == null || item._itemData == null)
+                continue;
+
+            //Check if ItemData contains any additional attributes
+            if (item._itemData.additionalAttributeStats == null)
+                continue;
+
+            //Get weapon damage
+            if (item._weaponItem != null && item._itemData.baseStat != null)
+                total += item._itemData.baseStat.value;
+        }
+
+        return total;
+    }
+
+    public EntityAttributes CalculateTotalAttributes()
+    {
+        EntityAttributes totalAttributes = new();
+
+        // Lista wszystkich ItemID z gearHoldera
+        List<ItemID> equippedItems = new()
+        {
+            _weaponRight,
+            _weaponLeft,
+            _weaponBoth,
+            _armorHead,
+            _armorChestplate,
+            _armorBoots
+        };
+
+        foreach (var item in equippedItems)
+        {
+            if (item == null || item._itemData == null) 
+                continue;
+
+            //Check if ItemData contains any additional attributes
+            if (item._itemData.additionalAttributeStats == null) 
+                continue;
+
+            foreach (var stat in item._itemData.additionalAttributeStats)
+            {
+                switch (stat.attribute)
+                {
+                    case Attributes.Strength:
+                        totalAttributes.strengthPoints += stat.value;
+                        break;
+                    case Attributes.Dexterity:
+                        totalAttributes.dexterityPoints += stat.value;
+                        break;
+                    case Attributes.Intelligence:
+                        totalAttributes.intelligencePoints += stat.value;
+                        break;
+                    case Attributes.Durability:
+                        totalAttributes.durablityPoints += stat.value;
+                        break;
+                    case Attributes.Luck:
+                        totalAttributes.luckPoints += stat.value;
+                        break;
+                }
+            }
+
+            //Get armorPoints
+            if (item._armorItem != null && item._itemData.baseStat != null)
+                totalAttributes.armorPoints += item._itemData.baseStat.value;
+        }
+
+        return totalAttributes;
     }
 }

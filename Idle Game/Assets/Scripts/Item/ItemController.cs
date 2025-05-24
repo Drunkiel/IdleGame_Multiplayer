@@ -61,7 +61,7 @@ public class ItemController : MonoBehaviour
         return false;
     }
 
-    public WeaponItem PickWeapon(ItemID _itemID, Quaternion rotation, Transform newParent)
+    public ItemID PickWeapon(ItemID _itemID, Quaternion rotation, Transform newParent)
     {
         GameObject weaponCopy = Instantiate(_itemID.gameObject, newParent);
         weaponCopy.name = _itemID.name;
@@ -72,7 +72,7 @@ public class ItemController : MonoBehaviour
         if (_itemID._weaponItem.weaponType == WeaponType.Sword)
             weaponCopy.transform.localPosition = new(0.9f, 0, 0);
 
-        return weaponCopy.GetComponent<ItemID>()._weaponItem;
+        return weaponCopy.GetComponent<ItemID>();
     }
 
     public void SetWeapon(ItemID _itemID)
@@ -128,7 +128,7 @@ public class ItemController : MonoBehaviour
         return false;
     }
 
-    public ArmorItem PickArmor(ItemID _itemID, Transform newParent)
+    public ItemID PickArmor(ItemID _itemID, Transform newParent)
     {
         GameObject armorCopy = Instantiate(_itemID.gameObject, newParent);
         armorCopy.name = _itemID.name;
@@ -138,7 +138,7 @@ public class ItemController : MonoBehaviour
         else
             armorCopy.transform.localPosition = new(0, -0.17f, 0);
 
-        return armorCopy.GetComponent<ItemID>()._armorItem;
+        return armorCopy.GetComponent<ItemID>();
     }
 
     public void SetArmor(ItemID _itemID)
@@ -176,7 +176,7 @@ public class ItemController : MonoBehaviour
         {
             case ItemType.Weapon:
                 //Get current item
-                WeaponItem _weaponItem = _gearHolder.GetHoldingWeapon(_itemID._weaponItem.holdingType);
+                WeaponItem _weaponItem = _gearHolder.GetHoldingWeapon(_itemID._weaponItem.holdingType)._weaponItem;
 
                 //Checks if item is found
                 if (_weaponItem == null)
@@ -198,7 +198,7 @@ public class ItemController : MonoBehaviour
 
                 //Adding clone to inventory
                 _inventoryController.DeleteGearInventory((int)_weaponItem.holdingType);
-                _weaponItem = _gearHolder.GetHoldingWeapon(_itemID._weaponItem.holdingType);
+                _weaponItem = _gearHolder.GetHoldingWeapon(_itemID._weaponItem.holdingType)._weaponItem;
                 _inventoryController.AddToGearInventory(_itemID, (int)_weaponItem.holdingType);
 
                 Destroy(_holdingItemID.gameObject);
@@ -207,14 +207,14 @@ public class ItemController : MonoBehaviour
                 SetWeapon(_itemID);
 
                 //Adding clone to inventory
-                _weaponItem = _gearHolder.GetHoldingWeapon(_itemID._weaponItem.holdingType);
+                _weaponItem = _gearHolder.GetHoldingWeapon(_itemID._weaponItem.holdingType)._weaponItem;
                 _inventoryController.DeleteGearInventory((int)_weaponItem.holdingType);
                 _inventoryController.AddToGearInventory(_itemID, (int)_weaponItem.holdingType);
                 break;
 
             case ItemType.Armor:
                 //Get current item
-                ArmorItem _armorItem = _gearHolder.GetHoldingArmor(_itemID._armorItem.armorType);
+                ArmorItem _armorItem = _gearHolder.GetHoldingArmor(_itemID._armorItem.armorType)._armorItem;
 
                 //Checks if item is found
                 if (_armorItem == null)
@@ -242,7 +242,7 @@ public class ItemController : MonoBehaviour
                 SetArmor(_itemID);
 
                 //Adding clone to inventory
-                _armorItem = _gearHolder.GetHoldingArmor(_itemID._armorItem.armorType);
+                _armorItem = _gearHolder.GetHoldingArmor(_itemID._armorItem.armorType)._armorItem;
                 _inventoryController.DeleteGearInventory((int)_armorItem.armorType);
                 _inventoryController.AddToGearInventory(_itemID, (int)_armorItem.armorType);
                 break;

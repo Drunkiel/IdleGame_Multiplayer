@@ -2,6 +2,17 @@ using System;
 using UnityEngine;
 
 [Serializable]
+public class EntityAttributes
+{
+    public int strengthPoints;
+    public int dexterityPoints;
+    public int intelligencePoints;
+    public int durablityPoints;
+    public int luckPoints;
+    public int armorPoints;
+}
+
+[Serializable]
 public class EntityInfo
 {
     public HeroClass heroClass;
@@ -32,12 +43,17 @@ public class EntityInfo
     public int damageReductionPercentage;
 
     [Header("Attributes")]
-    public int strengthPoints;
-    public int dexterityPoints;
-    public int intelligencePoints;
-    public int durablityPoints;
-    public int luckPoints;
-    public int armorPoints;
+    public EntityAttributes _attributes;
+    public EntityAttributes _baseAttributes
+    {
+        get;
+        private set;
+    }
+    public EntityAttributes _gearAttributes
+    {
+        get;
+        private set;
+    }
 
     public StatisticsUI _statisticsUI;
 
@@ -49,22 +65,15 @@ public class EntityInfo
         this.expPoints = expPoints;
         expToNextLvl = Mathf.CeilToInt(100 * Mathf.Pow(currentLevel, 1.5f));
         this.goldCoins = goldCoins;
-        this.strengthPoints = strengthPoints;
-        this.dexterityPoints = dexterityPoints;
-        this.intelligencePoints = intelligencePoints;
-        this.durablityPoints = durablityPoints;
-        this.luckPoints = luckPoints;
-        this._statisticsUI = _statisticsUI;
-
-        if (_statisticsUI != null)
+        _baseAttributes = new()
         {
-            _statisticsUI.strengthPointsText.text = strengthPoints.ToString();
-            _statisticsUI.dexterityPointsText.text = dexterityPoints.ToString();
-            _statisticsUI.intelligencePointsText.text = intelligencePoints.ToString();
-            _statisticsUI.durabilityPointsText.text = durablityPoints.ToString();
-            _statisticsUI.luckPointsText.text = luckPoints.ToString();
-            _statisticsUI.armorPointsText.text = armorPoints.ToString();
-        }
+            strengthPoints = strengthPoints,
+            dexterityPoints = dexterityPoints,
+            intelligencePoints = intelligencePoints,
+            durablityPoints = durablityPoints,
+            luckPoints = luckPoints
+        };
+        this._statisticsUI = _statisticsUI;
 
         UpdateStats();
     }
@@ -95,43 +104,55 @@ public class EntityInfo
             LvlUp();
     }
 
-    private void UpdateStats()
+    public void UpdateStats()
     {
         if (currentLevel <= 0)
             return;
 
+        RecalculateStats();
+        int weaponDamage = PlayerController.instance._holdingController._itemController._gearHolder.GetWeaponDamage();
+
         switch (heroClass)
         {
             case HeroClass.Mage:
-                hitPoints = durablityPoints * 2 * (currentLevel + 1);
-                protection = strengthPoints / currentLevel;
-                damage = Mathf.RoundToInt(1.25f * (1 + intelligencePoints / 10));
-                criticalChancePercentage = Mathf.Clamp(luckPoints * 5 / ((currentLevel + 1) * 2), 0, 50);
-                dodgePercentage = Mathf.Clamp(dexterityPoints / currentLevel, 0, 10);
-                damageReductionPercentage = Mathf.Clamp(armorPoints / (currentLevel + 1), 0, 10);
+                hitPoints = _attributes.durablityPoints * 2 * (currentLevel + 1);
+                protection = _attributes.strengthPoints / currentLevel;
+                damage = weaponDamage * Mathf.RoundToInt(1.25f * (1 + _attributes.intelligencePoints / 10));
+                criticalChancePercentage = Mathf.Clamp(_attributes.luckPoints * 5 / ((currentLevel + 1) * 2), 0, 50);
+                dodgePercentage = Mathf.Clamp(_attributes.dexterityPoints / currentLevel, 0, 10);
+                damageReductionPercentage = Mathf.Clamp(_attributes.armorPoints / (currentLevel + 1), 0, 10);
                 break;
 
             case HeroClass.Warrior:
-                hitPoints = durablityPoints * 6 * (currentLevel + 1);
-                protection = intelligencePoints / currentLevel;
-                damage = Mathf.RoundToInt(0.83f * (1 + strengthPoints / 10));
-                criticalChancePercentage = Mathf.Clamp(luckPoints * 5 / ((currentLevel + 1) * 2), 0, 50);
-                dodgePercentage = Mathf.Clamp(Mathf.RoundToInt(intelligencePoints / (1.2f * currentLevel)), 0, 25);
-                damageReductionPercentage = Mathf.Clamp(armorPoints / (currentLevel + 1), 0, 50);
+                hitPoints = _attributes.durablityPoints * 6 * (currentLevel + 1);
+                protection = _attributes.intelligencePoints / currentLevel;
+                damage = weaponDamage * Mathf.RoundToInt(0.83f * (1 + _attributes.strengthPoints / 10));
+                criticalChancePercentage = Mathf.Clamp(_attributes.luckPoints * 5 / ((currentLevel + 1) * 2), 0, 50);
+                dodgePercentage = Mathf.Clamp(Mathf.RoundToInt(_attributes.intelligencePoints / (1.2f * currentLevel)), 0, 25);
+                damageReductionPercentage = Mathf.Clamp(_attributes.armorPoints / (currentLevel + 1), 0, 50);
                 break;
 
             case HeroClass.Scout:
-                hitPoints = durablityPoints * 4 * (currentLevel + 1);
-                protection = strengthPoints / currentLevel;
-                damage = Mathf.RoundToInt(1 * (1 + dexterityPoints / 10));
-                criticalChancePercentage = Mathf.Clamp(luckPoints * 5 / ((currentLevel + 1) * 2), 0, 50);
-                dodgePercentage = Mathf.Clamp(Mathf.RoundToInt(intelligencePoints / (1.1f * currentLevel)), 0, 50);
-                damageReductionPercentage = Mathf.Clamp(armorPoints / (currentLevel + 1), 0, 25);
+                hitPoints = _attributes.durablityPoints * 4 * (currentLevel + 1);
+                protection = _attributes.strengthPoints / currentLevel;
+                damage = weaponDamage * Mathf.RoundToInt(1 * (1 + _attributes.dexterityPoints / 10));
+                criticalChancePercentage = Mathf.Clamp(_attributes.luckPoints * 5 / ((currentLevel + 1) * 2), 0, 50);
+                dodgePercentage = Mathf.Clamp(Mathf.RoundToInt(_attributes.intelligencePoints / (1.1f * currentLevel)), 0, 50);
+                damageReductionPercentage = Mathf.Clamp(_attributes.armorPoints / (currentLevel + 1), 0, 25);
                 break;
         }
 
         if (_statisticsUI != null)
         {
+            //Update just points
+            _statisticsUI.strengthPointsText.text = _attributes.strengthPoints.ToString();
+            _statisticsUI.dexterityPointsText.text = _attributes.dexterityPoints.ToString();
+            _statisticsUI.intelligencePointsText.text = _attributes.intelligencePoints.ToString();
+            _statisticsUI.durabilityPointsText.text = _attributes.durablityPoints.ToString();
+            _statisticsUI.luckPointsText.text = _attributes.luckPoints.ToString();
+            _statisticsUI.armorPointsText.text = _attributes.armorPoints.ToString();
+
+            //Update actual stats
             _statisticsUI.hitPointsText.text = $"Hit points: {hitPoints}";
             _statisticsUI.protectionText.text = $"Protection: {protection}";
             _statisticsUI.damageText.text = $"Damage: ~{damage}";
@@ -141,6 +162,20 @@ public class EntityInfo
         }
     }
 
+    private void RecalculateStats()
+    {
+        _gearAttributes = PlayerController.instance._holdingController._itemController._gearHolder.CalculateTotalAttributes();
+        _attributes = new()
+        {
+            strengthPoints = _baseAttributes.strengthPoints + _gearAttributes.strengthPoints,
+            dexterityPoints = _baseAttributes.dexterityPoints + _gearAttributes.dexterityPoints,
+            intelligencePoints = _baseAttributes.intelligencePoints + _gearAttributes.intelligencePoints,
+            durablityPoints = _baseAttributes.durablityPoints + _gearAttributes.durablityPoints,
+            luckPoints = _baseAttributes.luckPoints + _gearAttributes.luckPoints,
+            armorPoints = _gearAttributes.armorPoints,
+        };
+    }
+
     public void AddPoint(int index)
     {
         Attributes attribute = (Attributes)Enum.Parse(typeof(Attributes), index.ToString());
@@ -148,28 +183,23 @@ public class EntityInfo
         switch (attribute)
         {
             case Attributes.Strength:
-                strengthPoints += 1;
-                _statisticsUI.strengthPointsText.text = strengthPoints.ToString();
+                _baseAttributes.strengthPoints += 1;
                 break;
 
             case Attributes.Dexterity:
-                dexterityPoints += 1;
-                _statisticsUI.dexterityPointsText.text = dexterityPoints.ToString();
+                _baseAttributes.dexterityPoints += 1;
                 break;
 
             case Attributes.Intelligence:
-                intelligencePoints += 1;
-                _statisticsUI.intelligencePointsText.text = intelligencePoints.ToString();
+                _baseAttributes.intelligencePoints += 1;
                 break;
 
             case Attributes.Durability:
-                durablityPoints += 1;
-                _statisticsUI.durabilityPointsText.text = durablityPoints.ToString();
+                _baseAttributes.durablityPoints += 1;
                 break;
 
             case Attributes.Luck:
-                luckPoints += 1;
-                _statisticsUI.luckPointsText.text = luckPoints.ToString();
+                _baseAttributes.luckPoints += 1;
                 break;
         }
 

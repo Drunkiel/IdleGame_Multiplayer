@@ -1210,8 +1210,8 @@ MonoBehaviour:
   slotID: 0
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 0
-  holdingTypes: 
+  itemRestriction: 1
+  holdingTypes: 02000000
   armorType: 0
 --- !u!1 &112679192
 GameObject:
@@ -3056,8 +3056,8 @@ MonoBehaviour:
   slotID: 0
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 0
-  holdingTypes: 
+  itemRestriction: 1
+  holdingTypes: 00000000
   armorType: 0
 --- !u!1 &393468654
 GameObject:
@@ -4662,7 +4662,7 @@ MonoBehaviour:
   slotID: 0
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 0
+  itemRestriction: 2
   holdingTypes: 
   armorType: 0
 --- !u!1 &588159611
@@ -6456,7 +6456,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -6752,9 +6752,9 @@ MonoBehaviour:
   slotID: 0
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 0
+  itemRestriction: 2
   holdingTypes: 
-  armorType: 0
+  armorType: 2
 --- !u!1 &942774900
 GameObject:
   m_ObjectHideFlags: 0
@@ -7110,8 +7110,8 @@ MonoBehaviour:
   slotID: 0
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 0
-  holdingTypes: 
+  itemRestriction: 1
+  holdingTypes: 01000000
   armorType: 0
 --- !u!1 &984169303
 GameObject:
@@ -14128,9 +14128,9 @@ MonoBehaviour:
   slotID: 0
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 0
+  itemRestriction: 2
   holdingTypes: 
-  armorType: 0
+  armorType: 1
 --- !u!1 &1849353736
 GameObject:
   m_ObjectHideFlags: 0
@@ -15802,6 +15802,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2060129368}
   - component: {fileID: 2060129369}
+  - component: {fileID: 2060129370}
   m_Layer: 0
   m_Name: Inventory_Controller
   m_TagString: Untagged
@@ -15865,7 +15866,20 @@ MonoBehaviour:
   - {fileID: 1678726921}
   - {fileID: 410343311}
   slotParent: {fileID: 1643224097}
+  _inventoryAPI: {fileID: 2060129370}
   isMovingItem: 0
+--- !u!114 &2060129370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060129367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 196de023fa204d740a123e3c1c0b9e86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2062403488
 GameObject:
   m_ObjectHideFlags: 0

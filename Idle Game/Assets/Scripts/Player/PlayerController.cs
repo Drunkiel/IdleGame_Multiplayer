@@ -30,7 +30,6 @@ public class PlayerStatsPayload
     public int intelligencePoints;
     public int durablityPoints;
     public int luckPoints;
-    public int armorPoints;
 }
 
 public enum PlayerStatus
@@ -50,7 +49,7 @@ public class PlayerController : MonoBehaviour
     public EntityInfo _entityInfo;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private Rigidbody2D rgBody;
-    [SerializeField] private PlayerStatus currentStatus;
+    [SerializeField] private PlayerAPI _playerAPI;
     public HoldingController _holdingController;
 
     private bool isFlipped;
@@ -67,7 +66,7 @@ public class PlayerController : MonoBehaviour
     public void Initialize(ConnectResponse _response)
     {
         playerId = _response.player_id;
-        currentStatus = (PlayerStatus)Enum.Parse(typeof(PlayerStatus), _response.status);
+        _playerAPI.currentStatus = (PlayerStatus)Enum.Parse(typeof(PlayerStatus), _response.status);
         _entityInfo = new EntityInfo(
             _response.heroClass,
             _response.username,
@@ -83,10 +82,10 @@ public class PlayerController : MonoBehaviour
         );
 
         nameText.text = _entityInfo.username;
-        StartCoroutine(UpdateStatus(PlayerStatus.Connected));
-        StartCoroutine(UpdatePositionOnce());
-        StartCoroutine(UpdatePositionLoop());
-        StartCoroutine(HeartbeatLoop());
+        StartCoroutine(_playerAPI.UpdateStatus(PlayerStatus.Connected));
+        StartCoroutine(_playerAPI.UpdatePositionOnce());
+        StartCoroutine(_playerAPI.UpdatePositionLoop());
+        StartCoroutine(_playerAPI.HeartbeatLoop());
         GameController.instance.objectsToTeleportMust.Add(gameObject);
     }
 
@@ -138,110 +137,13 @@ public class PlayerController : MonoBehaviour
         movement = new Vector2(inputValue.x, inputValue.y);
     }
 
-    IEnumerator UpdateStatus(PlayerStatus newStatus)
-    {
-        string url = ServerConnector.instance.GetServerUrl() + "/update_status/" + playerId;
-        string jsonData = "{\"status\":\"" + newStatus.ToString() + "\"}";
-
-        UnityWebRequest request = UnityWebRequest.Put(url, jsonData);
-        request.method = UnityWebRequest.kHttpVerbPOST;
-        request.SetRequestHeader("Content-Type", "application/json");
-        currentStatus = newStatus;
-
-        yield return request.SendWebRequest();
-
-        if (request.result != UnityWebRequest.Result.Success)
-            Debug.LogError("Status update failed: " + request.error);
-    }
-
     public void UpdateStats()
     {
-        StartCoroutine(UpdateStats(_entityInfo));
-    }
-
-    private IEnumerator UpdateStats(EntityInfo _entityInfo)
-    {
-        string url = ServerConnector.instance.GetServerUrl() + "/update_stats/" + playerId;
-
-        PlayerStatsPayload payload = new()
-        {
-            heroClass = _entityInfo.heroClass,
-            currentLevel = _entityInfo.currentLevel,
-            expPoints = _entityInfo.expPoints,
-            goldCoins = _entityInfo.goldCoins,
-            strengthPoints = _entityInfo.strengthPoints,
-            dexterityPoints = _entityInfo.dexterityPoints,
-            intelligencePoints = _entityInfo.intelligencePoints,
-            durablityPoints = _entityInfo.durablityPoints,
-            luckPoints = _entityInfo.luckPoints,
-            armorPoints = _entityInfo.armorPoints
-        };
-
-        string jsonData = JsonUtility.ToJson(payload);
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
-
-        UnityWebRequest request = new(url, "POST")
-        {
-            uploadHandler = new UploadHandlerRaw(bodyRaw),
-            downloadHandler = new DownloadHandlerBuffer()
-        };
-        request.SetRequestHeader("Content-Type", "application/json");
-
-        yield return request.SendWebRequest();
-
-        if (request.result != UnityWebRequest.Result.Success)
-            Debug.LogError("Stats update failed: " + request.error);
-    }
-
-
-    IEnumerator HeartbeatLoop()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(5f);
-            string url = ServerConnector.instance.GetServerUrl() + "/heartbeat/" + playerId;
-            UnityWebRequest request = UnityWebRequest.PostWwwForm(url, "");
-            yield return request.SendWebRequest();
-        }
-    }
-
-    IEnumerator UpdatePositionLoop()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.1f);
-
-            if (string.IsNullOrEmpty(playerId)) 
-                continue;
-
-            Vector3 pos = transform.position;
-            string jsonData = JsonUtility.ToJson(new PositionData(pos));
-
-            UnityWebRequest request = UnityWebRequest.Put(
-                ServerConnector.instance.GetServerUrl() + "/update_position/" + playerId,
-                jsonData
-            );
-            request.method = UnityWebRequest.kHttpVerbPOST;
-            request.SetRequestHeader("Content-Type", "application/json");
-            yield return request.SendWebRequest();
-        }
-    }
-
-    IEnumerator UpdatePositionOnce()
-    {
-        Vector3 pos = transform.position;
-        PositionData data = new(pos);
-
-        string json = JsonUtility.ToJson(data);
-
-        UnityWebRequest request = UnityWebRequest.Put(ServerConnector.instance.GetServerUrl() + "/update_position/" + playerId, json);
-        request.method = "POST";
-        request.SetRequestHeader("Content-Type", "application/json");
-        yield return request.SendWebRequest();
+        StartCoroutine(_playerAPI.UpdateStats(_entityInfo));
     }
 
     private void OnApplicationQuit()
     {
-        StartCoroutine(UpdateStatus(PlayerStatus.Disconnected));
+        StartCoroutine(_playerAPI.UpdateStatus(PlayerStatus.Disconnected));
     }
 }

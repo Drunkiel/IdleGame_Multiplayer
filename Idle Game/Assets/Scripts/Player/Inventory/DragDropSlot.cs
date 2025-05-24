@@ -29,7 +29,7 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
             if (currentSlot._itemID._armorItem != null)
             {
                 //Find armor piece
-                ArmorItem _armorItem = _gearHolder.GetHoldingArmor(currentSlot._itemID._armorItem.armorType);
+                ArmorItem _armorItem = _gearHolder.GetHoldingArmor(currentSlot._itemID._armorItem.armorType)._armorItem;
 
                 //If not null then destroy
                 if (_armorItem != null)
@@ -55,7 +55,7 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
             if (currentSlot._itemID._weaponItem != null)
             {
                 //Find weapon
-                WeaponItem _weaponItem = _gearHolder.GetHoldingWeapon(currentSlot._itemID._weaponItem.holdingType);
+                WeaponItem _weaponItem = _gearHolder.GetHoldingWeapon(currentSlot._itemID._weaponItem.holdingType)._weaponItem;
 
                 //Destroy current holding weapon
                 if (_weaponItem != null)
@@ -96,16 +96,14 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
             //Checks if there is any weapon equipped
             if (_itemID._weaponItem != null && _gearHolder.GetHoldingWeapon(transform.GetChild(1).GetComponent<ItemID>()._weaponItem.holdingType) == null)
                 currentSlot.OnDrop(eventData);
+
+            PlayerController.instance._entityInfo.UpdateStats();
         }
 
         rectTransform.SetParent(currentSlot.transform);
         rectTransform.localPosition = Vector3.zero;
         currentSlot._itemID = transform.GetChild(1).GetComponent<ItemID>();
         InventoryController.instance.isMovingItem = false;
-
-        //Checks if item is dropped on quick inventory  
-        if (transform.parent.parent.parent.TryGetComponent(out QuickInventoryController _quickInventory))
-            lockedUp = _quickInventory.GetLockedState();
 
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;

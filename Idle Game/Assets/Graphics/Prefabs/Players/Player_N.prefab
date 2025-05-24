@@ -115,6 +115,7 @@ GameObject:
   - component: {fileID: 6766339354730744107}
   - component: {fileID: 8346007687823548256}
   - component: {fileID: 4167481583208683684}
+  - component: {fileID: -2081001868477470768}
   - component: {fileID: 6762414381914347804}
   - component: {fileID: 8872444235796146396}
   m_Layer: 7
@@ -262,19 +263,34 @@ MonoBehaviour:
     criticalChancePercentage: 0
     dodgePercentage: 0
     damageReductionPercentage: 0
-    strengthPoints: 0
-    dexterityPoints: 0
-    intelligencePoints: 0
-    durablityPoints: 0
-    luckPoints: 0
-    armorPoints: 0
+    _attributes:
+      strengthPoints: 0
+      dexterityPoints: 0
+      intelligencePoints: 0
+      durablityPoints: 0
+      luckPoints: 0
+      armorPoints: 0
     _statisticsUI: {fileID: 0}
   nameText: {fileID: 7692736644264565311}
   rgBody: {fileID: 8719082443075187836}
-  currentStatus: 0
+  _playerAPI: {fileID: -2081001868477470768}
   _holdingController:
     _itemController: {fileID: 6762414381914347804}
   speedForce: 100
+--- !u!114 &-2081001868477470768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8837236290967611691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8737e56eb3004f342b155deb061819ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentStatus: 0
+  playerID: 
 --- !u!114 &6762414381914347804
 MonoBehaviour:
   m_ObjectHideFlags: 0
