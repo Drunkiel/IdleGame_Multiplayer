@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
+const { exec } = require('child_process');
 
 const app = express();
 const port = 3000;
@@ -13,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 const testDB = {};
 testDB["a"] = {
     password: "a",
-    playerId: uuidv4(),
+    playerId: "a",
     playerData: {
         username: "Denis",
         status: "Disconnected",
@@ -30,44 +31,28 @@ testDB["a"] = {
         durablityPoints: 1,
         luckPoints: 1,
         inventory: Array.from({ length: 26 }, (_, i) => {
-            if (i === 0) {
-                return {
-                    slotId: i,
-                    itemID: {
-                        ID: 101,
-                        baseStat: { baseStats: "Strength", value: 10 },
+            return {
+                slotId: i,
+                itemID: {
+                    _itemData: {
+                        ID: 0,
+                        baseStat: {
+                            baseStats: "a",
+                            value: 1
+                        },
                         additionalAttributeStats: [
-                            { attribute: "Dexterity", value: 2 },
-                            { attribute: "Luck", value: 1 }
+                            {
+                                attribute: "A",
+                                value: 1
+                            },
+                            {
+                                attribute: "b",
+                                value: 2
+                            }
                         ]
                     }
-                };
-            } else if (i === 5) {
-                return {
-                    slotId: i,
-                    itemID: {
-                        ID: 202,
-                        baseStat: { baseStats: "Intelligence", value: 12 },
-                        additionalAttributeStats: [
-                            { attribute: "Strength", value: 3 }
-                        ]
-                    }
-                };
-            } else if (i === 12) {
-                return {
-                    slotId: i,
-                    itemID: {
-                        ID: 303,
-                        baseStat: { baseStats: "Durability", value: 8 },
-                        additionalAttributeStats: []
-                    }
-                };
-            } else {
-                return {
-                    slotId: i,
-                    itemID: null
-                };
-            }
+                }
+            };
         })
     }
 };
@@ -156,7 +141,7 @@ app.post('/register', (req, res) => {
 app.get('/player/:player_id', (req, res) => {
     const playerId = req.params.player_id;
 
-    const user = Object.values(users).find(u => u.playerId === playerId);
+    const user = Object.values(testDB).find(u => u.playerId === playerId);
 
     if (user) {
         user.playerData.lastSeen = Date.now();
@@ -321,24 +306,16 @@ app.get('/inventory/:player_id', (req, res) => {
     return res.status(404).json({ error: 'Player not found' });
   }
 
-  if (!user.playerData.inventory) {
-    return res.status(500).json({ error: 'Inventory not initialized for this player' });
-  }
-
   const inventoryData = user.playerData.inventory.map(slot => ({
-    slotId: slot.slotId,
+    slotID: slot.slotId,
     itemID: slot.itemID
       ? {
-          itemData: {
-            ID: slot.itemID.itemData.ID,
-            displayedName: slot.itemID.itemData.displayedName,
-            itemType: slot.itemID.itemData.itemType,
+          _itemData: {
+            ID: slot.itemID._itemData.ID,
             baseStat: {
-              baseStats: slot.itemID.itemData.baseStat?.baseStats || "None",
-              value: slot.itemID.itemData.baseStat?.value || 0
+              value: slot.itemID._itemData.baseStat?.value || 0
             },
-            additionalAttributeStats:
-              slot.itemID.itemData.additionalAttributeStats || []
+            additionalAttributeStats: slot.itemID._itemData.additionalAttributeStats || []
           }
         }
       : null
@@ -346,7 +323,6 @@ app.get('/inventory/:player_id', (req, res) => {
 
   res.json(inventoryData);
 });
-
 
 app.post('/inventory/:player_id', (req, res) => {
     const playerId = req.params.player_id;

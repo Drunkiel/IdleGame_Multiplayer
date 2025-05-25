@@ -5,10 +5,24 @@ using System.Collections.Generic;
 using System;
 
 [Serializable]
+public class ItemDataDTO
+{
+    public short ID;
+    public BaseStat baseStat;
+    public List<AdditionalAttributeStats> additionalAttributeStats;
+}
+
+[Serializable]
+public class ItemIDDTO
+{
+    public ItemDataDTO _itemData;
+}
+
+[Serializable]
 public class InventorySlotData
 {
     public int slotID;
-    public ItemID itemID;
+    public ItemIDDTO itemID;
 }
 
 public class InventoryAPI : MonoBehaviour
@@ -20,34 +34,42 @@ public class InventoryAPI : MonoBehaviour
         StartCoroutine(GetInventoryCoroutine());
     }
 
-    private IEnumerator GetInventoryCoroutine()
+private IEnumerator GetInventoryCoroutine()
+{
+    UnityWebRequest www = UnityWebRequest.Get($"{ServerConnector.instance.GetServerUrl()}/inventory/{ServerConnector.instance.playerId}");
+    yield return www.SendWebRequest();
+
+    if (www.result == UnityWebRequest.Result.Success)
     {
-        UnityWebRequest www = UnityWebRequest.Get($"{ServerConnector.instance.GetServerUrl()}/inventory/{ServerConnector.instance.playerId}");
-        yield return www.SendWebRequest();
+        string json = www.downloadHandler.text;
+        inventory = JsonHelper.FromJson<InventorySlotData>(JsonHelper.FixJsonArray(json));
 
-        if (www.result == UnityWebRequest.Result.Success)
+        Debug.Log($"Inventory loaded. Slots: {inventory.Length}");
+        foreach (var slot in inventory)
         {
-            string json = www.downloadHandler.text;
-            inventory = JsonHelper.FromJson<InventorySlotData>(FixJsonArray(json));
-            Debug.Log($"Inventory loaded. Slots: {inventory.Length}");
-            print(inventory);
-            print(inventory[0]);
-            print(inventory[0].slotID);
-            print(inventory[0].itemID);
+            Debug.Log($"Slot {slot.slotID}:");
 
-            //foreach (var slot in inventory)
-            //{
-            //    Debug.Log($"Slot {slot.slotID}: " +
-            //              (slot.itemID._itemData != null
-            //                  ? $"ItemID: {slot.itemID._itemData.ID}, BaseValue: {slot.itemID._itemData.baseStat.value}"
-            //                  : "Empty"));
-            //}
-        }
-        else
-        {
-            Debug.LogError($"Error fetching inventory: {www.error}");
+            if (slot.itemID != null && slot.itemID._itemData != null)
+            {
+                var data = slot.itemID._itemData;
+                Debug.Log($"Item ID: {data.ID}, Base Value: {data.baseStat.value}");
+
+                foreach (var attr in data.additionalAttributeStats)
+                {
+                    Debug.Log($"  - Attribute: {attr.attribute}, Value: {attr.value}");
+                }
+            }
+            else
+            {
+                Debug.Log("Empty slot.");
+            }
         }
     }
+    else
+    {
+        Debug.LogError($"Error fetching inventory: {www.error}");
+    }
+}
 
     // POST example (optional)
     public void UpdateInventory(List<InventorySlot> inventory)
@@ -95,6 +117,11 @@ public static class JsonHelper
     {
         Wrapper<T> wrapper = new Wrapper<T> { Items = array };
         return JsonUtility.ToJson(wrapper, prettyPrint);
+    }
+
+    public static string FixJsonArray(string json)
+    {
+        return "{\"Items\":" + json + "}";
     }
 
     [System.Serializable]
