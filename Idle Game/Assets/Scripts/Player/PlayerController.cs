@@ -80,6 +80,7 @@ public class PlayerController : MonoBehaviour
             _response.luckPoints, 
             UIController.instance.panelObjects[0].panelObject.GetComponent<StatisticsUI>()
         );
+        InventoryController.instance.LoadInventory();
 
         nameText.text = _entityInfo.username;
         StartCoroutine(_playerAPI.UpdateStatus(PlayerStatus.Connected));

@@ -169,7 +169,6 @@ public class ItemController : MonoBehaviour
             return;
 
         ItemID _holdingItemID;
-        PickInteraction _pickInteraction = null;
         InventoryController _inventoryController = InventoryController.instance;
 
         switch (_itemID._itemData.itemType)
@@ -185,16 +184,11 @@ public class ItemController : MonoBehaviour
                 //Assign founded item 
                 _holdingItemID = _weaponItem.GetComponent<ItemID>();
 
-                //Gets stand Pick interaction script
-                _pickInteraction = _itemID.transform.parent.parent.GetChild(0).GetComponent<PickInteraction>();
-
                 //Making clone of weapon item and assigning it to stand
                 Transform weaponClone = PickWeapon(_holdingItemID, Quaternion.identity, _itemID.transform.parent).gameObject.transform;
                 if (weaponClone.GetComponent<ItemID>()._weaponItem.resizable)
                     weaponClone.localScale = new(0.25f, 0.25f, 0.25f);
                 weaponClone.localPosition = Vector2.zero;
-
-                _pickInteraction._itemID = weaponClone.GetComponent<ItemID>();
 
                 //Adding clone to inventory
                 _inventoryController.DeleteGearInventory((int)_weaponItem.holdingType);
@@ -223,14 +217,10 @@ public class ItemController : MonoBehaviour
                 //Assign founded item 
                 _holdingItemID = _armorItem.GetComponent<ItemID>();
 
-                //Gets stand Pick interaction script
-                _pickInteraction = _itemID.transform.parent.parent.GetChild(0).GetComponent<PickInteraction>();
-
                 //Making clone of armor item and assigning it to stand
                 Transform armorClone = PickArmor(_holdingItemID, _itemID.transform.parent).gameObject.transform;
                 armorClone.localScale = new(0.5f, 0.5f, 0.5f);
                 armorClone.localPosition = Vector2.zero;
-                _pickInteraction._itemID = armorClone.GetComponent<ItemID>();
 
                 //If armor is boots then destroy both
                 if (_holdingItemID._armorItem.armorType == ArmorType.Boots)

@@ -37,6 +37,17 @@ public class ItemContainer : MonoBehaviour
         instance = this;
     }
 
+    public ItemID GetItemByID(int itemID)
+    {
+        for (int i = 0; i < _allItems.Count; i++)
+        {
+            if (_allItems[i]._itemData.ID == itemID)
+                return _allItems[i];
+        }
+
+        return null;
+    }
+
     public ItemID GetItemByName(string itemName)
     {
         for (int i = 0; i < _allItems.Count; i++)

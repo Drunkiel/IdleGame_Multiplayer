@@ -254,7 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _allItems:
-  - {fileID: 0}
+  - {fileID: 6364541126876596842, guid: f215d035aeb778c47b48d55fe37f0b7f, type: 3}
   _weaponItems: []
   _armorItems: []
   _collectableItems: []

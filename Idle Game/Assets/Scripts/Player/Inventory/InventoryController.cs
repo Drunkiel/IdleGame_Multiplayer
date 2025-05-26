@@ -19,6 +19,11 @@ public class InventoryController : MonoBehaviour
         instance = this;
     }
 
+    public void LoadInventory()
+    {
+        StartCoroutine(_inventoryAPI.GetInventoryCoroutine());
+    }
+
     public void AddToInventory(ItemID _itemID, int slotIndex)
     {
         if (slotIndex == -1)
@@ -28,32 +33,36 @@ public class InventoryController : MonoBehaviour
         GameObject slot = Instantiate(_inventorySlots[slotIndex].itemPlacePrefab, _inventorySlots[slotIndex].transform);
         slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;  
         _inventorySlots[slotIndex]._itemID.transform.SetParent(slot.transform, false);
-        _inventoryAPI.GetInventory();
 
         //QuestController.instance.InvokeCollectEvent(_itemID._itemData.ID);
     }
 
     public void AddToGearInventory(ItemID _itemID, int slotIndex)
     {
+        _gearSlots[slotIndex]._itemID = _itemID;
         GameObject slot = Instantiate(_gearSlots[slotIndex].itemPlacePrefab, _gearSlots[slotIndex].transform);
-        ItemController _itemController = PlayerController.instance._holdingController._itemController;
+        slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;
+        _gearSlots[slotIndex]._itemID.transform.SetParent(slot.transform, false);
 
-        switch (_itemID._itemData.itemType)
-        {
-            case ItemType.Weapon:
-                if (!_itemController.CanPickWeapon(_itemID._weaponItem.holdingType))
-                    _itemController.ReplaceItem(_itemID);
+        //GameObject slot = Instantiate(_gearSlots[slotIndex].itemPlacePrefab, _gearSlots[slotIndex].transform);
+        //ItemController _itemController = PlayerController.instance._holdingController._itemController;
 
-                _itemController.SetWeapon(_itemID);
-                break;
+        //switch (_itemID._itemData.itemType)
+        //{
+        //    case ItemType.Weapon:
+        //        if (!_itemController.CanPickWeapon(_itemID._weaponItem.holdingType))
+        //            _itemController.ReplaceItem(_itemID);
 
-            case ItemType.Armor:
-                if (!_itemController.CanPickArmor(_itemID._armorItem.armorType))
-                    _itemController.ReplaceItem(_itemID);
+        //        _itemController.SetWeapon(_itemID);
+        //        break;
 
-                _itemController.SetArmor(_itemID);
-                break;
-        }
+        //    case ItemType.Armor:
+        //        if (!_itemController.CanPickArmor(_itemID._armorItem.armorType))
+        //            _itemController.ReplaceItem(_itemID);
+
+        //        _itemController.SetArmor(_itemID);
+        //        break;
+        //}
     }
 
     public void RemoveItemByID(int itemID)

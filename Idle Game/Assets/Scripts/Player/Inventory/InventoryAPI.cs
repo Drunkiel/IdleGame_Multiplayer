@@ -1,15 +1,22 @@
-using UnityEngine;
-using UnityEngine.Networking;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System;
+using UnityEngine;
+using UnityEngine.Networking;
+
+[Serializable]
+public class AdditionalAttributeStatsDTO
+{
+    public int attribute;
+    public int value;
+}
 
 [Serializable]
 public class ItemDataDTO
 {
     public short ID;
     public BaseStat baseStat;
-    public List<AdditionalAttributeStats> additionalAttributeStats;
+    public List<AdditionalAttributeStatsDTO> additionalAttributeStats;
 }
 
 [Serializable]
@@ -29,47 +36,66 @@ public class InventoryAPI : MonoBehaviour
 {
     public InventorySlotData[] inventory;
 
-    public void GetInventory()
+    public IEnumerator GetInventoryCoroutine()
     {
-        StartCoroutine(GetInventoryCoroutine());
-    }
+        UnityWebRequest www = UnityWebRequest.Get($"{ServerConnector.instance.GetServerUrl()}/inventory/{ServerConnector.instance.playerId}");
+        yield return www.SendWebRequest();
 
-private IEnumerator GetInventoryCoroutine()
-{
-    UnityWebRequest www = UnityWebRequest.Get($"{ServerConnector.instance.GetServerUrl()}/inventory/{ServerConnector.instance.playerId}");
-    yield return www.SendWebRequest();
-
-    if (www.result == UnityWebRequest.Result.Success)
-    {
-        string json = www.downloadHandler.text;
-        inventory = JsonHelper.FromJson<InventorySlotData>(JsonHelper.FixJsonArray(json));
-
-        Debug.Log($"Inventory loaded. Slots: {inventory.Length}");
-        foreach (var slot in inventory)
+        if (www.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log($"Slot {slot.slotID}:");
+            string json = www.downloadHandler.text;
+            inventory = JsonHelper.FromJson<InventorySlotData>(JsonHelper.FixJsonArray(json));
 
-            if (slot.itemID != null && slot.itemID._itemData != null)
+            foreach (var slot in inventory)
             {
-                var data = slot.itemID._itemData;
-                Debug.Log($"Item ID: {data.ID}, Base Value: {data.baseStat.value}");
-
-                foreach (var attr in data.additionalAttributeStats)
+                if (slot.itemID != null && slot.itemID._itemData != null)
                 {
-                    Debug.Log($"  - Attribute: {attr.attribute}, Value: {attr.value}");
+                    var data = slot.itemID._itemData;
+
+                    //Get item
+                    ItemID item = ItemContainer.instance.GetItemByID(data.ID);
+                    if (item == null)
+                        continue;
+
+                    //Duplicate item and modify it
+                    ItemID _itemID = Instantiate(item);
+                    _itemID._itemData = ScriptableObject.CreateInstance<ItemData>();
+                    _itemID._itemData.ID = data.ID;
+                    _itemID._itemData.displayedName = item._itemData.displayedName;
+                    _itemID._itemData.itemType = item._itemData.itemType;
+                    _itemID._itemData.spriteIcon = item._itemData.spriteIcon;
+                    _itemID._itemData.baseStat = new()
+                    {
+                        baseStats = item._itemData.baseStat.baseStats,
+                        value = data.baseStat.value
+                    };
+                    _itemID._itemData.additionalAttributeStats = new();
+                    for (int i = 0; i < data.additionalAttributeStats.Count; i++)
+                    {
+                        _itemID._itemData.additionalAttributeStats.Add(new() 
+                        {
+                            attribute = (Attributes)data.additionalAttributeStats[i].attribute,
+                            value = data.additionalAttributeStats[i].value,
+                        });
+                    }
+
+                    //Assign the item
+                    if (slot.slotID <= 5)
+                        InventoryController.instance.AddToGearInventory(_itemID, slot.slotID);
+                    else
+                        InventoryController.instance.AddToInventory(_itemID, slot.slotID - 6);
+                }
+                else
+                {
+                    Debug.Log("Empty slot.");
                 }
             }
-            else
-            {
-                Debug.Log("Empty slot.");
-            }
+        }
+        else
+        {
+            Debug.LogError($"Error fetching inventory: {www.error}");
         }
     }
-    else
-    {
-        Debug.LogError($"Error fetching inventory: {www.error}");
-    }
-}
 
     // POST example (optional)
     public void UpdateInventory(List<InventorySlot> inventory)

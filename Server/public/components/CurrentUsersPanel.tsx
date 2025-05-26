@@ -6,6 +6,7 @@ type Player = {
   player_id: string;
   username: string;
   scene: string;
+  status: string;
   [key: string]: any;
 };
 
@@ -29,6 +30,7 @@ const CurrentUsersPanel: React.FC<Props> = ({ players, onDisconnect }) => {
               <p><strong>ID:</strong> <span className="ellipsis">{player.player_id}</span></p>
               <p><strong>Username:</strong> <span className="ellipsis">{player.username}</span></p>
               <p><strong>Scene:</strong> <span className="ellipsis">{player.scene}</span></p>
+              <p><strong>Status:</strong> <span className="ellipsis">{player.status}</span></p>
             </div>
             <div className="player-actions">
               <button className="btn-disconnect" onClick={() => onDisconnect(player.player_id)}>
@@ -57,7 +59,7 @@ const CurrentUsersPanel: React.FC<Props> = ({ players, onDisconnect }) => {
           border: 1px solid #ccc;
           border-radius: 8px;
           padding: 16px;
-          height: 150px;
+          height: 175px;
           display: flex;
           flex-direction: column;
           justify-content: space-between;

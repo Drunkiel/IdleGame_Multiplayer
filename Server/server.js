@@ -35,21 +35,9 @@ testDB["a"] = {
                 slotId: i,
                 itemID: {
                     _itemData: {
-                        ID: 0,
-                        baseStat: {
-                            baseStats: "a",
-                            value: 1
-                        },
-                        additionalAttributeStats: [
-                            {
-                                attribute: "A",
-                                value: 1
-                            },
-                            {
-                                attribute: "b",
-                                value: 2
-                            }
-                        ]
+                        ID: -1,
+                        baseStat: null,
+                        additionalAttributeStats: null
                     }
                 }
             };
@@ -90,10 +78,7 @@ app.post('/login', (req, res) => {
             intelligencePoints: data.intelligencePoints,
             durablityPoints: data.durablityPoints,
             luckPoints: data.luckPoints,
-            inventory: Array.from({ length: 26 }, (_, i) => ({
-                slotId: i,
-                itemData: null
-            }))
+            inventory: data.inventory
         });
     } else {
         res.status(401).json({ error: "Invalid username or password" });
@@ -127,10 +112,18 @@ app.post('/register', (req, res) => {
             durablityPoints: 0,
             luckPoints: 0,
             armorPoints: 0,
-            inventory: Array.from({ length: 26 }, (_, i) => ({
-                slotId: i,
-                itemData: null
-            }))
+            inventory: Array.from({ length: 26 }, (_, i) => {
+                return {
+                    slotId: i,
+                    itemID: {
+                        _itemData: {
+                            ID: -1,
+                            baseStat: null,
+                            additionalAttributeStats: null
+                        }
+                    }
+                };
+            })
         }
     };
 
