@@ -63,7 +63,9 @@ public class InventorySlot : MonoBehaviour, IDropHandler
                 break;
         }
 
+        int oldSlot = _dragDropSlot.currentSlot.slotID;
         _dragDropSlot.currentSlot = this;
+        InventoryController.instance.MoveItemToOtherSlot(oldSlot, slotID);
         rectTransform.SetParent(rectTransform.GetComponent<DragDropSlot>().currentSlot.transform);
         rectTransform.localPosition = Vector3.zero;
     }

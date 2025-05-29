@@ -46,11 +46,21 @@ public class InventoryAPI : MonoBehaviour
             string json = www.downloadHandler.text;
             inventory = JsonHelper.FromJson<InventorySlotData>(JsonHelper.FixJsonArray(json));
 
-            foreach (var slot in inventory)
+            for (int i = 0; i < inventory.Length; i++)
             {
-                if (slot.itemID != null && slot.itemID._itemData != null)
+                inventory[i].slotID = i;
+                if (inventory[i].itemID != null && inventory[i].itemID._itemData != null)
                 {
-                    var data = slot.itemID._itemData;
+                    var data = inventory[i].itemID._itemData;
+
+                    //Overwriting data because when updating serwer it creates items that dont exist
+                    if (data.baseStat == null)
+                    {
+                        data.ID = -1;
+                        data.baseStat = null;
+                        data.additionalAttributeStats = null;
+                        continue;
+                    }
 
                     //Get item
                     ItemID item = ItemContainer.instance.GetItemByID(data.ID);
@@ -70,89 +80,98 @@ public class InventoryAPI : MonoBehaviour
                         value = data.baseStat.value
                     };
                     _itemID._itemData.additionalAttributeStats = new();
-                    for (int i = 0; i < data.additionalAttributeStats.Count; i++)
+                    for (int j = 0; j < data.additionalAttributeStats.Count; j++)
                     {
-                        _itemID._itemData.additionalAttributeStats.Add(new() 
+                        _itemID._itemData.additionalAttributeStats.Add(new()
                         {
-                            attribute = (Attributes)data.additionalAttributeStats[i].attribute,
-                            value = data.additionalAttributeStats[i].value,
+                            attribute = (Attributes)data.additionalAttributeStats[j].attribute,
+                            value = data.additionalAttributeStats[j].value,
                         });
                     }
 
                     //Assign the item
-                    if (slot.slotID <= 5)
-                        InventoryController.instance.AddToGearInventory(_itemID, slot.slotID);
-                    else
-                        InventoryController.instance.AddToInventory(_itemID, slot.slotID - 6);
-                }
-                else
-                {
-                    Debug.Log("Empty slot.");
+                    InventoryController.instance.AddToInventory(_itemID, inventory[i].slotID, true);
                 }
             }
         }
         else
-        {
             Debug.LogError($"Error fetching inventory: {www.error}");
-        }
+
+        PlayerController.instance._entityInfo.UpdateStats();
     }
 
-    // POST example (optional)
-    public void UpdateInventory(List<InventorySlot> inventory)
+    public void UpdateInventory(List<InventorySlot> updatedSlots)
     {
+        foreach (var slot in updatedSlots)
+        {
+            if (slot.slotID < 0 || slot.slotID >= inventory.Length)
+            {
+                Debug.LogWarning($"SlotID {slot.slotID} is out of bounds.");
+                continue;
+            }
+
+            //If item is moved or removed then write it to default values
+            if (slot._itemID == null)
+            {
+                inventory[slot.slotID].itemID._itemData.ID = -1;
+                inventory[slot.slotID].itemID._itemData.baseStat = null;
+                inventory[slot.slotID].itemID._itemData.additionalAttributeStats = null;
+                StartCoroutine(UpdateInventoryCoroutine(inventory));
+                continue;
+            }
+
+            //Update current slot item
+            inventory[slot.slotID].itemID._itemData.ID = slot._itemID._itemData.ID;
+            inventory[slot.slotID].itemID._itemData.baseStat = slot._itemID._itemData.baseStat;
+            inventory[slot.slotID].itemID._itemData.additionalAttributeStats = new();
+            foreach (var attr in slot._itemID._itemData.additionalAttributeStats)
+            {
+                inventory[slot.slotID].itemID._itemData.additionalAttributeStats.Add(new()
+                {
+                    attribute = (int)attr.attribute,
+                    value = attr.value
+                });
+            }
+        }
+
         StartCoroutine(UpdateInventoryCoroutine(inventory));
     }
 
-    private IEnumerator UpdateInventoryCoroutine(List<InventorySlot> inventory)
+    private IEnumerator UpdateInventoryCoroutine(InventorySlotData[] inventorySlotDataList)
     {
-        string json = JsonHelper.ToJson(inventory.ToArray(), true);
+        string json = JsonHelper.ToJson(inventorySlotDataList, true);
         UnityWebRequest www = UnityWebRequest.Put($"{ServerConnector.instance.GetServerUrl()}/inventory/{ServerConnector.instance.playerId}", json);
         www.method = "POST";
         www.SetRequestHeader("Content-Type", "application/json");
         yield return www.SendWebRequest();
 
-        if (www.result == UnityWebRequest.Result.Success)
-        {
-            Debug.Log("Inventory updated successfully");
-        }
-        else
-        {
+        if (www.result != UnityWebRequest.Result.Success)
             Debug.LogError($"Error updating inventory: {www.error}");
+    }
+
+    public static class JsonHelper
+    {
+        public static T[] FromJson<T>(string json)
+        {
+            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+            return wrapper.Items;
         }
-    }
 
-    // Helper fix for raw JSON arrays
-    private string FixJsonArray(string json)
-    {
-        if (!json.StartsWith("["))
-            return json;
+        public static string ToJson<T>(T[] array, bool prettyPrint = false)
+        {
+            Wrapper<T> wrapper = new() { Items = array };
+            return JsonUtility.ToJson(wrapper, prettyPrint);
+        }
 
-        return "{\"Items\":" + json + "}";
-    }
-}
+        public static string FixJsonArray(string json)
+        {
+            return "{\"Items\":" + json + "}";
+        }
 
-public static class JsonHelper
-{
-    public static T[] FromJson<T>(string json)
-    {
-        Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
-        return wrapper.Items;
-    }
-
-    public static string ToJson<T>(T[] array, bool prettyPrint = false)
-    {
-        Wrapper<T> wrapper = new Wrapper<T> { Items = array };
-        return JsonUtility.ToJson(wrapper, prettyPrint);
-    }
-
-    public static string FixJsonArray(string json)
-    {
-        return "{\"Items\":" + json + "}";
-    }
-
-    [System.Serializable]
-    private class Wrapper<T>
-    {
-        public T[] Items;
+        [System.Serializable]
+        private class Wrapper<T>
+        {
+            public T[] Items;
+        }
     }
 }

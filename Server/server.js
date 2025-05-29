@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
-const { exec } = require('child_process');
 
 const app = express();
 const port = 3000;
@@ -318,20 +317,53 @@ app.get('/inventory/:player_id', (req, res) => {
 });
 
 app.post('/inventory/:player_id', (req, res) => {
-    const playerId = req.params.player_id;
-    const updatedInventory = req.body;
+  const playerId = req.params.player_id;
+  const updatedPayload = req.body;
 
-    const user = Object.values(users).find(u => u.playerId === playerId);
-    if (!user) {
-        return res.status(404).json({ error: 'Player not found' });
+  const updatedSlots = updatedPayload?.Items;
+  if (!Array.isArray(updatedSlots)) {
+    return res.status(400).json({ error: 'Invalid inventory data format' });
+  }
+
+  const user = Object.values(users).find(u => u.playerId === playerId);
+  if (!user) {
+    return res.status(404).json({ error: 'Player not found' });
+  }
+
+  const inventory = user.playerData.inventory;
+
+  updatedSlots.forEach(slot => {
+    const { slotID, itemID } = slot;
+
+    if (typeof slotID !== 'number' || slotID < 0 || slotID >= inventory.length) {
+      console.warn(`Ignored invalid slotID: ${slotID}`);
+      return;
     }
 
-    if (!Array.isArray(updatedInventory) || updatedInventory.length !== 26) {
-        return res.status(400).json({ error: 'Invalid inventory data' });
+    // Zwaliduj itemID._itemData.ID
+    if (itemID?._itemData?.ID === -1) {
+      // Ustawiamy na null, czyli slot pusty
+      inventory[slotID] = {
+        slotID,
+        itemID: null
+      };
+    } else {
+      inventory[slotID] = {
+        slotID,
+        itemID: {
+          _itemData: {
+            ID: itemID._itemData.ID,
+            baseStat: {
+              value: itemID._itemData.baseStat?.value || 0
+            },
+            additionalAttributeStats: itemID._itemData.additionalAttributeStats || []
+          }
+        }
+      };
     }
+  });
 
-    user.playerData.inventory = updatedInventory;
-    res.json({ message: 'Inventory updated' });
+  res.json({ message: 'Inventory updated successfully' });
 });
 
 app.get('/users', (req, res) => {

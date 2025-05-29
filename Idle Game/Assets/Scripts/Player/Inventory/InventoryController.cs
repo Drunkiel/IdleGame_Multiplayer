@@ -7,7 +7,6 @@ public class InventoryController : MonoBehaviour
     public static InventoryController instance;
 
     private readonly int countOfSlots = 24;
-    public List<InventorySlot> _gearSlots = new();
     public List<InventorySlot> _inventorySlots = new();
     public Transform slotParent;
     [SerializeField] private InventoryAPI _inventoryAPI;
@@ -24,45 +23,62 @@ public class InventoryController : MonoBehaviour
         StartCoroutine(_inventoryAPI.GetInventoryCoroutine());
     }
 
-    public void AddToInventory(ItemID _itemID, int slotIndex)
+    public void AddToInventory(ItemID _itemID, int slotIndex, bool load = false)
     {
         if (slotIndex == -1)
             return;
 
         _inventorySlots[slotIndex]._itemID = _itemID;
         GameObject slot = Instantiate(_inventorySlots[slotIndex].itemPlacePrefab, _inventorySlots[slotIndex].transform);
-        slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;  
+        slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;
         _inventorySlots[slotIndex]._itemID.transform.SetParent(slot.transform, false);
+        if (!load)
+            _inventoryAPI.UpdateInventory(new() { _inventorySlots[slotIndex] });
 
+        if (slotIndex < 6)
+        {
+            ItemController _itemController = PlayerController.instance._holdingController._itemController;
+            switch (_inventorySlots[slotIndex].itemRestriction)
+            {
+                case ItemType.Weapon:
+                    bool isFound = false;
+                    for (int i = 0; i < _inventorySlots[slotIndex].holdingTypes.Length; i++)
+                    {
+                        ItemID _weaponItemID = _itemID;
+                        if (_weaponItemID._weaponItem.holdingType == _inventorySlots[slotIndex].holdingTypes[i])
+                        {
+                            isFound = true;
+
+                            _itemController.SetWeapon(_weaponItemID);
+                            break;
+                        }
+                    }
+
+                    //If weapon is not correct then return
+                    if (!isFound)
+                        return;
+                    break;
+
+                case ItemType.Armor:
+                    ItemID _armorItemID = _itemID;
+                    if (_armorItemID._armorItem.armorType != _inventorySlots[slotIndex].armorType)
+                        return;
+                    else
+                        _itemController.SetArmor(_armorItemID);
+                    break;
+            }
+        }
         //QuestController.instance.InvokeCollectEvent(_itemID._itemData.ID);
     }
 
-    public void AddToGearInventory(ItemID _itemID, int slotIndex)
+    public void UpdateSlot(int slotID)
     {
-        _gearSlots[slotIndex]._itemID = _itemID;
-        GameObject slot = Instantiate(_gearSlots[slotIndex].itemPlacePrefab, _gearSlots[slotIndex].transform);
-        slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;
-        _gearSlots[slotIndex]._itemID.transform.SetParent(slot.transform, false);
+        _inventoryAPI.UpdateInventory(new() { _inventorySlots[slotID] });
+    }
 
-        //GameObject slot = Instantiate(_gearSlots[slotIndex].itemPlacePrefab, _gearSlots[slotIndex].transform);
-        //ItemController _itemController = PlayerController.instance._holdingController._itemController;
-
-        //switch (_itemID._itemData.itemType)
-        //{
-        //    case ItemType.Weapon:
-        //        if (!_itemController.CanPickWeapon(_itemID._weaponItem.holdingType))
-        //            _itemController.ReplaceItem(_itemID);
-
-        //        _itemController.SetWeapon(_itemID);
-        //        break;
-
-        //    case ItemType.Armor:
-        //        if (!_itemController.CanPickArmor(_itemID._armorItem.armorType))
-        //            _itemController.ReplaceItem(_itemID);
-
-        //        _itemController.SetArmor(_itemID);
-        //        break;
-        //}
+    public void MoveItemToOtherSlot(int currentSlotID, int newSlotID)
+    {
+        _inventoryAPI.UpdateInventory(new() { _inventorySlots[currentSlotID], _inventorySlots[newSlotID] });
     }
 
     public void RemoveItemByID(int itemID)
@@ -82,23 +98,34 @@ public class InventoryController : MonoBehaviour
         //ConsoleController.instance.ChatMessage(SenderType.System, $"Item: <color=red>{itemID}</color> is not found in the inventory", OutputType.Error);
     }
 
-    public void DeleteGearInventory(int slotIndex)
-    {
-        if (_gearSlots[slotIndex].transform.childCount <= 0)
-            return;
-
-        GameObject item = _gearSlots[slotIndex].transform.GetChild(1).gameObject;
-        Destroy(item);
-    }
-
-    public int GetAvailableSlotIndex()
+    public int GetAvailableSlotIndex(ItemID _itemID)
     {
         for (int i = 0; i < countOfSlots; i++)
         {
             if (_inventorySlots[i]._itemID == null)
-                return i;
+            {
+                switch (_itemID._itemData.itemType)
+                {
+                    case ItemType.Weapon:
+                        for (int j = 0; j < _inventorySlots[i].holdingTypes.Length; j++)
+                        {
+                            ItemID _weaponItemID = _itemID;
+                            if (_weaponItemID._weaponItem.holdingType == _inventorySlots[i].holdingTypes[j])
+                                return i;
+                        }
+                        break;
+
+                    case ItemType.Armor:
+                        if (_inventorySlots[i].armorType == _itemID._armorItem.armorType)
+                            return i;
+                        break;
+                }
+
+                if (_inventorySlots[i].itemRestriction == ItemType.None)
+                    return i;
+            }
         }
 
-        return -1;
+        return -1; 
     }
 }
