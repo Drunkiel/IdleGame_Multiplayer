@@ -8,8 +8,5 @@ public class PickInteraction : MonoBehaviour
     {
         if (!PlayerController.instance._holdingController._itemController.PickItem(_itemID))
             return;
-
-        //GetComponent<EventTriggerController>().canBeShown = false;
-        //GetComponent<HintEvent>().ChangeHint(0);
     }
 }

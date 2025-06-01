@@ -42,11 +42,11 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
                             Destroy(_gearHolder.headTransform.GetChild(0).gameObject);
                             break;
                         case ArmorType.Chestplate:
-                            Destroy(_gearHolder.bodyTransform.GetChild(0).gameObject);
+                            Destroy(_gearHolder.bodyTransform.GetChild(2).gameObject);
                             break;
                         case ArmorType.Boots:
-                            Destroy(_gearHolder.leftFeetTransform.GetChild(1).gameObject);
-                            Destroy(_gearHolder.rightFeetTransform.GetChild(1).gameObject);
+                            Destroy(_gearHolder.leftFeetTransform.GetChild(0).gameObject);
+                            Destroy(_gearHolder.rightFeetTransform.GetChild(0).gameObject);
                             break;
                     }
                 }

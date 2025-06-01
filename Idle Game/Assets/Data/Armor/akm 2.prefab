@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: -347478009
   m_SortingLayer: 2
   m_SortingOrder: 6
-  m_Sprite: {fileID: 21300000, guid: 3cb5e60e8478f4b4f8a229c49362b958, type: 3}
+  m_Sprite: {fileID: -437060104, guid: 5110442fd7516bb43be90620e63d6884, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -94,9 +94,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2142389161881337535}
   - component: {fileID: 6364541126876596842}
-  - component: {fileID: 7419709204412752083}
+  - component: {fileID: 3513780931158106241}
   m_Layer: 0
-  m_Name: ala
+  m_Name: akm 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,11 +130,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87f17f7b790ba804183036b898dc947f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemData: {fileID: 11400000, guid: b04a248d231874543be0251715b9161b, type: 2}
-  _weaponItem: {fileID: 7419709204412752083}
+  _itemData: {fileID: 11400000, guid: d9da4dfd21e0a7941b6f457ae7073890, type: 2}
+  _weaponItem: {fileID: 0}
   _armorItem: {fileID: 0}
   _collectableItem: {fileID: 0}
---- !u!114 &7419709204412752083
+--- !u!114 &3513780931158106241
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,10 +143,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4367366643459442440}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b19778a1b8797984baba6c83dadba4c3, type: 3}
+  m_Script: {fileID: 11500000, guid: b714a8efc50d56146b80aea317013c5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   classReserved: 0
-  weaponType: 0
-  holdingType: 0
-  resizable: 1
+  armorType: 2

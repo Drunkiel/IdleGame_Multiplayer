@@ -153,6 +153,7 @@ MonoBehaviour:
   playerId: 
   username: 
   nameText: {fileID: 5945548453042810749}
+  anim: {fileID: 7261748099877933305}
   currentStatus: 0
   targetPosition: {x: 0, y: 0, z: 0}
 --- !u!50 &-3458161395892823088
@@ -363,6 +364,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: AnimatedCharacter
       objectReference: {fileID: 0}
+    - target: {fileID: 6906864688786163146, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6906864688857916181, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6906864689293894520, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6906864690235669884, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7271521190741862559, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -408,6 +425,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+--- !u!95 &7261748099877933305 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7995894496428949795, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}
+  m_PrefabInstance: {fileID: 734639527669371354}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7987229859624876357 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7271521190741862559, guid: 4658d6d4b3105dd46a695eb055979ded, type: 3}

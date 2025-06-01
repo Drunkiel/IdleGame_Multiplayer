@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 [System.Serializable]
 public class GearHolder
@@ -23,6 +22,27 @@ public class GearHolder
     public ItemID _armorHead;
     public ItemID _armorChestplate;
     public ItemID _armorBoots;
+
+    [HideInInspector] public bool isFlipped;
+
+    public void FlipItems(bool isFlipped)
+    {
+        this.isFlipped = isFlipped;
+
+        if (_weaponRight != null)
+        {
+            _weaponRight.transform.parent = isFlipped ? leftHandTransform : rightHandTransform;
+            _weaponRight.transform.SetLocalPositionAndRotation(new(0.3f, 0, 0), Quaternion.identity);
+            _weaponRight.transform.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder = isFlipped ? 1 : 6;
+        }
+
+        if (_weaponLeft != null)
+        {
+            _weaponLeft.transform.parent = isFlipped ? rightHandTransform : leftHandTransform;
+            _weaponLeft.transform.SetLocalPositionAndRotation(new(0.3f, 0, 0), Quaternion.identity);
+            _weaponLeft.transform.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder = isFlipped ? 1 : 6;
+        }
+    }
 
     public ItemID GetHoldingWeapon(WeaponHoldingType holdingType)
     {
@@ -102,11 +122,11 @@ public class GearHolder
 
         foreach (var item in equippedItems)
         {
-            if (item == null || item._itemData == null) 
+            if (item == null || item._itemData == null)
                 continue;
 
             //Check if ItemData contains any additional attributes
-            if (item._itemData.additionalAttributeStats == null) 
+            if (item._itemData.additionalAttributeStats == null)
                 continue;
 
             foreach (var stat in item._itemData.additionalAttributeStats)

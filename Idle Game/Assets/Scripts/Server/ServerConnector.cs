@@ -67,6 +67,9 @@ public class ServerConnector : MonoBehaviour
 
     public void RegisterPlayer()
     {
+        if (!_loginUI.CanReg())
+            return;
+
         StartCoroutine(RegisterUser());
     }
 

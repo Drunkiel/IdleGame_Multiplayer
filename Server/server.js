@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
+const path = require('path');
+const DATA_FILE = path.join(__dirname, 'players.json');
 
 const app = express();
 const port = 3000;
@@ -11,38 +14,31 @@ app.use(express.urlencoded({ extended: true }));
 
 // In-memory database of users
 const testDB = {};
-testDB["a"] = {
-    password: "a",
-    playerId: "a",
-    playerData: {
-        username: "Denis",
-        status: "Disconnected",
-        position: { x: 0, y: 0, z: 0 },
-        lastSeen: Date.now(),
-        scene: "SampleScene",
-        heroClass: 1,
-        currentLevel: 400,
-        expPoints: 1,
-        goldCoins: 1,
-        strengthPoints: 1,
-        dexterityPoints: 1,
-        intelligencePoints: 1,
-        durablityPoints: 1,
-        luckPoints: 1,
-        inventory: Array.from({ length: 26 }, (_, i) => {
-            return {
-                slotId: i,
-                itemID: {
-                    _itemData: {
-                        ID: -1,
-                        baseStat: null,
-                        additionalAttributeStats: null
-                    }
-                }
-            };
-        })
+if (fs.existsSync(DATA_FILE)) {
+    try {
+        const rawData = fs.readFileSync(DATA_FILE);
+        const savedData = JSON.parse(rawData);
+        Object.assign(testDB, savedData);
+        console.log('Loaded player data from file.');
+    } catch (err) {
+        console.error('Failed to load player data:', err);
     }
-};
+}
+
+function savePlayerDataToFile() {
+    fs.writeFile(DATA_FILE, JSON.stringify(testDB, null, 2), (err) => {
+        if (err) {
+            console.error('Failed to save player data:', err);
+        } else {
+            console.log('Player data saved to players.json');
+        }
+    });
+}
+
+// Save testDB to file every 5 minutes
+setInterval(() => {
+    savePlayerDataToFile();
+}, 5 * 60 * 1000); 
 
 //Actual in game players
 const users = {};
@@ -87,16 +83,37 @@ app.post('/login', (req, res) => {
 app.post('/register', (req, res) => {
     const { username, password, heroClass } = req.body;
 
-    if (testDB[username]) {
+    // REGEX - Walidacja
+    const usernameRegex = /^[a-zA-Z0-9_]{5,20}$/; // bez spacji, tylko litery, cyfry, podkreślenia
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/; // min. 8 znaków, 1 wielka litera, 1 cyfra
+
+    if (!username || !password || !heroClass) {
+        return res.status(400).json({ error: 'Missing fields' });
+    }
+
+    const trimmedUsername = username.trim();
+
+    // // Sprawdzenie nazwy użytkownika
+    // if (!usernameRegex.test(trimmedUsername)) {
+    //     return res.status(400).json({ error: 'Invalid username. Only letters, numbers, and underscores are allowed.' });
+    // }
+
+    // // Sprawdzenie hasła
+    // if (!passwordRegex.test(password)) {
+    //     return res.status(400).json({ error: 'Invalid password. Must be at least 8 characters, include one uppercase letter and one number.' });
+    // }
+
+    // Czy użytkownik już istnieje
+    if (testDB[trimmedUsername]) {
         return res.status(400).json({ error: 'Username already exists' });
     }
 
     const playerId = uuidv4();
-    testDB[username] = {
+    testDB[trimmedUsername] = {
         password,
         playerId,
         playerData: {
-            username,
+            username: trimmedUsername,
             status: "Disconnected",
             position: { x: 0, y: 0, z: 0 },
             lastSeen: Date.now(),
@@ -111,18 +128,10 @@ app.post('/register', (req, res) => {
             durablityPoints: 0,
             luckPoints: 0,
             armorPoints: 0,
-            inventory: Array.from({ length: 26 }, (_, i) => {
-                return {
-                    slotId: i,
-                    itemID: {
-                        _itemData: {
-                            ID: -1,
-                            baseStat: null,
-                            additionalAttributeStats: null
-                        }
-                    }
-                };
-            })
+            inventory: Array.from({ length: 26 }, (_, i) => ({
+                slotId: i,
+                itemID: null
+            }))
         }
     };
 
@@ -378,7 +387,7 @@ app.get('/users', (req, res) => {
 // Cleanup inactive players
 setInterval(() => {
     const now = Date.now();
-    const timeout = 300000; // 5 minutes
+    const timeout = 5 * 60 * 1000; // 5 minutes
 
     for (const username in users) {
         const player = users[username];

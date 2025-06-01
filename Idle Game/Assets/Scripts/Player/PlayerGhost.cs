@@ -6,6 +6,7 @@ public class PlayerGhost : MonoBehaviour
     public string playerId;
     public string username;
     [SerializeField] private TMP_Text nameText;
+    [SerializeField] private Animator anim;
     [SerializeField] private PlayerStatus currentStatus;
 
     [SerializeField] private Vector3 targetPosition;
@@ -18,6 +19,7 @@ public class PlayerGhost : MonoBehaviour
 
     private void Update()
     {
+        anim.SetFloat("Movement", Vector3.Distance(targetPosition, transform.position));
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * lerpSpeed);
         transform.GetChild(1).localScale = new(Mathf.Sign((targetPosition - transform.position).x) * 1, 1, 1);
     }

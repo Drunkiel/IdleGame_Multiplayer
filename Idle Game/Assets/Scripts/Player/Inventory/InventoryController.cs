@@ -98,32 +98,12 @@ public class InventoryController : MonoBehaviour
         //ConsoleController.instance.ChatMessage(SenderType.System, $"Item: <color=red>{itemID}</color> is not found in the inventory", OutputType.Error);
     }
 
-    public int GetAvailableSlotIndex(ItemID _itemID)
+    public int GetAvailableSlotIndex()
     {
-        for (int i = 0; i < countOfSlots; i++)
+        for (int i = 6; i < countOfSlots; i++)
         {
             if (_inventorySlots[i]._itemID == null)
-            {
-                switch (_itemID._itemData.itemType)
-                {
-                    case ItemType.Weapon:
-                        for (int j = 0; j < _inventorySlots[i].holdingTypes.Length; j++)
-                        {
-                            ItemID _weaponItemID = _itemID;
-                            if (_weaponItemID._weaponItem.holdingType == _inventorySlots[i].holdingTypes[j])
-                                return i;
-                        }
-                        break;
-
-                    case ItemType.Armor:
-                        if (_inventorySlots[i].armorType == _itemID._armorItem.armorType)
-                            return i;
-                        break;
-                }
-
-                if (_inventorySlots[i].itemRestriction == ItemType.None)
-                    return i;
-            }
+                return i;
         }
 
         return -1; 

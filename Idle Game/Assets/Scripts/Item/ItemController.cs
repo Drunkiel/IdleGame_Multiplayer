@@ -22,8 +22,8 @@ public class ItemController : MonoBehaviour
         InventoryController _inventoryController = InventoryController.instance;
 
         //Looking for available slot in inventory
-        int availableSlot = _inventoryController.GetAvailableSlotIndex(_itemID);
-        Debug.Log(availableSlot);
+        int availableSlot = _inventoryController.GetAvailableSlotIndex();
+
         if (availableSlot == -1)
             return false;
 
@@ -66,12 +66,10 @@ public class ItemController : MonoBehaviour
     {
         GameObject weaponCopy = Instantiate(_itemID.gameObject, newParent);
         weaponCopy.name = _itemID.name;
-        weaponCopy.transform.SetLocalPositionAndRotation(Vector3.zero, rotation);
+        weaponCopy.transform.SetLocalPositionAndRotation(new(0.3f, 0, 0), rotation);
+        weaponCopy.transform.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder = _gearHolder.isFlipped ? 1 : 6;
         if (_itemID._weaponItem.resizable)
             weaponCopy.transform.localScale = Vector3.one;
-        
-        if (_itemID._weaponItem.weaponType == WeaponType.Sword)
-            weaponCopy.transform.localPosition = new(0.9f, 0, 0);
 
         return weaponCopy.GetComponent<ItemID>();
     }
@@ -82,23 +80,17 @@ public class ItemController : MonoBehaviour
         {
             //Picking weapon to right hand
             case WeaponHoldingType.Right_Hand:
-                _gearHolder._weaponRight = PickWeapon(_itemID, Quaternion.Euler(0, 0, -90), _gearHolder.rightHandTransform);
+                _gearHolder._weaponRight = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.leftHandTransform : _gearHolder.rightHandTransform);
                 break;
 
             //Picking weapon to left hand
             case WeaponHoldingType.Left_Hand:
-                Quaternion rotation = Quaternion.Euler(0, 0, -90);
-
-                if (_itemID._weaponItem.weaponType == WeaponType.Shield)
-                    rotation = Quaternion.identity;
-
-                _gearHolder._weaponLeft = PickWeapon(_itemID, rotation, _gearHolder.leftHandTransform);
-                _gearHolder._weaponLeft.transform.localScale = new(-1, 1, 1);
+                _gearHolder._weaponLeft = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.rightHandTransform : _gearHolder.leftHandTransform);
                 break;
 
             //Picking weapon to both hands
             case WeaponHoldingType.Both_Hands:
-                _gearHolder._weaponBoth = PickWeapon(_itemID, Quaternion.Euler(0, 0, -90), _gearHolder.bothHandTransform);
+                _gearHolder._weaponBoth = PickWeapon(_itemID, Quaternion.identity, _gearHolder.bothHandTransform);
                 break;
         }
     }
@@ -134,10 +126,21 @@ public class ItemController : MonoBehaviour
         GameObject armorCopy = Instantiate(_itemID.gameObject, newParent);
         armorCopy.name = _itemID.name;
         armorCopy.transform.localScale = Vector3.one;
-        if (_itemID._armorItem.armorType != ArmorType.Boots)
-            armorCopy.transform.localPosition = Vector3.zero;
-        else
-            armorCopy.transform.localPosition = new(0, -0.17f, 0);
+
+        switch (_itemID._armorItem.armorType)
+        {
+            case ArmorType.Helmet:
+                armorCopy.transform.localPosition = new(0, 0.25f, 0);
+                break;
+
+            case ArmorType.Chestplate:
+                armorCopy.transform.localPosition = new(0, -0.25f, 0);
+                break;
+
+            case ArmorType.Boots:
+                armorCopy.transform.localPosition = new(0, -0.2f, 0);
+                break;
+        }
 
         return armorCopy.GetComponent<ItemID>();
     }

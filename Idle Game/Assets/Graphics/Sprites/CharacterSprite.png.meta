@@ -144,10 +144,10 @@ TextureImporter:
       name: ProtoHead
       rect:
         serializedVersion: 2
-        x: 38
-        y: 178
-        width: 58
-        height: 58
+        x: 89
+        y: 176
+        width: 61
+        height: 61
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -165,7 +165,7 @@ TextureImporter:
       name: ProtoBody
       rect:
         serializedVersion: 2
-        x: 58
+        x: 112
         y: 97
         width: 15
         height: 67
@@ -186,7 +186,7 @@ TextureImporter:
       name: ProtoUpperArm
       rect:
         serializedVersion: 2
-        x: 83
+        x: 137
         y: 148
         width: 36
         height: 15
@@ -207,7 +207,7 @@ TextureImporter:
       name: ProtoLowerArm
       rect:
         serializedVersion: 2
-        x: 125
+        x: 60
         y: 147
         width: 42
         height: 16
@@ -228,7 +228,7 @@ TextureImporter:
       name: ProtoUpperLeg
       rect:
         serializedVersion: 2
-        x: 56
+        x: 101
         y: 44
         width: 15
         height: 48
@@ -249,7 +249,7 @@ TextureImporter:
       name: ProtoLowerLeg
       rect:
         serializedVersion: 2
-        x: 78
+        x: 123
         y: 44
         width: 15
         height: 48

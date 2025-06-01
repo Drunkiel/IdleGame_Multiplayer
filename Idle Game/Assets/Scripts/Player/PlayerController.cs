@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Networking;
 
 [Serializable]
 public class PositionData
@@ -49,6 +47,7 @@ public class PlayerController : MonoBehaviour
     public EntityInfo _entityInfo;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private Rigidbody2D rgBody;
+    [SerializeField] private Animator anim;
     [SerializeField] private PlayerAPI _playerAPI;
     public HoldingController _holdingController;
 
@@ -72,12 +71,12 @@ public class PlayerController : MonoBehaviour
             _response.username,
             _response.currentLevel,
             _response.expPoints,
-            _response.goldCoins, 
-            _response.strengthPoints, 
+            _response.goldCoins,
+            _response.strengthPoints,
             _response.dexterityPoints,
-            _response.intelligencePoints, 
-            _response.durablityPoints, 
-            _response.luckPoints, 
+            _response.intelligencePoints,
+            _response.durablityPoints,
+            _response.luckPoints,
             UIController.instance.panelObjects[0].panelObject.GetComponent<StatisticsUI>()
         );
         InventoryController.instance.LoadInventory();
@@ -92,7 +91,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        //anim.SetFloat("Movement", isStopped ? 0 : movement.magnitude);
+        anim.SetFloat("Movement", isStopped ? 0 : movement.magnitude);
 
         if (string.IsNullOrEmpty(playerId) || isStopped || GameController.isPaused)
             return;
@@ -126,11 +125,24 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 inputValue = context.ReadValue<Vector2>();
 
+        if (isStopped)
+        {
+            movement = new();
+            return;
+        }
+
         //Flipping player to direction they are going
         if (inputValue.x < 0 && !isFlipped)
+        {
             isFlipped = true;
+            _holdingController._itemController._gearHolder.FlipItems(true);
+
+        }
         else if (inputValue.x > 0 && isFlipped)
+        {
             isFlipped = false;
+            _holdingController._itemController._gearHolder.FlipItems(false);
+        }
 
         //Flipping player to direction they are going
         transform.GetChild(1).localScale = new(isFlipped ? -1 : 1 * 1, 1, 1);
