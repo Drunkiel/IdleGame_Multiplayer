@@ -20,24 +20,28 @@ public class InventoryController : MonoBehaviour
 
     public void LoadInventory()
     {
-        StartCoroutine(_inventoryAPI.GetInventoryCoroutine());
+        StartCoroutine(_inventoryAPI.GetInventoryCoroutine(ServerConnector.instance.playerId));
     }
 
-    public void AddToInventory(ItemID _itemID, int slotIndex, bool load = false)
+    public void AddToInventory(ItemID _itemID, int slotIndex, bool load = false, ItemController itemController = null)
     {
         if (slotIndex == -1)
             return;
 
-        _inventorySlots[slotIndex]._itemID = _itemID;
-        GameObject slot = Instantiate(_inventorySlots[slotIndex].itemPlacePrefab, _inventorySlots[slotIndex].transform);
-        slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;
-        _inventorySlots[slotIndex]._itemID.transform.SetParent(slot.transform, false);
+        if (itemController == null)
+        {
+            _inventorySlots[slotIndex]._itemID = _itemID;
+            GameObject slot = Instantiate(_inventorySlots[slotIndex].itemPlacePrefab, _inventorySlots[slotIndex].transform);
+            slot.transform.GetChild(0).GetComponent<Image>().sprite = _itemID.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;
+            _inventorySlots[slotIndex]._itemID.transform.SetParent(slot.transform, false);
+        }
+
         if (!load)
             _inventoryAPI.UpdateInventory(new() { _inventorySlots[slotIndex] });
 
         if (slotIndex < 6)
         {
-            ItemController _itemController = PlayerController.instance._holdingController._itemController;
+            ItemController _itemController = itemController == null ? PlayerController.instance._holdingController._itemController : itemController;
             switch (_inventorySlots[slotIndex].itemRestriction)
             {
                 case ItemType.Weapon:

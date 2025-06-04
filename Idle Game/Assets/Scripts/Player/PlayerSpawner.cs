@@ -39,7 +39,7 @@ public class PlayerSpawner : MonoBehaviour
     public GameObject playerPrefab;
     public GameObject ghostPrefab;
 
-    private Dictionary<string, PlayerGhost> ghosts = new();
+    public Dictionary<string, PlayerGhost> ghosts = new();
 
     void Start()
     {
@@ -51,9 +51,10 @@ public class PlayerSpawner : MonoBehaviour
     void OnConnected(ConnectResponse _response)
     {
         //Create local player
-        GameObject player = Instantiate(playerPrefab, transform.position, Quaternion.identity);
-        PlayerController _controller = player.GetComponent<PlayerController>();
+        Instantiate(playerPrefab, transform.position, Quaternion.identity);
+        PlayerController _controller = PlayerController.instance;
         _controller.Initialize(_response);
+        CameraController.instance.playerTransform = _controller.transform;
         GameController.instance.ChangeScene(_response.scene);
     }
 

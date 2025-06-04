@@ -4200,7 +4200,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerId: 
-  serverUrl: http://localhost:3000
   _loginUI: {fileID: 1683761662}
 --- !u!4 &487973862
 Transform:
@@ -16031,8 +16030,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4637a59c58a58f342a40d28f39e0265e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetObject: {fileID: 0}
   virtualCamera: {fileID: 1456910117}
+  playerTransform: {fileID: 0}
+  yFollowThreshold: 3
+  cameraFollowSpeed: 1
 --- !u!1 &2070537329
 GameObject:
   m_ObjectHideFlags: 0

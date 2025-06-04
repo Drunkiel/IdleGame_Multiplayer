@@ -10,18 +10,25 @@ public class PlayerGhost : MonoBehaviour
     [SerializeField] private PlayerStatus currentStatus;
 
     [SerializeField] private Vector3 targetPosition;
-    private float lerpSpeed = 5f;
+    private readonly float lerpSpeed = 5f;
+    private InventoryAPI _inventory;
 
     void Start()
     {
         targetPosition = transform.position;
+        _inventory = GetComponent<InventoryAPI>();
+        StartCoroutine(_inventory.GetInventoryCoroutine(playerId, GetComponent<ItemController>()));
     }
 
     private void Update()
     {
-        anim.SetFloat("Movement", Vector3.Distance(targetPosition, transform.position));
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * lerpSpeed);
-        transform.GetChild(1).localScale = new(Mathf.Sign((targetPosition - transform.position).x) * 1, 1, 1);
+        float distance = Vector3.Distance(targetPosition, transform.position);
+        anim.SetFloat("Movement", distance);
+        if (distance > 0.05f)
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * lerpSpeed);
+            transform.GetChild(1).localScale = new(Mathf.Sign((targetPosition - transform.position).x) * 1, 1, 1);
+        }
     }
 
     public void SetStatus(PlayerStatus status)

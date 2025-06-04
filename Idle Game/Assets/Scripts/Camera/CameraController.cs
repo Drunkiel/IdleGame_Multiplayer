@@ -6,12 +6,33 @@ public class CameraController : MonoBehaviour
 {
     public static CameraController instance;
 
-    public Transform targetObject;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    public Transform playerTransform;
+    [SerializeField] private float yFollowThreshold = 2f;
+    [SerializeField] private float cameraFollowSpeed = 5f;
+
+    private Transform cameraTransform;
 
     private void Awake()
     {
         instance = this;
+        cameraTransform = virtualCamera.transform;
+    }
+
+    private void LateUpdate()
+    {
+        if (playerTransform == null) 
+            return;
+
+        Vector3 cameraPos = cameraTransform.position;
+        float yDistance = Mathf.Abs(playerTransform.position.y - cameraPos.y);
+
+        //If disstance grater then move camera
+        if (yDistance > yFollowThreshold)
+        {
+            float targetY = Mathf.Lerp(cameraPos.y, playerTransform.position.y, Time.deltaTime * cameraFollowSpeed);
+            cameraTransform.position = new Vector3(cameraPos.x, targetY, cameraPos.z);
+        }
     }
 
     public void ResetZoom()

@@ -46,7 +46,7 @@ public class ServerConnector : MonoBehaviour
 {
     public static ServerConnector instance;
     public string playerId;
-    [SerializeField] private string serverUrl = "http://localhost:3000";
+    private readonly string serverUrl = "http://localhost:3000";
     public LoginUI _loginUI;
 
     public Action<ConnectResponse> OnConnected;

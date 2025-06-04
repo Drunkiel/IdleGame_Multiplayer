@@ -132,7 +132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _itemData: {fileID: 11400000, guid: d9da4dfd21e0a7941b6f457ae7073890, type: 2}
   _weaponItem: {fileID: 0}
-  _armorItem: {fileID: 0}
+  _armorItem: {fileID: 3513780931158106241}
   _collectableItem: {fileID: 0}
 --- !u!114 &3513780931158106241
 MonoBehaviour:

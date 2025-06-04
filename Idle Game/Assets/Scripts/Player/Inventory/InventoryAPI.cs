@@ -36,9 +36,15 @@ public class InventoryAPI : MonoBehaviour
 {
     public InventorySlotData[] inventory;
 
-    public IEnumerator GetInventoryCoroutine()
+    public IEnumerator GetInventoryCoroutine(string id, ItemController _itemController = null)
     {
-        UnityWebRequest www = UnityWebRequest.Get($"{ServerConnector.instance.GetServerUrl()}/inventory/{ServerConnector.instance.playerId}");
+        yield return StartCoroutine(FetchInventoryData(id));
+        InitializeInventory(_itemController);
+    }
+
+    private IEnumerator FetchInventoryData(string id)
+    {
+        UnityWebRequest www = UnityWebRequest.Get($"{ServerConnector.instance.GetServerUrl()}/inventory/{id}");
         yield return www.SendWebRequest();
 
         if (www.result == UnityWebRequest.Result.Success)
@@ -47,57 +53,66 @@ public class InventoryAPI : MonoBehaviour
             inventory = JsonHelper.FromJson<InventorySlotData>(JsonHelper.FixJsonArray(json));
 
             for (int i = 0; i < inventory.Length; i++)
-            {
                 inventory[i].slotID = i;
-                if (inventory[i].itemID != null && inventory[i].itemID._itemData != null)
-                {
-                    var data = inventory[i].itemID._itemData;
-
-                    //Overwriting data because when updating serwer it creates items that dont exist
-                    if (data.baseStat == null)
-                    {
-                        data.ID = -1;
-                        data.baseStat = null;
-                        data.additionalAttributeStats = null;
-                        continue;
-                    }
-
-                    //Get item
-                    ItemID item = ItemContainer.instance.GetItemByID(data.ID);
-                    if (item == null)
-                        continue;
-
-                    //Duplicate item and modify it
-                    ItemID _itemID = Instantiate(item);
-                    _itemID._itemData = ScriptableObject.CreateInstance<ItemData>();
-                    _itemID._itemData.ID = data.ID;
-                    _itemID._itemData.displayedName = item._itemData.displayedName;
-                    _itemID._itemData.itemType = item._itemData.itemType;
-                    _itemID._itemData.spriteIcon = item._itemData.spriteIcon;
-                    _itemID._itemData.baseStat = new()
-                    {
-                        baseStats = item._itemData.baseStat.baseStats,
-                        value = data.baseStat.value
-                    };
-                    _itemID._itemData.additionalAttributeStats = new();
-                    for (int j = 0; j < data.additionalAttributeStats.Count; j++)
-                    {
-                        _itemID._itemData.additionalAttributeStats.Add(new()
-                        {
-                            attribute = (Attributes)data.additionalAttributeStats[j].attribute,
-                            value = data.additionalAttributeStats[j].value,
-                        });
-                    }
-
-                    //Assign the item
-                    InventoryController.instance.AddToInventory(_itemID, inventory[i].slotID, true);
-                }
-            }
         }
         else
             Debug.LogError($"Error fetching inventory: {www.error}");
+    }
 
-        PlayerController.instance._entityInfo.UpdateStats();
+    private void InitializeInventory(ItemController _itemController)
+    {
+        if (inventory == null)
+            return;
+
+        foreach (var slot in inventory)
+        {
+            var data = slot.itemID?._itemData;
+            if (data == null || data.baseStat == null)
+            {
+                if (data != null)
+                {
+                    data.ID = -1;
+                    data.baseStat = null;
+                    data.additionalAttributeStats = null;
+                }
+                continue;
+            }
+
+            ItemID item = ItemContainer.instance.GetItemByID(data.ID);
+            if (item == null)
+                continue;
+
+            ItemID _itemID = null;
+            if (_itemController == null)
+            {
+                _itemID = Instantiate(item);
+                _itemID._itemData = ScriptableObject.CreateInstance<ItemData>();
+                _itemID._itemData.ID = data.ID;
+                _itemID._itemData.displayedName = item._itemData.displayedName;
+                _itemID._itemData.itemType = item._itemData.itemType;
+                _itemID._itemData.spriteIcon = item._itemData.spriteIcon;
+                _itemID._itemData.baseStat = new()
+                {
+                    baseStats = item._itemData.baseStat.baseStats,
+                    value = data.baseStat.value
+                };
+                _itemID._itemData.additionalAttributeStats = new();
+
+                foreach (var stat in data.additionalAttributeStats)
+                {
+                    _itemID._itemData.additionalAttributeStats.Add(new()
+                    {
+                        attribute = (Attributes)stat.attribute,
+                        value = stat.value
+                    });
+                }
+            }
+
+            InventoryController.instance.AddToInventory(_itemID != null ? _itemID : item, slot.slotID, true, _itemController);
+        }
+
+        if (_itemController == null)
+            PlayerController.instance._entityInfo.UpdateStats();
     }
 
     public void UpdateInventory(List<InventorySlot> updatedSlots)
