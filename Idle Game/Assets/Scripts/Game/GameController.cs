@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,14 @@ public enum HeroClass
     Scout
 }
 
+[Serializable]
+public class SceneConfig
+{
+    public Vector2 spawnPosition;
+    public bool cameraFollowX;
+    public bool cameraFollowY;
+}
+
 public class GameController : MonoBehaviour
 {
     public static GameController instance;
@@ -29,7 +38,7 @@ public class GameController : MonoBehaviour
 
     public List<GameObject> objectsToTeleportMust = new();
     public List<GameObject> objectsToTeleportAdditional = new();
-    public List<Vector2> sceneSpawnPositions = new();
+    public List<SceneConfig> _sceneConfigs = new();
 
     private void Awake()
     {
@@ -47,7 +56,8 @@ public class GameController : MonoBehaviour
         if (currentScene.name.Equals(sceneName))
         {
             StartCoroutine(UpdateScene(currentScene.name));
-            PlayerController.instance.transform.position = sceneSpawnPositions[currentScene.buildIndex];
+            PlayerController.instance.transform.position = _sceneConfigs[currentScene.buildIndex].spawnPosition;
+            CameraController.instance.Config(_sceneConfigs[currentScene.buildIndex].cameraFollowX, _sceneConfigs[currentScene.buildIndex].cameraFollowY);
             yield break;
         }
 
@@ -64,7 +74,8 @@ public class GameController : MonoBehaviour
         for (int i = 0; i < objectsToTeleportMust.Count; i++)
             SceneManager.MoveGameObjectToScene(objectsToTeleportMust[i], nextScene);
 
-        PlayerController.instance.transform.position = sceneSpawnPositions[nextScene.buildIndex];
+        PlayerController.instance.transform.position = _sceneConfigs[nextScene.buildIndex].spawnPosition;
+        CameraController.instance.Config(_sceneConfigs[nextScene.buildIndex].cameraFollowX, _sceneConfigs[nextScene.buildIndex].cameraFollowY);
 
         SceneManager.UnloadSceneAsync(currentScene);
     }

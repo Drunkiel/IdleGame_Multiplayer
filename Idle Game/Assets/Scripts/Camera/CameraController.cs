@@ -8,8 +8,13 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
     public Transform playerTransform;
+
     [SerializeField] private float yFollowThreshold = 2f;
+    [SerializeField] private float xFollowThreshold = 2f;
     [SerializeField] private float cameraFollowSpeed = 5f;
+
+    [SerializeField] private bool followHorizontal = true;
+    [SerializeField] private bool followVertical = true;
 
     private Transform cameraTransform;
 
@@ -21,18 +26,33 @@ public class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (playerTransform == null) 
+        if (playerTransform == null)
             return;
 
         Vector3 cameraPos = cameraTransform.position;
-        float yDistance = Mathf.Abs(playerTransform.position.y - cameraPos.y);
+        Vector3 targetPos = cameraPos;
 
-        //If disstance grater then move camera
-        if (yDistance > yFollowThreshold)
+        if (followVertical)
         {
-            float targetY = Mathf.Lerp(cameraPos.y, playerTransform.position.y, Time.deltaTime * cameraFollowSpeed);
-            cameraTransform.position = new Vector3(cameraPos.x, targetY, cameraPos.z);
+            float yDistance = Mathf.Abs(playerTransform.position.y - cameraPos.y);
+            if (yDistance > yFollowThreshold)
+                targetPos.y = Mathf.Lerp(cameraPos.y, playerTransform.position.y, Time.deltaTime * cameraFollowSpeed);
         }
+
+        if (followHorizontal)
+        {
+            float xDistance = Mathf.Abs(playerTransform.position.x - cameraPos.x);
+            if (xDistance > xFollowThreshold)
+                targetPos.x = Mathf.Lerp(cameraPos.x, playerTransform.position.x, Time.deltaTime * cameraFollowSpeed);
+        }
+
+        cameraTransform.position = targetPos;
+    }
+
+    public void Config(bool followX, bool followY)
+    {
+        followHorizontal = followX;
+        followVertical = followY;
     }
 
     public void ResetZoom()

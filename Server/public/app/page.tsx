@@ -36,7 +36,7 @@ const HomePanel: React.FC<{ usersCount: number; playersCount: number; onRestart:
     </div>
     <div className="restart-container">
       <button onClick={onRestart} className="btn-restart">
-        Restart serwera
+        Wyloguj graczy
       </button>
     </div>
 
@@ -169,18 +169,18 @@ const HomePage: React.FC = () => {
   };
 
   const restartServer = async () => {
-    if (!confirm('Czy na pewno chcesz zrestartować serwer?')) return;
+    if (!confirm('Czy na pewno chcesz rozłączyć wszystkich graczy?')) return;
 
     try {
-      const res = await fetch('http://localhost:3000/restart', { method: 'POST' });
+      const res = await fetch('http://localhost:3000/disconnect_all', { method: 'POST' });
       if (res.ok) {
-        alert('Serwer został zrestartowany.');
+        alert('Rozłączono graczy.');
       } else {
-        alert('Nie udało się zrestartować serwera.');
+        alert('Nie udało się rozłączyć graczy.');
       }
     } catch (err) {
-      console.error('Błąd podczas restartu serwera:', err);
-      alert('Błąd podczas restartu serwera.');
+      console.error('Błąd podczas rozłączania graczy:', err);
+      alert('Błąd podczas rozłączania graczy.');
     }
   };
 

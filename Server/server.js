@@ -384,6 +384,30 @@ app.get('/users', (req, res) => {
     res.json(usersArray);
 });
 
+app.post('/disconnect_all', (req, res) => {
+    const now = Date.now();
+    const disconnectedPlayers = [];
+
+    for (const username in users) {
+        const player = users[username];
+        player.playerData.status = "Disconnected";
+        player.playerData.lastSeen = now;
+        disconnectedPlayers.push({
+            player_id: player.playerId,
+            username,
+            status: "Disconnected"
+        });
+    }
+
+    // Wyczyszczenie listy aktywnych graczy
+    Object.keys(users).forEach(username => {
+        delete users[username];
+    });
+
+    console.log(`Disconnected all players at ${new Date().toISOString()}`);
+    res.json({ message: "All players have been disconnected", players: disconnectedPlayers });
+});
+
 // Cleanup inactive players
 setInterval(() => {
     const now = Date.now();
