@@ -7,6 +7,7 @@ public class DialogUI : MonoBehaviour
 {
     public TMP_Text nameText;
     public TMP_Text dialogText;
+    public TMP_InputField answerField;
     //public EntityPreview _npcPreview;
     public Transform parent;
     public Button optionBTN;
