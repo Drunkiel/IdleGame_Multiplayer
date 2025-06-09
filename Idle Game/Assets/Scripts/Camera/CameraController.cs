@@ -49,10 +49,11 @@ public class CameraController : MonoBehaviour
         cameraTransform.position = targetPos;
     }
 
-    public void Config(bool followX, bool followY)
+    public void Config(bool followX, bool followY, Vector2 startPosition)
     {
         followHorizontal = followX;
         followVertical = followY;
+        cameraTransform.position = new(startPosition.x, startPosition.y + 3, -10);
     }
 
     public void ResetZoom()

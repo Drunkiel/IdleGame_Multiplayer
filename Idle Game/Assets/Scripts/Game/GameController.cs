@@ -57,7 +57,7 @@ public class GameController : MonoBehaviour
         {
             StartCoroutine(UpdateScene(currentScene.name));
             PlayerController.instance.transform.position = _sceneConfigs[currentScene.buildIndex].spawnPosition;
-            CameraController.instance.Config(_sceneConfigs[currentScene.buildIndex].cameraFollowX, _sceneConfigs[currentScene.buildIndex].cameraFollowY);
+            CameraController.instance.Config(_sceneConfigs[currentScene.buildIndex].cameraFollowX, _sceneConfigs[currentScene.buildIndex].cameraFollowY, _sceneConfigs[currentScene.buildIndex].spawnPosition);
             yield break;
         }
 
@@ -75,7 +75,7 @@ public class GameController : MonoBehaviour
             SceneManager.MoveGameObjectToScene(objectsToTeleportMust[i], nextScene);
 
         PlayerController.instance.transform.position = _sceneConfigs[nextScene.buildIndex].spawnPosition;
-        CameraController.instance.Config(_sceneConfigs[nextScene.buildIndex].cameraFollowX, _sceneConfigs[nextScene.buildIndex].cameraFollowY);
+        CameraController.instance.Config(_sceneConfigs[nextScene.buildIndex].cameraFollowX, _sceneConfigs[nextScene.buildIndex].cameraFollowY, _sceneConfigs[nextScene.buildIndex].spawnPosition);
 
         SceneManager.UnloadSceneAsync(currentScene);
     }
