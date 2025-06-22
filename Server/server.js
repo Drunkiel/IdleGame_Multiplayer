@@ -103,7 +103,7 @@ app.post('/register', (req, res) => {
     //     return res.status(400).json({ error: 'Invalid password. Must be at least 8 characters, include one uppercase letter and one number.' });
     // }
 
-    // Czy użytkownik już istnieje
+    //Check if user exist
     if (testDB[trimmedUsername]) {
         return res.status(400).json({ error: 'Username already exists' });
     }
@@ -117,7 +117,7 @@ app.post('/register', (req, res) => {
             status: "Disconnected",
             position: { x: 0, y: 0, z: 0 },
             lastSeen: Date.now(),
-            scene: "SampleScene",
+            scene: "Nothingness",
             heroClass: heroClass,
             currentLevel: 1,
             expPoints: 0,

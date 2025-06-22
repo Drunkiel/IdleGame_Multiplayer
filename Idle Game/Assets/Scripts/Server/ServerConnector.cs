@@ -114,7 +114,7 @@ public class ServerConnector : MonoBehaviour
         {
             username = _loginUI.registerUsernameInput.text,
             password = _loginUI.registerPasswordInput.text,
-            heroClass = _loginUI.dropdownHeroClass.value.ToString(),
+            heroClass = _loginUI.selectedClass.ToString(),
         };
 
         string jsonData = JsonUtility.ToJson(registerData);

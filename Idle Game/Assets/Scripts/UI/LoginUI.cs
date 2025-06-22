@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System;
 
 public class LoginUI : MonoBehaviour
 {
@@ -12,8 +13,11 @@ public class LoginUI : MonoBehaviour
     [Header("Register")]
     public GameObject registrationPage;
     public TMP_InputField registerUsernameInput;
+    public TMP_InputField registerEmailInput;
     public TMP_InputField registerPasswordInput;
-    public TMP_Dropdown dropdownHeroClass;
+    public TMP_InputField registerRepeatPasswordInput;
+    public TMP_Text selectedClassText;
+    public int selectedClass = -1;
 
     // REGEX
     private readonly Regex usernameRegex = new(@"^[a-zA-Z0-9_]{5,20}$"); // bez spacji, bez znaków specjalnych
@@ -51,9 +55,17 @@ public class LoginUI : MonoBehaviour
     public bool CanReg()
     {
         string username = registerUsernameInput.text.Trim();
+        string email = registerEmailInput.text.Trim();
         string password = registerPasswordInput.text;
+        string repeatPassword = registerRepeatPasswordInput.text;
 
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        if (string.IsNullOrEmpty(username) ||
+            string.IsNullOrEmpty(email) || 
+            !email.Contains("@") ||
+            string.IsNullOrEmpty(password) ||
+            string.IsNullOrEmpty(repeatPassword) ||
+            !password.Equals(repeatPassword) ||
+            selectedClass != -1)
             return false;
 
         //if (!usernameRegex.IsMatch(username))
@@ -69,6 +81,12 @@ public class LoginUI : MonoBehaviour
         //}
 
         return true;
+    }
+
+    public void SelectClass(int index)
+    {
+        selectedClass = index;
+        selectedClassText.text = Enum.Parse(typeof(HeroClass), index.ToString()).ToString();
     }
 
     public void OpenRegPage()

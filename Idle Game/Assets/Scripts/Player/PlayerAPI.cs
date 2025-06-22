@@ -64,7 +64,7 @@ public class PlayerAPI : MonoBehaviour
             if (string.IsNullOrEmpty(ServerConnector.instance.playerId))
                 continue;
 
-            Vector3 pos = transform.position;
+            Vector3 pos = new(transform.position.x, transform.position.y, 0);
             string jsonData = JsonUtility.ToJson(new PositionData(pos));
 
             UnityWebRequest request = UnityWebRequest.Put(
@@ -90,7 +90,7 @@ public class PlayerAPI : MonoBehaviour
 
     public IEnumerator UpdatePositionOnce()
     {
-        Vector3 pos = transform.position;
+        Vector3 pos = new(transform.position.x, transform.position.y, 0);
         PositionData data = new(pos);
 
         string json = JsonUtility.ToJson(data);

@@ -655,9 +655,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorLevels:
   - floor: 0
-    position: {x: 4.625, y: -4.5}
+    position: {x: 4.5, y: -4.5}
   - floor: 1
-    position: {x: 4.625, y: -1.125}
+    position: {x: 4.5, y: -1.125}
   currentFloorIndex: 0
   moveSpeed: 2
   threshold: 0.05
@@ -1728,9 +1728,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorLevels:
   - floor: 0
-    position: {x: -4.625, y: -4.5}
+    position: {x: -4.5, y: -4.5}
   - floor: 1
-    position: {x: -4.625, y: 1.1}
+    position: {x: -4.5, y: 1.1}
   currentFloorIndex: 0
   moveSpeed: 2
   threshold: 0.05
