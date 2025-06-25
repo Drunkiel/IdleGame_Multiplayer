@@ -191,7 +191,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &35493301
 RectTransform:
   m_ObjectHideFlags: 0
@@ -255,19 +255,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1683761662}
-        m_TargetAssemblyTypeName: LoginUI, Assembly-CSharp
-        m_MethodName: OpenLogPage
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!222 &35493303
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3007,7 +2995,7 @@ GameObject:
   - component: {fileID: 306827866}
   - component: {fileID: 306827865}
   m_Layer: 5
-  m_Name: MissionButton
+  m_Name: QuestProfileButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3084,7 +3072,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -5201,6 +5189,7 @@ Transform:
   - {fileID: 1157172992}
   - {fileID: 21006709}
   - {fileID: 2060129368}
+  - {fileID: 690227014}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &487973863
@@ -6306,6 +6295,117 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 112.5}
   m_SizeDelta: {x: 225, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &690227013
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 690227014}
+  - component: {fileID: 690227015}
+  - component: {fileID: 690227016}
+  m_Layer: 0
+  m_Name: Quest_Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &690227014
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690227013}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 487973862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &690227015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690227013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff64f53c37c1c0e47a8097c7d7f2bf03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _questUI: {fileID: 815432688}
+  _allQuests:
+  - id: 0
+    title: Introduction
+    description: 
+    durationTime: {x: 2, y: 5, z: 0}
+    expReward: 20
+    goldReward: 45
+    _requirement:
+      type: 2
+      description: Talk to Josh
+      targetID: 0
+      progressCurrent: 0
+      progressNeeded: 1
+    onFinishEvent:
+      m_PersistentCalls:
+        m_Calls: []
+  - id: 1
+    title: Introduction
+    description: 
+    durationTime: {x: 2, y: 5, z: 0}
+    expReward: 20
+    goldReward: 45
+    _requirement:
+      type: 2
+      description: Talk to Josh
+      targetID: 0
+      progressCurrent: 0
+      progressNeeded: 1
+    onFinishEvent:
+      m_PersistentCalls:
+        m_Calls: []
+  - id: 2
+    title: Introduction
+    description: 
+    durationTime: {x: 2, y: 5, z: 0}
+    expReward: 20
+    goldReward: 45
+    _requirement:
+      type: 2
+      description: Talk to Josh
+      targetID: 0
+      progressCurrent: 0
+      progressNeeded: 1
+    onFinishEvent:
+      m_PersistentCalls:
+        m_Calls: []
+  _currentQuestsIndex: 
+  completedQuests: 
+  idToCheck: 0
+  killQuestIndexes: 
+  collectQuestIndexes: 
+  talkQuestIndexes: 
+  _questAPI: {fileID: 690227016}
+--- !u!114 &690227016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690227013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7329f96ad537634bb4e3386dfefa329, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &708129180
 GameObject:
   m_ObjectHideFlags: 0
@@ -7153,12 +7253,12 @@ GameObject:
   - component: {fileID: 815432687}
   - component: {fileID: 815432688}
   m_Layer: 5
-  m_Name: MissionProfile
+  m_Name: QuestProfile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &815432687
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7190,21 +7290,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 815432686}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 087a538047c8e0849b17170ef8212682, type: 3}
+  m_Script: {fileID: 11500000, guid: d6780b1a306f80a4eab62e1641c36f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitPointsText: {fileID: 0}
-  protectionText: {fileID: 0}
-  damageText: {fileID: 0}
-  criticalChanceText: {fileID: 0}
-  dodgeText: {fileID: 0}
-  damageReductionText: {fileID: 0}
-  strengthPointsText: {fileID: 0}
-  dexterityPointsText: {fileID: 0}
-  intelligencePointsText: {fileID: 0}
-  durabilityPointsText: {fileID: 0}
-  luckPointsText: {fileID: 0}
-  armorPointsText: {fileID: 0}
+  _questCards:
+  - {fileID: 0}
+  questCardPrefab: {fileID: 7748773550600581916}
+  parent: {fileID: 1066921278}
 --- !u!1 &815810534
 GameObject:
   m_ObjectHideFlags: 0
@@ -7347,7 +7439,7 @@ GameObject:
   - component: {fileID: 829953976}
   - component: {fileID: 829953975}
   m_Layer: 5
-  m_Name: DescriptionText
+  m_Name: RequirementText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11057,6 +11149,60 @@ MonoBehaviour:
               m_StringArgument: 
               m_BoolArgument: 0
             m_CallState: 2
+  - text: Hello mission there
+    endOptions:
+    - displayText: Thank ju
+      actionToDo:
+        m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 690227015}
+            m_TargetAssemblyTypeName: QuestController, Assembly-CSharp
+            m_MethodName: GiveQuest
+            m_Mode: 3
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+          - m_Target: {fileID: 690227015}
+            m_TargetAssemblyTypeName: QuestController, Assembly-CSharp
+            m_MethodName: GiveQuest
+            m_Mode: 3
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 1
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+          - m_Target: {fileID: 690227015}
+            m_TargetAssemblyTypeName: QuestController, Assembly-CSharp
+            m_MethodName: GiveQuest
+            m_Mode: 3
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 2
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+          - m_Target: {fileID: 1157172993}
+            m_TargetAssemblyTypeName: DialogController, Assembly-CSharp
+            m_MethodName: EndDialog
+            m_Mode: 1
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 7
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
   isTalking: 0
   _dialogUI: {fileID: 815810536}
   _openCloseUI: {fileID: 1157172994}
@@ -11312,6 +11458,8 @@ MonoBehaviour:
   panelObjects:
   - panelObject: {fileID: 430821104}
     isOn: 0
+  - panelObject: {fileID: 815432686}
+    isOn: 0
 --- !u!1 &1269916630
 GameObject:
   m_ObjectHideFlags: 0
@@ -11325,7 +11473,7 @@ GameObject:
   - component: {fileID: 1269916633}
   - component: {fileID: 1269916632}
   m_Layer: 5
-  m_Name: ProfileButton
+  m_Name: PlayerProfileButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18954,19 +19102,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1683761662}
-        m_TargetAssemblyTypeName: LoginUI, Assembly-CSharp
-        m_MethodName: OpenLogPage
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!222 &1967837588
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21470,10 +21606,10 @@ RectTransform:
   - {fileID: 35493301}
   m_Father: {fileID: 1066921278}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 230, y: -50}
+  m_SizeDelta: {x: 460, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6320593531741056449
 MonoBehaviour:
@@ -21524,6 +21660,7 @@ GameObject:
   - component: {fileID: 4950218973762402114}
   - component: {fileID: 6330521160939770502}
   - component: {fileID: 6320593531741056449}
+  - component: {fileID: 7748773550600581917}
   m_Layer: 5
   m_Name: QuestCard
   m_TagString: Untagged
@@ -21531,6 +21668,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &7748773550600581917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7748773550600581916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da7c25897db862a4797070990654154e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  titleText: {fileID: 2728134627447672747}
+  requirementText: {fileID: 829953975}
+  durationTimeText: {fileID: 303929920}
+  expText: {fileID: 1579732177}
+  goldText: {fileID: 1795018430}
+  completeButton: {fileID: 35493302}
 --- !u!224 &8220566204772198921
 RectTransform:
   m_ObjectHideFlags: 0

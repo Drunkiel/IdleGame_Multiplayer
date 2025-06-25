@@ -1,32 +1,35 @@
-using TMPro;
-using UnityEditor.Rendering;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class QuestUI : MonoBehaviour
 {
-    public GameObject questPrefab;
-    public GameObject requirementPrefab;
+    public List<QuestCard> _questCards;
+    public GameObject questCardPrefab;
     public Transform parent;
 
     public void AddQuestToUI(Quest _quest)
     {
-        GameObject newQuest = Instantiate(questPrefab, parent);
+        //Set name for object
+        GameObject newQuest = Instantiate(questCardPrefab, parent);
         newQuest.transform.name = _quest.id.ToString();
-        for (int i = 0; i < _quest._requirements.Count; i++)
+
+        //Assign quest card data
+        QuestCard _questCard = newQuest.GetComponent<QuestCard>();
+        _questCard.titleText.text = _quest.title;
+        TimeSpan timeLeft = (_quest.startDate + new TimeSpan(_quest.durationTime.x * 24 + _quest.durationTime.y, _quest.durationTime.z, 0)) - DateTime.Now;
+        _questCard.durationTimeText.text = $"{timeLeft.Days}d:{timeLeft.Hours}h:{timeLeft.Minutes}m";
+        _questCard.expText.text = $"{_quest.expReward} EXP";
+        _questCard.goldText.text = $"{_quest.goldReward} Gold";
+        _questCard.completeButton.onClick.AddListener(() =>
         {
-            GameObject newRequirement = Instantiate(requirementPrefab, newQuest.transform.GetChild(1));
-            TMP_Text descriptionText = newRequirement.transform.GetChild(1).GetComponent<TMP_Text>();
-            TMP_Text progressText = newRequirement.transform.GetChild(2).GetComponent<TMP_Text>();
+            QuestController.instance.FinishQuest(_quest.id);
+        });
+        _questCards.Add(_questCard);
+        UpdateQuestUI(_quest.id, _quest);
 
-            descriptionText.text = _quest._requirements[i].description;
-            progressText.text = $"{_quest._requirements[i].progressCurrent} / {_quest._requirements[i].progressNeeded}";
-        }
-
-        //Set title
-        TMP_Text titleText = newQuest.transform.GetChild(0).GetChild(1).GetComponent<TMP_Text>();
-        titleText.text = _quest.title;
-
+        //Reset UI to load changes
         LayoutRebuilder.ForceRebuildLayoutImmediate(parent.GetComponent<RectTransform>());
     }
 
@@ -39,10 +42,10 @@ public class QuestUI : MonoBehaviour
             return;
         }
 
-        Destroy(parent.GetChild(index).gameObject);
+        Destroy(_questCards[index].gameObject);
     }
 
-    public void UpdateQuestUI(int questIndex, int requirementIndex, Quest _quest)
+    public void UpdateQuestUI(int questIndex, Quest _quest)
     {
         int index = GetQuestIndex(questIndex);
         if (index == -1)
@@ -51,7 +54,7 @@ public class QuestUI : MonoBehaviour
             return;
         }
 
-        parent.GetChild(index).GetChild(1).GetChild(requirementIndex).GetChild(2).GetComponent<TMP_Text>().text = $"{_quest._requirements[requirementIndex].progressCurrent} / {_quest._requirements[requirementIndex].progressNeeded}";
+        _questCards[index].requirementText.text = $"{_quest._requirement.description} | {_quest._requirement.progressCurrent}/{_quest._requirement.progressNeeded}";
     }
 
     public int GetQuestIndex(int questIndex)

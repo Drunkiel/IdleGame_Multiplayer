@@ -1,23 +1,24 @@
 using System;
-using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
 
 [Serializable]
 public class Quest
 {
-    public float id;
+    public int id;
     public string title;
     public string description;
-    public List<Requirement> _requirements;
+    public DateTime startDate;
+    public Vector3Int durationTime;
+    public int expReward;
+    public int goldReward;
+    public Requirement _requirement;
     public UnityEvent onFinishEvent;
 
     public bool CheckIfFinished()
     {
-        for (int i = 0; i < _requirements.Count; i++)
-        {
-            if (_requirements[i].progressCurrent < _requirements[i].progressNeeded)
-                return false;
-        }
+        if (_requirement.progressCurrent < _requirement.progressNeeded)
+            return false;
 
         return true;
     }

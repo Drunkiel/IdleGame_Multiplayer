@@ -80,6 +80,7 @@ public class PlayerController : MonoBehaviour
             UIController.instance.panelObjects[0].panelObject.GetComponent<StatisticsUI>()
         );
         InventoryController.instance.LoadInventory();
+        QuestController.instance.LoadQuests();
 
         nameText.text = _entityInfo.username;
         StartCoroutine(_playerAPI.UpdateStatus(PlayerStatus.Connected));

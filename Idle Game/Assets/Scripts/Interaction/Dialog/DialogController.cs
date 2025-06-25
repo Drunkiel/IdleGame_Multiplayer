@@ -10,7 +10,6 @@ public class DialogController : MonoBehaviour
     public bool isTalking;
 
     public DialogUI _dialogUI;
-    //private EntityController _entityController;
     [SerializeField] private OpenCloseUI _openCloseUI;
 
     private void Awake()
@@ -18,7 +17,7 @@ public class DialogController : MonoBehaviour
         instance = this;
     }
 
-    public void StartDialog(int index)
+    public void StartDialog(int index, EntityController _entityController = null)
     {
         PlayerController _playerController = PlayerController.instance;
 
@@ -29,20 +28,19 @@ public class DialogController : MonoBehaviour
         }
 
         //Assigning values
-        //this._entityController = _entityController;
         dialogIndex = index;
         _playerController.isStopped = true;
 
-        //if (_entityController != null)
-        //{
-        //    _entityController._entityWalk.isStopped = true;
-        //    _entityController._entityWalk.GoTo(_playerController.transform.position, _playerController.transform.position);
-        //    //_dialogUI._npcPreview.UpdateAllByEntity(_entityController.GetComponent<EntityLookController>()._entityLook, _entityController._holdingController._itemController._gearHolder);
-        //    _dialogUI.nameText.text = _entityController._entityInfo.name;
+        if (_entityController != null)
+        {
+            //_entityController._entityWalk.isStopped = true;
+            //_entityController._entityWalk.GoTo(_playerController.transform.position, _playerController.transform.position);
+            //_dialogUI._npcPreview.UpdateAllByEntity(_entityController.GetComponent<EntityLookController>()._entityLook, _entityController._holdingController._itemController._gearHolder);
+            _dialogUI.nameText.text = _entityController._entityInfo.username;
 
-        //    //Checking if player is talking to right npc
-        //    //QuestController.instance.InvokeTalkEvent(_entityController._entityInfo.ID);
-        //}
+            //Checking if player is talking to right npc
+            QuestController.instance.InvokeTalkEvent(_entityController.entityID);
+        }
 
         _openCloseUI.Open();
         _dialogUI.UpdateDialog(_dialogs[dialogIndex]);

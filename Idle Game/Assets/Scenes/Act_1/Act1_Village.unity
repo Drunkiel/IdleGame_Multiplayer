@@ -434,6 +434,7 @@ GameObject:
   m_Component:
   - component: {fileID: 366167570}
   - component: {fileID: 366167569}
+  - component: {fileID: 366167571}
   - component: {fileID: 366167568}
   - component: {fileID: 366167567}
   - component: {fileID: 366167566}
@@ -619,6 +620,36 @@ Transform:
   - {fileID: 1281909159}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &366167571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 366167564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fed4085e5fbde542938f62a54bbf453, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _entityInfo:
+    heroClass: 0
+    username: Not NPC
+    expToNextLvl: 0
+    hitPoints: 0
+    protection: 0
+    damage: 0
+    criticalChancePercentage: 0
+    dodgePercentage: 0
+    damageReductionPercentage: 0
+    _attributes:
+      strengthPoints: 0
+      dexterityPoints: 0
+      intelligencePoints: 0
+      durablityPoints: 0
+      luckPoints: 0
+      armorPoints: 0
+    _statisticsUI: {fileID: 0}
 --- !u!1 &418050578
 GameObject:
   m_ObjectHideFlags: 0
@@ -1522,7 +1553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 820b0dc7fc3e5f3128903771bf09bdaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogIndex: 0
+  dialogIndex: 9
 --- !u!114 &1205860129
 MonoBehaviour:
   m_ObjectHideFlags: 0
