@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using Newtonsoft.Json;
 
 [Serializable]
 public class AdditionalAttributeStatsDTO
@@ -50,10 +51,17 @@ public class InventoryAPI : MonoBehaviour
         if (www.result == UnityWebRequest.Result.Success)
         {
             string json = www.downloadHandler.text;
-            inventory = JsonHelper.FromJson<InventorySlotData>(JsonHelper.FixJsonArray(json));
 
-            for (int i = 0; i < inventory.Length; i++)
-                inventory[i].slotID = i;
+            try
+            {
+                inventory = JsonConvert.DeserializeObject<InventorySlotData[]>(json);
+                for (int i = 0; i < inventory.Length; i++)
+                    inventory[i].slotID = i;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Deserialization error: {ex.Message}");
+            }
         }
         else
             Debug.LogError($"Error fetching inventory: {www.error}");
@@ -61,7 +69,7 @@ public class InventoryAPI : MonoBehaviour
 
     private void InitializeInventory(ItemController _itemController)
     {
-        if (inventory == null)
+        if (inventory == null) 
             return;
 
         foreach (var slot in inventory)
@@ -79,10 +87,12 @@ public class InventoryAPI : MonoBehaviour
             }
 
             ItemID item = ItemContainer.instance.GetItemByID(data.ID);
-            if (item == null)
+
+            if (item == null) 
                 continue;
 
             ItemID _itemID = null;
+
             if (_itemController == null)
             {
                 _itemID = Instantiate(item);
@@ -125,7 +135,6 @@ public class InventoryAPI : MonoBehaviour
                 continue;
             }
 
-            //If item is moved or removed then write it to default values
             if (slot._itemID == null)
             {
                 inventory[slot.slotID].itemID._itemData.ID = -1;
@@ -135,13 +144,14 @@ public class InventoryAPI : MonoBehaviour
                 continue;
             }
 
-            //Update current slot item
-            inventory[slot.slotID].itemID._itemData.ID = slot._itemID._itemData.ID;
-            inventory[slot.slotID].itemID._itemData.baseStat = slot._itemID._itemData.baseStat;
-            inventory[slot.slotID].itemID._itemData.additionalAttributeStats = new();
+            var dto = inventory[slot.slotID].itemID._itemData;
+            dto.ID = slot._itemID._itemData.ID;
+            dto.baseStat = slot._itemID._itemData.baseStat;
+            dto.additionalAttributeStats = new();
+
             foreach (var attr in slot._itemID._itemData.additionalAttributeStats)
             {
-                inventory[slot.slotID].itemID._itemData.additionalAttributeStats.Add(new()
+                dto.additionalAttributeStats.Add(new()
                 {
                     attribute = (int)attr.attribute,
                     value = attr.value
@@ -154,7 +164,7 @@ public class InventoryAPI : MonoBehaviour
 
     private IEnumerator UpdateInventoryCoroutine(InventorySlotData[] inventorySlotDataList)
     {
-        string json = JsonHelper.ToJson(inventorySlotDataList, true);
+        string json = JsonConvert.SerializeObject(inventorySlotDataList);
         UnityWebRequest www = UnityWebRequest.Put($"{ServerConnector.instance.GetServerUrl()}/inventory/{ServerConnector.instance.playerId}", json);
         www.method = "POST";
         www.SetRequestHeader("Content-Type", "application/json");

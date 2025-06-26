@@ -2,11 +2,49 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using Newtonsoft.Json;
 
 public class QuestAPI : MonoBehaviour
 {
-    // Pobieranie listy questów gracza z endpointu /quests/:player_id
-    public IEnumerator GetQuests(System.Action<List<QuestPayLoad>> onComplete, System.Action<string> onError = null)
+    public QuestPayLoad[] quests;
+    public QuestPayLoad[] completedQuests;
+
+    // Wrapper na dane z API
+    [System.Serializable]
+    public class QuestListResponse
+    {
+        [JsonProperty("activeQuests")]
+        public QuestPayLoad[] activeQuests;
+
+        [JsonProperty("completedQuests")]
+        public QuestPayLoad[] completedQuests;
+    }
+
+    public IEnumerator GetQuestCoroutine()
+    {
+        yield return FetchQuestsData(
+            (active, completed) => 
+            {
+                InitializeQuests();
+            },
+            err => Debug.LogError("ERROR: " + err)
+        );
+    }
+
+    public void InitializeQuests()
+    {
+        if (quests == null) 
+            return;
+
+        for (int i = 0; i < quests.Length; i++)
+        {
+            QuestController.instance._allQuests[quests[i].id].startDate = quests[i].startDate;
+            QuestController.instance._allQuests[quests[i].id]._requirement.progressCurrent = quests[i].requirementProgressCurrent;
+            QuestController.instance.GiveQuest(quests[i].id, false);
+        }
+    }
+
+    private IEnumerator FetchQuestsData(System.Action<List<QuestPayLoad>, List<QuestPayLoad>> onComplete, System.Action<string> onError = null)
     {
         string url = ServerConnector.instance.GetServerUrl() + "/quests/" + ServerConnector.instance.playerId;
 
@@ -22,27 +60,27 @@ public class QuestAPI : MonoBehaviour
         {
             string json = request.downloadHandler.text;
 
-            // Za³ó¿my, ¿e backend zwraca tablicê questów, wiêc potrzebujemy opakowaæ j¹ w coœ co JsonUtility potrafi zdeserializowaæ.
-            // Unity JsonUtility nie deserializuje tablicy jako root, wiêc zróbmy wrapper:
-            QuestsWrapper wrapper = JsonUtility.FromJson<QuestsWrapper>("{\"quests\":" + json + "}");
+            try
+            {
+                QuestListResponse wrapper = JsonConvert.DeserializeObject<QuestListResponse>(json);
+                quests = wrapper.activeQuests;
+                completedQuests = wrapper.completedQuests;
 
-            onComplete?.Invoke(wrapper.quests);
+                onComplete?.Invoke(new List<QuestPayLoad>(quests), new List<QuestPayLoad>(completedQuests));
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError("Deserialization failed: " + ex.Message);
+                onError?.Invoke("Failed to parse quests.");
+            }
         }
     }
 
-    // Wrapper do poprawnej deserializacji tablicy
-    [System.Serializable]
-    private class QuestsWrapper
-    {
-        public List<QuestPayLoad> quests;
-    }
-
-    // Aktualizacja jednego questa na endpoint /update_quest/:player_id/:quest_id
     public IEnumerator UpdateSingleQuest(QuestPayLoad quest, System.Action onComplete = null, System.Action<string> onError = null)
     {
         string url = ServerConnector.instance.GetServerUrl() + "/update_quest/" + ServerConnector.instance.playerId + "/" + quest.id;
 
-        string json = JsonUtility.ToJson(quest);
+        string json = JsonConvert.SerializeObject(quest);
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
 
         UnityWebRequest request = new(url, "POST")
@@ -66,12 +104,12 @@ public class QuestAPI : MonoBehaviour
         }
     }
 
-    // Twoja ju¿ istniej¹ca funkcja aktualizacji wielu questów (bez zmian, ale tutaj dla kompletnoœci)
     public IEnumerator UpdateActiveQuests()
     {
         string url = ServerConnector.instance.GetServerUrl() + "/update_quests/" + ServerConnector.instance.playerId;
 
-        List<QuestPayLoad> payloadList = new();
+        List<QuestPayLoad> activePayload = new();
+        List<string> completed = new(); // Dodaj jeœli chcesz wysy³aæ completedQuests
 
         foreach (int questIndex in QuestController.instance._currentQuestsIndex)
         {
@@ -82,17 +120,16 @@ public class QuestAPI : MonoBehaviour
                 startDate = quest.startDate,
                 requirementProgressCurrent = quest._requirement.progressCurrent
             };
-            payloadList.Add(payload);
+            activePayload.Add(payload);
         }
 
-        UpdateQuestsRequest requestData = new()
+        var requestData = new
         {
-            activeQuests = payloadList,
-            completedQuests = new List<string>()
+            activeQuests = activePayload,
+            completedQuests = completed
         };
 
-        string json = JsonUtility.ToJson(requestData);
-
+        string json = JsonConvert.SerializeObject(requestData);
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
 
         UnityWebRequest request = new(url, "POST")

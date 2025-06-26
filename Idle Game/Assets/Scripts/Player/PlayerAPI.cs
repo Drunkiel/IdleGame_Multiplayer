@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using Newtonsoft.Json;
+using System.Text;
 
 public class PlayerAPI : MonoBehaviour
 {
@@ -9,7 +11,9 @@ public class PlayerAPI : MonoBehaviour
     public IEnumerator UpdateStatus(PlayerStatus newStatus)
     {
         string url = ServerConnector.instance.GetServerUrl() + "/update_status/" + ServerConnector.instance.playerId;
-        string jsonData = "{\"status\":\"" + newStatus.ToString() + "\"}";
+
+        var payload = new { status = newStatus.ToString() };
+        string jsonData = JsonConvert.SerializeObject(payload);
 
         UnityWebRequest request = UnityWebRequest.Put(url, jsonData);
         request.method = UnityWebRequest.kHttpVerbPOST;
@@ -39,8 +43,8 @@ public class PlayerAPI : MonoBehaviour
             luckPoints = _entityInfo._baseAttributes.luckPoints
         };
 
-        string jsonData = JsonUtility.ToJson(payload);
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+        string jsonData = JsonConvert.SerializeObject(payload);
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
         UnityWebRequest request = new(url, "POST")
         {
@@ -65,7 +69,7 @@ public class PlayerAPI : MonoBehaviour
                 continue;
 
             Vector3 pos = new(transform.position.x, transform.position.y, 0);
-            string jsonData = JsonUtility.ToJson(new PositionData(pos));
+            string jsonData = JsonConvert.SerializeObject(new PositionData(pos));
 
             UnityWebRequest request = UnityWebRequest.Put(
                 ServerConnector.instance.GetServerUrl() + "/update_position/" + ServerConnector.instance.playerId,
@@ -73,6 +77,7 @@ public class PlayerAPI : MonoBehaviour
             );
             request.method = UnityWebRequest.kHttpVerbPOST;
             request.SetRequestHeader("Content-Type", "application/json");
+
             yield return request.SendWebRequest();
         }
     }
@@ -93,11 +98,15 @@ public class PlayerAPI : MonoBehaviour
         Vector3 pos = new(transform.position.x, transform.position.y, 0);
         PositionData data = new(pos);
 
-        string json = JsonUtility.ToJson(data);
+        string json = JsonConvert.SerializeObject(data);
 
-        UnityWebRequest request = UnityWebRequest.Put(ServerConnector.instance.GetServerUrl() + "/update_position/" + ServerConnector.instance.playerId, json);
+        UnityWebRequest request = UnityWebRequest.Put(
+            ServerConnector.instance.GetServerUrl() + "/update_position/" + ServerConnector.instance.playerId,
+            json
+        );
         request.method = "POST";
         request.SetRequestHeader("Content-Type", "application/json");
+
         yield return request.SendWebRequest();
     }
 }

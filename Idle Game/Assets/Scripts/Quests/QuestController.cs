@@ -40,26 +40,17 @@ public class QuestController : MonoBehaviour
 
     public void LoadQuests()
     {
-        StartCoroutine(_questAPI.GetQuests(
-            (quests) => {
-                Debug.Log("Received quests: " + quests.Count);
-                print(quests[0].id);
-                // Tutaj mo¿esz zapisaæ lub zaktualizowaæ questy lokalnie
-            },
-            (error) => {
-                Debug.LogError("Error fetching quests: " + error);
-            }
-        ));
+        StartCoroutine(_questAPI.GetQuestCoroutine());
     }
 
-    public void GiveQuest(int questIndex)
+    public void GiveQuest(int questIndex, bool load = true)
     {
         //Check if index is bigger than are quests
         if (questIndex >= _allQuests.Count)
             return;
 
         //Check if quest is activated
-        if (_currentQuestsIndex.Contains(questIndex) || _allQuests[questIndex].CheckIfFinished())
+        if (_currentQuestsIndex.Contains(questIndex))
             return;
 
         //Add quest
@@ -86,7 +77,8 @@ public class QuestController : MonoBehaviour
                 break;
         }
 
-        StartCoroutine(_questAPI.UpdateActiveQuests());
+        if (load)
+            StartCoroutine(_questAPI.UpdateActiveQuests());
     }
 
     public void FinishQuest(int questIndex)
