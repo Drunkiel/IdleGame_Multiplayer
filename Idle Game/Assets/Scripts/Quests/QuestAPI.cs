@@ -6,41 +6,48 @@ using Newtonsoft.Json;
 
 public class QuestAPI : MonoBehaviour
 {
-    public QuestPayLoad[] quests;
-    public QuestPayLoad[] completedQuests;
+    public List<QuestPayLoad> quests = new();
+    public List<QuestPayLoad> finishedQuests = new();
 
     // Wrapper na dane z API
     [System.Serializable]
     public class QuestListResponse
     {
         [JsonProperty("activeQuests")]
-        public QuestPayLoad[] activeQuests;
+        public List<QuestPayLoad> activeQuests;
 
         [JsonProperty("completedQuests")]
-        public QuestPayLoad[] completedQuests;
+        public List<QuestPayLoad> completedQuests;
     }
 
     public IEnumerator GetQuestCoroutine()
     {
         yield return FetchQuestsData(
-            (active, completed) => 
-            {
-                InitializeQuests();
-            },
+            (active, completed) => InitializeQuests(),
             err => Debug.LogError("ERROR: " + err)
         );
     }
 
     public void InitializeQuests()
     {
-        if (quests == null) 
+        if (quests == null || quests.Count == 0)
             return;
 
-        for (int i = 0; i < quests.Length; i++)
+        QuestController _questController = QuestController.instance;
+
+        foreach (var quest in quests)
         {
-            QuestController.instance._allQuests[quests[i].id].startDate = quests[i].startDate;
-            QuestController.instance._allQuests[quests[i].id]._requirement.progressCurrent = quests[i].requirementProgressCurrent;
-            QuestController.instance.GiveQuest(quests[i].id, false);
+            _questController._allQuests[quest.id].startDate = quest.startDate;
+            _questController._allQuests[quest.id]._requirement.progressCurrent = quest.requirementProgressCurrent;
+            _questController.GiveQuest(quest.id, false);
+
+            // Check if quest is finished
+            if (_questController._allQuests[quest.id].CheckIfFinished())
+            {
+                int index = _questController._questUI.GetQuestIndex(quest.id);
+                if (index >= 0 && index < _questController._questUI._questCards.Count)
+                    _questController._questUI._questCards[index].completeButton.gameObject.SetActive(true);
+            }
         }
     }
 
@@ -63,10 +70,10 @@ public class QuestAPI : MonoBehaviour
             try
             {
                 QuestListResponse wrapper = JsonConvert.DeserializeObject<QuestListResponse>(json);
-                quests = wrapper.activeQuests;
-                completedQuests = wrapper.completedQuests;
+                quests = wrapper.activeQuests ?? new List<QuestPayLoad>();
+                finishedQuests = wrapper.completedQuests ?? new List<QuestPayLoad>();
 
-                onComplete?.Invoke(new List<QuestPayLoad>(quests), new List<QuestPayLoad>(completedQuests));
+                onComplete?.Invoke(quests, finishedQuests);
             }
             catch (System.Exception ex)
             {
@@ -76,57 +83,14 @@ public class QuestAPI : MonoBehaviour
         }
     }
 
-    public IEnumerator UpdateSingleQuest(QuestPayLoad quest, System.Action onComplete = null, System.Action<string> onError = null)
-    {
-        string url = ServerConnector.instance.GetServerUrl() + "/update_quest/" + ServerConnector.instance.playerId + "/" + quest.id;
-
-        string json = JsonConvert.SerializeObject(quest);
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-
-        UnityWebRequest request = new(url, "POST")
-        {
-            uploadHandler = new UploadHandlerRaw(bodyRaw),
-            downloadHandler = new DownloadHandlerBuffer()
-        };
-        request.SetRequestHeader("Content-Type", "application/json");
-
-        yield return request.SendWebRequest();
-
-        if (request.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError("Update single quest failed: " + request.error);
-            onError?.Invoke(request.error);
-        }
-        else
-        {
-            Debug.Log("Single quest successfully updated: " + quest.id);
-            onComplete?.Invoke();
-        }
-    }
-
-    public IEnumerator UpdateActiveQuests()
+    public IEnumerator UpdateAllQuests()
     {
         string url = ServerConnector.instance.GetServerUrl() + "/update_quests/" + ServerConnector.instance.playerId;
 
-        List<QuestPayLoad> activePayload = new();
-        List<string> completed = new(); // Dodaj jeœli chcesz wysy³aæ completedQuests
-
-        foreach (int questIndex in QuestController.instance._currentQuestsIndex)
-        {
-            Quest quest = QuestController.instance._allQuests[questIndex];
-            QuestPayLoad payload = new()
-            {
-                id = quest.id,
-                startDate = quest.startDate,
-                requirementProgressCurrent = quest._requirement.progressCurrent
-            };
-            activePayload.Add(payload);
-        }
-
         var requestData = new
         {
-            activeQuests = activePayload,
-            completedQuests = completed
+            activeQuests = quests,
+            completedQuests = finishedQuests
         };
 
         string json = JsonConvert.SerializeObject(requestData);

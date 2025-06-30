@@ -23,7 +23,7 @@ public class QuestController : MonoBehaviour
     public QuestUI _questUI;
 
     public List<Quest> _allQuests;
-    public List<int> _currentQuestsIndex;
+    public List<int> currentQuestsIndex;
     public List<int> completedQuests;
 
     public short idToCheck;
@@ -50,11 +50,11 @@ public class QuestController : MonoBehaviour
             return;
 
         //Check if quest is activated
-        if (_currentQuestsIndex.Contains(questIndex))
+        if (currentQuestsIndex.Contains(questIndex))
             return;
 
         //Add quest
-        _currentQuestsIndex.Add(questIndex);
+        currentQuestsIndex.Add(questIndex);
         _allQuests[questIndex].startDate = DateTime.Now;
         _questUI.AddQuestToUI(_allQuests[questIndex]);
 
@@ -78,14 +78,22 @@ public class QuestController : MonoBehaviour
         }
 
         if (load)
-            StartCoroutine(_questAPI.UpdateActiveQuests());
+            StartCoroutine(_questAPI.UpdateAllQuests());
     }
 
     public void FinishQuest(int questIndex)
     {
+        int correctIndex = _questUI.GetQuestIndex(questIndex);
+
+        //Remove quest from the API
+        _questAPI.finishedQuests.Add(_questAPI.quests[correctIndex]);
+        _questAPI.quests.RemoveAt(correctIndex);
+        StartCoroutine(_questAPI.UpdateAllQuests());
+
         //Removing quest
         _questUI.RemoveQuestUI(questIndex);
-        _currentQuestsIndex.Remove(questIndex);
+        currentQuestsIndex.Remove(questIndex);
+        completedQuests.Add(questIndex);
         _allQuests[questIndex].onFinishEvent.Invoke();
         //PopUpController.instance.CreatePopUp(PopUpInfo.QuestCompleted, _allQuests[questIndex].title);
 

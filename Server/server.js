@@ -393,7 +393,7 @@ app.post('/update_quests/:player_id', (req, res) => {
   }
 
   if (Array.isArray(completedQuests)) {
-    user.playerData.completedQuests = completedQuests.filter(q => typeof q === 'string');
+    user.playerData.completedQuests = completedQuests;
   }
 
   user.playerData.lastSeen = Date.now();
@@ -403,69 +403,6 @@ app.post('/update_quests/:player_id', (req, res) => {
     player_id: playerId,
     activeQuests: user.playerData.activeQuests,
     completedQuests: user.playerData.completedQuests
-  });
-});
-
-app.post('/update_quest/:player_id/:quest_id', (req, res) => {
-  const playerId = req.params.player_id;
-  const questId = req.params.quest_id;
-  const updatedQuest = req.body;
-
-  const user = Object.values(users).find(u => u.playerId === playerId);
-  if (!user) {
-    return res.status(404).json({ error: 'Player not found' });
-  }
-
-  if (!updatedQuest || typeof updatedQuest !== 'object' || !updatedQuest.id) {
-    return res.status(400).json({ error: 'Invalid quest data' });
-  }
-
-  // Szukamy questa do aktualizacji
-  const index = user.playerData.activeQuests.findIndex(q => q.id === questId);
-
-  if (index === -1) {
-    return res.status(404).json({ error: 'Quest not found in activeQuests' });
-  }
-
-  // Nadpisujemy istniejącego questa
-  user.playerData.activeQuests[index] = updatedQuest;
-  user.playerData.lastSeen = Date.now();
-
-  res.json({
-    message: 'Quest updated',
-    player_id: playerId,
-    quest: updatedQuest
-  });
-});
-
-app.post('/finish_quest/:player_id/:quest_id', (req, res) => {
-  const playerId = req.params.player_id;
-  const questId = req.params.quest_id;
-
-  const user = Object.values(users).find(u => u.playerId === playerId);
-  if (!user) {
-    return res.status(404).json({ error: 'Player not found' });
-  }
-
-  const activeIndex = user.playerData.activeQuests.findIndex(q => q.id === questId);
-  if (activeIndex === -1) {
-    return res.status(404).json({ error: 'Quest not found in activeQuests' });
-  }
-
-  // Usuń questa z aktywnych
-  user.playerData.activeQuests.splice(activeIndex, 1);
-
-  // Dodaj tylko ID do zakończonych (jeśli nie istnieje jeszcze)
-  if (!user.playerData.completedQuests.includes(questId)) {
-    user.playerData.completedQuests.push(questId);
-  }
-
-  user.playerData.lastSeen = Date.now();
-
-  res.json({
-    message: 'Quest marked as completed',
-    player_id: playerId,
-    quest_id: questId
   });
 });
 
