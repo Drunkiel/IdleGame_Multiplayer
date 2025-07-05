@@ -59,14 +59,14 @@ public class LoginUI : MonoBehaviour
         string password = registerPasswordInput.text;
         string repeatPassword = registerRepeatPasswordInput.text;
 
-        if (string.IsNullOrEmpty(username) ||
-            string.IsNullOrEmpty(email) || 
-            !email.Contains("@") ||
-            string.IsNullOrEmpty(password) ||
-            string.IsNullOrEmpty(repeatPassword) ||
-            !password.Equals(repeatPassword) ||
-            selectedClass != -1)
-            return false;
+        //if (string.IsNullOrEmpty(username) ||
+        //    string.IsNullOrEmpty(email) || 
+        //    !email.Contains("@") ||
+        //    string.IsNullOrEmpty(password) ||
+        //    string.IsNullOrEmpty(repeatPassword) ||
+        //    !password.Equals(repeatPassword) ||
+        //    selectedClass != -1)
+        //    return false;
 
         //if (!usernameRegex.IsMatch(username))
         //{

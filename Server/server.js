@@ -142,6 +142,9 @@ app.post('/register', (req, res) => {
     res.json({ message: 'Registered successfully', player_id: playerId });
 });
 
+// === MESSAGES ===
+const chatMessages = [];
+
 // === PLAYER DATA ===
 app.get('/player/:player_id', (req, res) => {
     const playerId = req.params.player_id;
@@ -418,6 +421,56 @@ app.get('/quests/:player_id', (req, res) => {
     activeQuests: user.playerData.activeQuests || [],
     completedQuests: user.playerData.completedQuests || []
   });
+});
+
+app.post('/chat/:player_id', (req, res) => {
+    const playerId = req.params.player_id;
+    const { message } = req.body;
+
+    if (!message || typeof message !== 'string') {
+        return res.status(400).json({ error: 'Invalid message' });
+    }
+
+    const user = Object.values(users).find(u => u.playerId === playerId);
+    if (!user) {
+        return res.status(404).json({ error: 'Sender not found' });
+    }
+
+    const chatEntry = {
+        senderId: playerId,
+        senderUsername: user.playerData.username,
+        scene: user.playerData.scene,
+        message: message.trim(),
+        timestamp: Date.now()
+    };
+
+    chatMessages.push(chatEntry);
+
+    //Save only 100 messages
+    if (chatMessages.length > 100) {
+        chatMessages.shift();
+    }
+
+    res.json({ success: true });
+});
+
+app.get('/chat', (req, res) => {
+    const since = req.query.since; // przykład: "2025-07-02T15:30:00.000Z"
+
+    if (since) {
+        const sinceDate = new Date(since);
+        if (!isNaN(sinceDate)) {
+            const filteredMessages = chatMessages.filter(msg => new Date(msg.timestamp) > sinceDate);
+            return res.json(filteredMessages);
+        } else {
+            return res.status(400).json({ error: 'Invalid since timestamp' });
+        }
+    }
+
+    // Najnowsze wiadomości (jeśli jest ich dużo)
+    //chatMessages = chatMessages.slice(-50);
+
+    res.json(chatMessages);
 });
 
 app.get('/users', (req, res) => {
