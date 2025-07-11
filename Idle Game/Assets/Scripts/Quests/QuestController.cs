@@ -8,6 +8,13 @@ public class QuestPayLoad
     public int id;
     public DateTime startDate;
     public int requirementProgressCurrent;
+
+    public QuestPayLoad(int id, DateTime startDate, int requirementProgressCurrent)
+    {
+        this.id = id;
+        this.startDate = startDate;
+        this.requirementProgressCurrent = requirementProgressCurrent;
+    }
 }
 
 [Serializable]
@@ -43,6 +50,11 @@ public class QuestController : MonoBehaviour
         StartCoroutine(_questAPI.GetQuestCoroutine());
     }
 
+    public void GiveQuest(int questIndex)
+    {
+        GiveQuest(questIndex, true);
+    }
+
     public void GiveQuest(int questIndex, bool load = true)
     {
         //Check if index is bigger than are quests
@@ -54,12 +66,14 @@ public class QuestController : MonoBehaviour
             return;
 
         //Add quest
+        if (load)
+            _questAPI.quests.Add(new(questIndex, DateTime.Now, _allQuests[questIndex]._requirement.progressCurrent));
         currentQuestsIndex.Add(questIndex);
         _allQuests[questIndex].startDate = DateTime.Now;
         _questUI.AddQuestToUI(_allQuests[questIndex]);
 
-        //if (PopUpController.instance != null)
-        //    PopUpController.instance.CreatePopUp(PopUpInfo.QuestAccepted, _allQuests[questIndex].title);
+        if (ConsoleController.instance != null)
+            ConsoleController.instance.ChatMessage(SenderType.System, $"Accepted quest: {_allQuests[questIndex].title}");
 
         //Set listeners
         switch (_allQuests[questIndex]._requirement.type)
@@ -179,6 +193,9 @@ public class QuestController : MonoBehaviour
 
         //Check if quest is finished
         if (_allQuests[questIndex].CheckIfFinished())
+        {
             _questUI._questCards[_questUI.GetQuestIndex(questIndex)].completeButton.gameObject.SetActive(true);
+            StartCoroutine(_questAPI.UpdateAllQuests());
+        }
     }
 }

@@ -7386,7 +7386,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -9627,7 +9627,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1069087494
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11073,30 +11073,6 @@ MonoBehaviour:
               m_StringArgument: 
               m_BoolArgument: 0
             m_CallState: 2
-          - m_Target: {fileID: 690227015}
-            m_TargetAssemblyTypeName: QuestController, Assembly-CSharp
-            m_MethodName: GiveQuest
-            m_Mode: 3
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 1
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-          - m_Target: {fileID: 690227015}
-            m_TargetAssemblyTypeName: QuestController, Assembly-CSharp
-            m_MethodName: GiveQuest
-            m_Mode: 3
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 2
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
           - m_Target: {fileID: 1157172993}
             m_TargetAssemblyTypeName: DialogController, Assembly-CSharp
             m_MethodName: EndDialog
@@ -11417,6 +11393,8 @@ MonoBehaviour:
   - panelObject: {fileID: 430821104}
     isOn: 0
   - panelObject: {fileID: 815432686}
+    isOn: 0
+  - panelObject: {fileID: 1069087493}
     isOn: 0
 --- !u!1 &1269916630
 GameObject:

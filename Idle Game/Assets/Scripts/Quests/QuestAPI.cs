@@ -1,8 +1,8 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using Newtonsoft.Json;
 
 public class QuestAPI : MonoBehaviour
 {
@@ -70,8 +70,8 @@ public class QuestAPI : MonoBehaviour
             try
             {
                 QuestListResponse wrapper = JsonConvert.DeserializeObject<QuestListResponse>(json);
-                quests = wrapper.activeQuests ?? new List<QuestPayLoad>();
-                finishedQuests = wrapper.completedQuests ?? new List<QuestPayLoad>();
+                quests = wrapper.activeQuests;
+                finishedQuests = wrapper.completedQuests;
 
                 onComplete?.Invoke(quests, finishedQuests);
             }
@@ -85,6 +85,11 @@ public class QuestAPI : MonoBehaviour
 
     public IEnumerator UpdateAllQuests()
     {
+        //Updating data
+        for (int i = 0; i < quests.Count; i++)
+            quests[i].requirementProgressCurrent = QuestController.instance._allQuests[quests[i].id]._requirement.progressCurrent;
+
+        //Sending api request
         string url = ServerConnector.instance.GetServerUrl() + "/update_quests/" + ServerConnector.instance.playerId;
 
         var requestData = new
