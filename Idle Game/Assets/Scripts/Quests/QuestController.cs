@@ -72,7 +72,7 @@ public class QuestController : MonoBehaviour
         _allQuests[questIndex].startDate = DateTime.Now;
         _questUI.AddQuestToUI(_allQuests[questIndex]);
 
-        if (ConsoleController.instance != null)
+        if (ConsoleController.instance != null && load)
             ConsoleController.instance.ChatMessage(SenderType.System, $"Accepted quest: {_allQuests[questIndex].title}");
 
         //Set listeners

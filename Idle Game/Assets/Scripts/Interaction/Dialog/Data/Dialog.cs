@@ -5,6 +5,7 @@ using UnityEngine.Events;
 [Serializable]
 public class Dialog
 {
+    public int id;
     public string text;
     public List<DialogEndOptions> endOptions = new();
 }
