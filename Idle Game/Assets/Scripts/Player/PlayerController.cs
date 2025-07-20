@@ -54,8 +54,6 @@ public class PlayerController : MonoBehaviour
     private bool isFlipped;
     public float speedForce;
     private Vector2 movement;
-    private Vector2 newVelocityXZ;
-    private float newVelocityY;
 
     private void Awake()
     {
@@ -92,34 +90,20 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        anim.SetFloat("Movement", isStopped ? 0 : movement.magnitude);
+        anim.SetFloat("Vertical", isStopped ? 0 : movement.y);
+        anim.SetFloat("Horizontal", isStopped ? 0 : movement.x);
+
+        if (movement != Vector2.zero)
+        {
+            anim.SetFloat("LastVertical", isStopped ? 0 : movement.y);
+            anim.SetFloat("LastHorizontal", isStopped ? 0 : movement.x);
+        }
 
         if (string.IsNullOrEmpty(playerId) || isStopped || GameController.isPaused)
             return;
 
-        //Clamping movement speed
-        newVelocityXZ = new(rgBody.velocity.x, 0);
-        newVelocityY = rgBody.velocity.y;
-
-        if (newVelocityXZ.magnitude > 1f)
-            newVelocityXZ = Vector3.ClampMagnitude(newVelocityXZ, 1f);
-
-        if (newVelocityY < -10)
-            newVelocityY = -10;
-
-        rgBody.velocity = new(newVelocityXZ.x, newVelocityY);
-    }
-
-    private void FixedUpdate()
-    {
-        if (string.IsNullOrEmpty(playerId) || isStopped || GameController.isPaused)
-            return;
-
-        //Make movement depend on direction player is facing
-        Vector2 move = new Vector2(movement.x, 0).normalized;
-
-        //Move player
-        rgBody.AddForce(move * speedForce);
+        Vector3 moveDelta = speedForce * Time.deltaTime * (Vector3)movement;
+        transform.Translate(moveDelta);
     }
 
     public void MovementInput(InputAction.CallbackContext context)
@@ -146,7 +130,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //Flipping player to direction they are going
-        transform.GetChild(1).localScale = new(isFlipped ? -1 : 1 * 1, 1, 1);
+        //transform.GetChild(1).localScale = new(isFlipped ? -1 : 1 * 1, 1, 1);
 
         movement = new Vector2(inputValue.x, inputValue.y);
     }

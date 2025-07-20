@@ -67,9 +67,12 @@ public class QuestController : MonoBehaviour
 
         //Add quest
         if (load)
+        {
             _questAPI.quests.Add(new(questIndex, DateTime.Now, _allQuests[questIndex]._requirement.progressCurrent));
+            _allQuests[questIndex].startDate = DateTime.Now;
+        }
+
         currentQuestsIndex.Add(questIndex);
-        _allQuests[questIndex].startDate = DateTime.Now;
         _questUI.AddQuestToUI(_allQuests[questIndex]);
 
         if (ConsoleController.instance != null && load)
