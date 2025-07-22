@@ -21500,7 +21500,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   virtualCamera: {fileID: 1456910117}
   playerTransform: {fileID: 0}
-  yFollowThreshold: 3
+  yFollowThreshold: 2
   xFollowThreshold: 2
   cameraFollowSpeed: 1
   followHorizontal: 0

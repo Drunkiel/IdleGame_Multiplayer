@@ -23,7 +23,16 @@ public class PlayerGhost : MonoBehaviour
     private void Update()
     {
         float distance = Vector3.Distance(targetPosition, transform.position);
-        anim.SetFloat("Movement", distance);
+        Vector2 positionDifference = targetPosition - transform.position;
+        anim.SetFloat("Vertical", positionDifference.y);
+        anim.SetFloat("Horizontal", positionDifference.x);
+
+        if (positionDifference != Vector2.zero)
+        {
+            anim.SetFloat("LastVertical", positionDifference.y);
+            anim.SetFloat("LastHorizontal", positionDifference.x);
+        }
+
         if (distance > 0.05f)
         {
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * lerpSpeed);
