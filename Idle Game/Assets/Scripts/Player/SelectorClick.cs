@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class SelectorClick : MonoBehaviour
 {
@@ -7,8 +6,9 @@ public class SelectorClick : MonoBehaviour
 
     [SerializeField] private Collider2D col;
 
-    public void OnClick(InputAction.CallbackContext context)
+    public void OnClick()
     {
+        print('a');
         Collider2D[] hits = Physics2D.OverlapBoxAll(col.bounds.center, col.bounds.size, 0f, interactableLayers);
 
         foreach (var hit in hits)

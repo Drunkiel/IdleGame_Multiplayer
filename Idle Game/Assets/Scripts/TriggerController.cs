@@ -24,6 +24,9 @@ public class TriggerController : MonoBehaviour
 
     void CheckCollision(Collider2D collider, bool enter = true)
     {
+        if (objectsTag.Count == 0)
+            return;
+
         if (objectsTag.Contains(collider.tag))
         {
             isTriggered = reverseReturn ? !enter : enter;

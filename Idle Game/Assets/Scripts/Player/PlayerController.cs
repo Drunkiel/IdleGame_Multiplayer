@@ -142,6 +142,6 @@ public class PlayerController : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        StartCoroutine(_playerAPI.UpdateStatus(PlayerStatus.Disconnected));
+        StartCoroutine(_playerAPI.DisconnectAll());
     }
 }

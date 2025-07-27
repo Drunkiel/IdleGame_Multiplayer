@@ -1,8 +1,8 @@
+using Newtonsoft.Json;
 using System.Collections;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
-using Newtonsoft.Json;
-using System.Text;
 
 public class PlayerAPI : MonoBehaviour
 {
@@ -106,6 +106,14 @@ public class PlayerAPI : MonoBehaviour
         );
         request.method = "POST";
         request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+    }
+
+    public IEnumerator DisconnectAll()
+    {
+        string url = ServerConnector.instance.GetServerUrl() + "/disconnect_all";
+        UnityWebRequest request = UnityWebRequest.PostWwwForm(url, "");
 
         yield return request.SendWebRequest();
     }
