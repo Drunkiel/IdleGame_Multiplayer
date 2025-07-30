@@ -29,7 +29,7 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
             if (currentSlot._itemID._armorItem != null)
             {
                 //Find armor piece
-                ArmorItem _armorItem = _gearHolder.GetHoldingArmor(currentSlot._itemID._armorItem.armorType)._armorItem;
+                ArmorItem _armorItem = _gearHolder.GetHoldingArmor(currentSlot._itemID._armorItem.holdingType)._armorItem;
 
                 //If not null then destroy
                 if (_armorItem != null)
@@ -90,7 +90,7 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
             GearHolder _gearHolder = PlayerController.instance._holdingController._itemController._gearHolder;
 
             //Checks if there is any armor equipped
-            if (_itemID._armorItem != null && _gearHolder.GetHoldingArmor(transform.GetChild(1).GetComponent<ItemID>()._armorItem.armorType) == null)
+            if (_itemID._armorItem != null && _gearHolder.GetHoldingArmor(transform.GetChild(1).GetComponent<ItemID>()._armorItem.holdingType) == null)
             {
                 currentSlot._itemID = transform.GetChild(1).GetComponent<ItemID>();
                 currentSlot.OnDrop(eventData);
@@ -109,7 +109,7 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
         rectTransform.SetParent(currentSlot.transform);
         rectTransform.localPosition = Vector3.zero;
         currentSlot._itemID = transform.GetChild(1).GetComponent<ItemID>();
-        InventoryController.instance.UpdateSlot(currentSlot.slotID);
+        InventoryController.instance.UpdateSlots();
         InventoryController.instance.isMovingItem = false;
 
         canvasGroup.interactable = true;

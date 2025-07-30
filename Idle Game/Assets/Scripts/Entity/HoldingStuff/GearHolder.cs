@@ -44,35 +44,35 @@ public class GearHolder
         }
     }
 
-    public ItemID GetHoldingWeapon(WeaponHoldingType holdingType)
+    public ItemID GetHoldingWeapon(HoldingType holdingType)
     {
         return holdingType switch
         {
-            WeaponHoldingType.Right_Hand => _weaponRight,
-            WeaponHoldingType.Left_Hand => _weaponLeft,
-            WeaponHoldingType.Both_Hands => _weaponBoth,
+            HoldingType.Right_Hand => _weaponRight,
+            HoldingType.Left_Hand => _weaponLeft,
+            HoldingType.Both_Hands => _weaponBoth,
             _ => null,
         };
     }
 
-    public ItemID GetHoldingArmor(ArmorType holdingType)
+    public ItemID GetHoldingArmor(HoldingType holdingType)
     {
         return holdingType switch
         {
-            ArmorType.Helmet => _armorHead,
-            ArmorType.Chestplate => _armorChestplate,
-            ArmorType.Boots => _armorBoots,
+            HoldingType.Head => _armorHead,
+            HoldingType.Chest => _armorChestplate,
+            HoldingType.Legs => _armorBoots,
             _ => null,
         };
     }
 
-    public Transform GetHoldingWeaponParent(WeaponHoldingType holdingType)
+    public Transform GetHoldingWeaponParent(HoldingType holdingType)
     {
         return holdingType switch
         {
-            WeaponHoldingType.Right_Hand => rightHandTransform,
-            WeaponHoldingType.Left_Hand => leftHandTransform,
-            WeaponHoldingType.Both_Hands => bothHandTransform,
+            HoldingType.Right_Hand => rightHandTransform,
+            HoldingType.Left_Hand => leftHandTransform,
+            HoldingType.Both_Hands => bothHandTransform,
             _ => null,
         };
     }

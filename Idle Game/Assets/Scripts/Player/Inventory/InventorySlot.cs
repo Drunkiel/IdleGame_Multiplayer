@@ -7,7 +7,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     public ItemID _itemID;
     public GameObject itemPlacePrefab;
     [HideInInspector] public ItemType itemRestriction;
-    [HideInInspector] public WeaponHoldingType[] holdingTypes;
+    [HideInInspector] public HoldingType[] holdingTypes;
     [HideInInspector] public ArmorType armorType;
 
     public void OnDrop(PointerEventData eventData)
@@ -23,12 +23,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         if (itemRestriction != ItemType.None)
         {
             ItemID _droppedItemID = eventData.pointerDrag.transform.GetChild(1).GetComponent<ItemID>();
-            if (_droppedItemID._itemData == null)
-            {
-                if (itemRestriction != ItemType.Spell)
-                    return;
-            }
-            else if (_droppedItemID._itemData.itemType != itemRestriction)
+            if (_droppedItemID._itemData.itemType != itemRestriction)
                 return;
         }
 
@@ -65,7 +60,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
 
         int oldSlot = _dragDropSlot.currentSlot.slotID;
         _dragDropSlot.currentSlot = this;
-        InventoryController.instance.MoveItemToOtherSlot(oldSlot, slotID);
+        InventoryController.instance.UpdateSlots();
         rectTransform.SetParent(rectTransform.GetComponent<DragDropSlot>().currentSlot.transform);
         rectTransform.localPosition = Vector3.zero;
     }

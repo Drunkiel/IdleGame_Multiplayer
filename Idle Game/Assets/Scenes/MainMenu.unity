@@ -171,6 +171,7 @@ MonoBehaviour:
   - {fileID: 6364541126876596842, guid: 3f9531f0d01761b4a83ed017df2d499e, type: 3}
   - {fileID: 6364541126876596842, guid: 95bad4dd8092e114ab6b8527489c4430, type: 3}
   - {fileID: 6364541126876596842, guid: fffb887297426ed40893ca7bbb4225b6, type: 3}
+  - {fileID: 6364541126876596842, guid: 0a034d8c0659b03a3a169491381243fd, type: 3}
   _weaponItems: []
   _armorItems: []
   _collectableItems: []
@@ -865,7 +866,7 @@ MonoBehaviour:
   slotID: 0
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 1
+  itemRestriction: 5
   holdingTypes: 01000000
   armorType: 0
 --- !u!1 &112679192
@@ -3830,7 +3831,7 @@ MonoBehaviour:
   slotID: 2
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 1
+  itemRestriction: 5
   holdingTypes: 00000000
   armorType: 0
 --- !u!1 &410343307
@@ -9180,7 +9181,7 @@ MonoBehaviour:
   slotID: 1
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 1
+  itemRestriction: 5
   holdingTypes: 01000000
   armorType: 0
 --- !u!1 &984169303
@@ -21451,7 +21452,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 196de023fa204d740a123e3c1c0b9e86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: []
+  inventory:
+  - slotID: 0
+    itemID:
+      _itemData:
+        ID: 0
+        baseStat:
+          baseStats: 0
+          value: 0
+        additionalAttributeStats: []
 --- !u!1 &2062403488
 GameObject:
   m_ObjectHideFlags: 0

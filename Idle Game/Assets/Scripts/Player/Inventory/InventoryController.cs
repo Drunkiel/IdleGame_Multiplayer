@@ -37,7 +37,7 @@ public class InventoryController : MonoBehaviour
         }
 
         if (!load)
-            _inventoryAPI.UpdateInventory(new() { _inventorySlots[slotIndex] });
+            _inventoryAPI.UpdateInventory();
 
         if (slotIndex < 6)
         {
@@ -75,14 +75,9 @@ public class InventoryController : MonoBehaviour
         //QuestController.instance.InvokeCollectEvent(_itemID._itemData.ID);
     }
 
-    public void UpdateSlot(int slotID)
+    public void UpdateSlots()
     {
-        _inventoryAPI.UpdateInventory(new() { _inventorySlots[slotID] });
-    }
-
-    public void MoveItemToOtherSlot(int currentSlotID, int newSlotID)
-    {
-        _inventoryAPI.UpdateInventory(new() { _inventorySlots[currentSlotID], _inventorySlots[newSlotID] });
+        _inventoryAPI.UpdateInventory();
     }
 
     public void RemoveItemByID(int itemID)

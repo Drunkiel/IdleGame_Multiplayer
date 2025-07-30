@@ -1,12 +1,30 @@
 using UnityEngine;
 
+public enum ToolType
+{
+    Pickaxe,
+    Axe,
+    Hoe,
+    WateringCan,
+}
+
 public enum ItemType
 {
     None,
     Weapon,
     Armor,
     Collectable,
-    Spell,
+    Tool,
+}
+
+public enum HoldingType
+{
+    Right_Hand,
+    Left_Hand,
+    Both_Hands,
+    Head,
+    Chest,
+    Legs,
 }
 
 public class ItemController : MonoBehaviour
@@ -36,23 +54,23 @@ public class ItemController : MonoBehaviour
         return true;
     }
 
-    public bool CanPickWeapon(WeaponHoldingType holdingType)
+    public bool CanPickWeapon(HoldingType holdingType)
     {
         switch (holdingType)
         {
-            case WeaponHoldingType.Right_Hand:
+            case HoldingType.Right_Hand:
                 if (_gearHolder._weaponRight == null && _gearHolder._weaponBoth == null)
                     return true;
                 else
                     return false;
 
-            case WeaponHoldingType.Left_Hand:
+            case HoldingType.Left_Hand:
                 if (_gearHolder._weaponLeft == null && _gearHolder._weaponBoth == null)
                     return true;
                 else
                     return false;
 
-            case WeaponHoldingType.Both_Hands:
+            case HoldingType.Both_Hands:
                 if (_gearHolder._weaponBoth == null && _gearHolder._weaponLeft == null && _gearHolder._weaponRight == null)
                     return true;
                 else
@@ -79,39 +97,39 @@ public class ItemController : MonoBehaviour
         switch (_itemID._weaponItem.holdingType)
         {
             //Picking weapon to right hand
-            case WeaponHoldingType.Right_Hand:
+            case HoldingType.Right_Hand:
                 _gearHolder._weaponRight = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.leftHandTransform : _gearHolder.rightHandTransform);
                 break;
 
             //Picking weapon to left hand
-            case WeaponHoldingType.Left_Hand:
+            case HoldingType.Left_Hand:
                 _gearHolder._weaponLeft = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.rightHandTransform : _gearHolder.leftHandTransform);
                 break;
 
             //Picking weapon to both hands
-            case WeaponHoldingType.Both_Hands:
+            case HoldingType.Both_Hands:
                 _gearHolder._weaponBoth = PickWeapon(_itemID, Quaternion.identity, _gearHolder.bothHandTransform);
                 break;
         }
     }
 
-    public bool CanPickArmor(ArmorType armorType)
+    public bool CanPickArmor(HoldingType holdingType)
     {
-        switch (armorType)
+        switch (holdingType)
         {
-            case ArmorType.Helmet:
+            case HoldingType.Head:
                 if (_gearHolder._armorHead == null)
                     return true;
                 else
                     return false;
 
-            case ArmorType.Chestplate:
+            case HoldingType.Chest:
                 if (_gearHolder._armorChestplate == null)
                     return true;
                 else
                     return false;
 
-            case ArmorType.Boots:
+            case HoldingType.Legs:
                 if (_gearHolder._armorBoots == null)
                     return true;
                 else

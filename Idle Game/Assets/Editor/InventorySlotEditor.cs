@@ -26,7 +26,7 @@ public class InventorySlotEditor : Editor
             if (script.holdingTypes != null)
             {
                 for (int i = 0; i < script.holdingTypes.Length; i++)
-                    script.holdingTypes[i] = (WeaponHoldingType)EditorGUILayout.EnumPopup($"Weapon Holding Type {i}", script.holdingTypes[i]);
+                    script.holdingTypes[i] = (HoldingType)EditorGUILayout.EnumPopup($"Weapon Holding Type {i}", script.holdingTypes[i]);
             }
 
             //Add button to allow adding new WeaponType elements
@@ -35,7 +35,7 @@ public class InventorySlotEditor : Editor
                 //Resize the array and add a new element
                 int newSize = (script.holdingTypes != null) ? script.holdingTypes.Length + 1 : 1;
                 System.Array.Resize(ref script.holdingTypes, newSize);
-                script.holdingTypes[newSize - 1] = WeaponHoldingType.Right_Hand; // Default new entry to a valid enum value
+                script.holdingTypes[newSize - 1] = HoldingType.Right_Hand; // Default new entry to a valid enum value
             }
 
             //Add button to allow removing the last WeaponType element

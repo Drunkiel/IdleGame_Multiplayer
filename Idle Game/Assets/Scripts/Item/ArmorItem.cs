@@ -11,4 +11,5 @@ public class ArmorItem : MonoBehaviour
 {
     public HeroClass classReserved;
     public ArmorType armorType;
+    public HoldingType holdingType;
 }

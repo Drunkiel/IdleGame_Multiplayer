@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: -347478009
   m_SortingLayer: 2
   m_SortingOrder: 8
-  m_Sprite: {fileID: 881324059, guid: 5110442fd7516bb43be90620e63d6884, type: 3}
+  m_Sprite: {fileID: -811181392, guid: 995c7fa20adb7954482b8271561d0cf2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -134,6 +134,7 @@ MonoBehaviour:
   _weaponItem: {fileID: 0}
   _armorItem: {fileID: 3513780931158106241}
   _collectableItem: {fileID: 0}
+  _toolItem: {fileID: 0}
 --- !u!114 &3513780931158106241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,3 +149,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   classReserved: 0
   armorType: 0
+  holdingType: 3

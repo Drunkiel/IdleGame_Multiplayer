@@ -109,7 +109,7 @@
                 {
                     "name": "",
                     "id": "bf200480-f229-47fa-95fc-dfb51ee28b18",
-                    "path": "<Keyboard>/f",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -120,7 +120,7 @@
                 {
                     "name": "",
                     "id": "c28ec42a-2d52-4fe1-8b52-1481660b707c",
-                    "path": "<Keyboard>/f",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "Hold",
                     "processors": "",
                     "groups": "",
@@ -131,7 +131,7 @@
                 {
                     "name": "",
                     "id": "c20bf1a4-f69d-4e03-8087-02c35ec3681f",
-                    "path": "<Keyboard>/f",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "Press(behavior=1)",
                     "processors": "",
                     "groups": "",

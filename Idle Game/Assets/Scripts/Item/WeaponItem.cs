@@ -1,12 +1,5 @@
 using UnityEngine;
 
-public enum WeaponHoldingType
-{
-    Right_Hand,
-    Left_Hand,
-    Both_Hands,
-}
-
 public enum WeaponType
 {
     Sword,
@@ -19,6 +12,6 @@ public class WeaponItem : MonoBehaviour
 {
     public HeroClass classReserved;
     public WeaponType weaponType;
-    public WeaponHoldingType holdingType;
+    public HoldingType holdingType;
     public bool resizable = true;
 }

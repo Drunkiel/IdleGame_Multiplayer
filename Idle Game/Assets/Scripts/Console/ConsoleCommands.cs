@@ -18,7 +18,8 @@ public class ConsoleCommands : MonoBehaviour
 
     public void GetItem(string itemName)
     {
-        ItemContainer.instance.GetItemByName(itemName);
+        ItemID a = Instantiate(ItemContainer.instance.GetItemByName(itemName));
+        PlayerController.instance.transform.GetComponent<ItemController>().PickItem(ItemContainer.instance.GetItemByName(itemName));
     }
 
     public void KillEvent(string id)

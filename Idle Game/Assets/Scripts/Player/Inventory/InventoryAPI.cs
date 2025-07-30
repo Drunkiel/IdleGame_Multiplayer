@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using Unity.VisualScripting;
 
 [Serializable]
 public class AdditionalAttributeStatsDTO
@@ -125,46 +126,59 @@ public class InventoryAPI : MonoBehaviour
             PlayerController.instance._entityInfo.UpdateStats();
     }
 
-    public void UpdateInventory(List<InventorySlot> updatedSlots)
+    public void UpdateInventory()
     {
-        foreach (var slot in updatedSlots)
+        List<InventorySlotData> updatedInventory = new();
+
+        foreach (var slot in InventoryController.instance._inventorySlots)
         {
-            if (slot.slotID < 0 || slot.slotID >= inventory.Length)
+            InventorySlotData slotData = new InventorySlotData
             {
-                Debug.LogWarning($"SlotID {slot.slotID} is out of bounds.");
-                continue;
-            }
+                slotID = slot.slotID
+            };
 
             if (slot._itemID == null)
             {
-                inventory[slot.slotID].itemID._itemData.ID = -1;
-                inventory[slot.slotID].itemID._itemData.baseStat = null;
-                inventory[slot.slotID].itemID._itemData.additionalAttributeStats = null;
-                StartCoroutine(UpdateInventoryCoroutine(inventory));
-                continue;
+                slotData.itemID = null; // pusty slot
             }
-
-            var dto = inventory[slot.slotID].itemID._itemData;
-            dto.ID = slot._itemID._itemData.ID;
-            dto.baseStat = slot._itemID._itemData.baseStat;
-            dto.additionalAttributeStats = new();
-
-            foreach (var attr in slot._itemID._itemData.additionalAttributeStats)
+            else
             {
-                dto.additionalAttributeStats.Add(new()
+                var itemData = slot._itemID._itemData;
+
+                slotData.itemID = new ItemIDDTO
                 {
-                    attribute = (int)attr.attribute,
-                    value = attr.value
-                });
+                    _itemData = new ItemDataDTO
+                    {
+                        ID = itemData.ID,
+                        baseStat = itemData.baseStat,
+                        additionalAttributeStats = new()
+                    }
+                };
+
+                foreach (var attr in itemData.additionalAttributeStats)
+                {
+                    slotData.itemID._itemData.additionalAttributeStats.Add(new AdditionalAttributeStatsDTO
+                    {
+                        attribute = (int)attr.attribute,
+                        value = attr.value
+                    });
+                }
             }
+
+            updatedInventory.Add(slotData);
         }
 
-        StartCoroutine(UpdateInventoryCoroutine(inventory));
+        StartCoroutine(UpdateInventoryCoroutine(updatedInventory.ToArray()));
     }
 
     private IEnumerator UpdateInventoryCoroutine(InventorySlotData[] inventorySlotDataList)
     {
-        string json = JsonConvert.SerializeObject(inventorySlotDataList);
+        var payload = new Dictionary<string, InventorySlotData[]>
+        {
+            { "Items", inventorySlotDataList }
+        };
+
+        string json = JsonConvert.SerializeObject(payload);
         UnityWebRequest www = UnityWebRequest.Put($"{ServerConnector.instance.GetServerUrl()}/inventory/{ServerConnector.instance.playerId}", json);
         www.method = "POST";
         www.SetRequestHeader("Content-Type", "application/json");

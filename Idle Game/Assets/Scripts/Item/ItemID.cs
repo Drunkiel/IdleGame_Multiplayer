@@ -6,4 +6,5 @@ public class ItemID : MonoBehaviour
     public WeaponItem _weaponItem;
     public ArmorItem _armorItem;
     public CollectableItem _collectableItem;
+    public ToolItem _toolItem;
 }

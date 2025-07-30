@@ -357,25 +357,25 @@ app.post('/inventory/:player_id', (req, res) => {
     }
 
     // Zwaliduj itemID._itemData.ID
-    if (itemID?._itemData?.ID === -1) {
-      // Ustawiamy na null, czyli slot pusty
-      inventory[slotID] = {
+    if (!itemID || !itemID._itemData || itemID._itemData.ID === -1) {
+    // Slot pusty
+    inventory[slotID] = {
         slotID,
         itemID: null
-      };
+    };
     } else {
-      inventory[slotID] = {
+    inventory[slotID] = {
         slotID,
         itemID: {
-          _itemData: {
+        _itemData: {
             ID: itemID._itemData.ID,
             baseStat: {
-              value: itemID._itemData.baseStat?.value || 0
+            value: itemID._itemData.baseStat?.value || 0
             },
             additionalAttributeStats: itemID._itemData.additionalAttributeStats || []
-          }
         }
-      };
+        }
+    };
     }
   });
 
