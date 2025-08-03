@@ -866,7 +866,7 @@ MonoBehaviour:
   slotID: 0
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 5
+  itemRestriction: 1
   holdingTypes: 01000000
   armorType: 0
 --- !u!1 &112679192
@@ -3831,7 +3831,7 @@ MonoBehaviour:
   slotID: 2
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 5
+  itemRestriction: 4
   holdingTypes: 00000000
   armorType: 0
 --- !u!1 &410343307
@@ -9181,7 +9181,7 @@ MonoBehaviour:
   slotID: 1
   _itemID: {fileID: 0}
   itemPlacePrefab: {fileID: 717573261603681906, guid: 555eb5deb57ceee40a37332ea5c3968c, type: 3}
-  itemRestriction: 5
+  itemRestriction: 4
   holdingTypes: 01000000
   armorType: 0
 --- !u!1 &984169303

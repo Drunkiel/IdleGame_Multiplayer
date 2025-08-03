@@ -56,9 +56,13 @@ public class InventorySlot : MonoBehaviour, IDropHandler
                 else
                     _itemController.SetArmor(_armorItemID);
                 break;
+
+            case ItemType.Tool:
+                ItemID _toolItemID = eventData.pointerDrag.transform.GetChild(1).GetComponent<ItemID>();
+                _itemController.SetTool(_toolItemID, slotID);
+                break;
         }
 
-        int oldSlot = _dragDropSlot.currentSlot.slotID;
         _dragDropSlot.currentSlot = this;
         InventoryController.instance.UpdateSlots();
         rectTransform.SetParent(rectTransform.GetComponent<DragDropSlot>().currentSlot.transform);

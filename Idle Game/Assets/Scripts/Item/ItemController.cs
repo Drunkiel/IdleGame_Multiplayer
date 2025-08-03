@@ -19,9 +19,9 @@ public enum ItemType
 
 public enum HoldingType
 {
-    Right_Hand,
-    Left_Hand,
-    Both_Hands,
+    Weapon,
+    Tool_1,
+    Tool_2,
     Head,
     Chest,
     Legs,
@@ -58,20 +58,20 @@ public class ItemController : MonoBehaviour
     {
         switch (holdingType)
         {
-            case HoldingType.Right_Hand:
-                if (_gearHolder._weaponRight == null && _gearHolder._weaponBoth == null)
+            case HoldingType.Weapon:
+                if (_gearHolder._weaponItem == null)
                     return true;
                 else
                     return false;
 
-            case HoldingType.Left_Hand:
-                if (_gearHolder._weaponLeft == null && _gearHolder._weaponBoth == null)
+            case HoldingType.Tool_1:
+                if (_gearHolder._toolItem1 == null)
                     return true;
                 else
                     return false;
 
-            case HoldingType.Both_Hands:
-                if (_gearHolder._weaponBoth == null && _gearHolder._weaponLeft == null && _gearHolder._weaponRight == null)
+            case HoldingType.Tool_2:
+                if (_gearHolder._toolItem2 == null)
                     return true;
                 else
                     return false;
@@ -86,7 +86,7 @@ public class ItemController : MonoBehaviour
         weaponCopy.name = _itemID.name;
         weaponCopy.transform.SetLocalPositionAndRotation(new(0.3f, 0, 0), rotation);
         weaponCopy.transform.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder = _gearHolder.isFlipped ? 1 : 6;
-        if (_itemID._weaponItem.resizable)
+        if (_itemID._weaponItem != null && _itemID._weaponItem.resizable)
             weaponCopy.transform.localScale = Vector3.one;
 
         return weaponCopy.GetComponent<ItemID>();
@@ -97,20 +97,29 @@ public class ItemController : MonoBehaviour
         switch (_itemID._weaponItem.holdingType)
         {
             //Picking weapon to right hand
-            case HoldingType.Right_Hand:
-                _gearHolder._weaponRight = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.leftHandTransform : _gearHolder.rightHandTransform);
-                break;
-
-            //Picking weapon to left hand
-            case HoldingType.Left_Hand:
-                _gearHolder._weaponLeft = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.rightHandTransform : _gearHolder.leftHandTransform);
-                break;
-
-            //Picking weapon to both hands
-            case HoldingType.Both_Hands:
-                _gearHolder._weaponBoth = PickWeapon(_itemID, Quaternion.identity, _gearHolder.bothHandTransform);
+            case HoldingType.Weapon:
+                _gearHolder._weaponItem = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.leftHandTransform : _gearHolder.rightHandTransform);
                 break;
         }
+    }
+
+    public void SetTool(ItemID _itemID, int slotID)
+    {
+        if (slotID == 1)
+            _gearHolder._toolItem1 = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.rightHandTransform : _gearHolder.leftHandTransform);
+
+        if (slotID == 2)
+            _gearHolder._toolItem2 = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.rightHandTransform : _gearHolder.leftHandTransform);
+
+            //         //Picking weapon to left hand
+        // case HoldingType.Tool_1:
+        //     _gearHolder._toolItem1 = PickWeapon(_itemID, Quaternion.identity, _gearHolder.isFlipped ? _gearHolder.rightHandTransform : _gearHolder.leftHandTransform);
+        //     break;
+
+        // //Picking weapon to both hands
+        // case HoldingType.Tool_2:
+        //     _gearHolder._toolItem2 = PickWeapon(_itemID, Quaternion.identity, _gearHolder.bothHandTransform);
+        //     break;
     }
 
     public bool CanPickArmor(HoldingType holdingType)

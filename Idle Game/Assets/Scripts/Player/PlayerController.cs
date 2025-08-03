@@ -117,17 +117,17 @@ public class PlayerController : MonoBehaviour
         }
 
         //Flipping player to direction they are going
-        if (inputValue.x < 0 && !isFlipped)
-        {
-            isFlipped = true;
-            _holdingController._itemController._gearHolder.FlipItems(true);
+        // if (inputValue.x < 0 && !isFlipped)
+        // {
+        //     isFlipped = true;
+        //     _holdingController._itemController._gearHolder.FlipItems(true);
 
-        }
-        else if (inputValue.x > 0 && isFlipped)
-        {
-            isFlipped = false;
-            _holdingController._itemController._gearHolder.FlipItems(false);
-        }
+        // }
+        // else if (inputValue.x > 0 && isFlipped)
+        // {
+        //     isFlipped = false;
+        //     _holdingController._itemController._gearHolder.FlipItems(false);
+        // }
 
         //Flipping player to direction they are going
         //transform.GetChild(1).localScale = new(isFlipped ? -1 : 1 * 1, 1, 1);

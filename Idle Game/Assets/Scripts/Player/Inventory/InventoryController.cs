@@ -70,9 +70,14 @@ public class InventoryController : MonoBehaviour
                     else
                         _itemController.SetArmor(_armorItemID);
                     break;
+
+                case ItemType.Tool:
+                    ItemID _toolItemID = _itemID;
+                    _itemController.SetTool(_toolItemID, slotIndex);
+                    break;
             }
         }
-        //QuestController.instance.InvokeCollectEvent(_itemID._itemData.ID);
+        QuestController.instance.InvokeCollectEvent(_itemID._itemData.ID);
     }
 
     public void UpdateSlots()

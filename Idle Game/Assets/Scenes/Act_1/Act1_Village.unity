@@ -299,7 +299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitPoints: 4
   toolType: 0
-  minPower: 0
+  minPower: 10
 --- !u!1 &1560274107
 GameObject:
   m_ObjectHideFlags: 0

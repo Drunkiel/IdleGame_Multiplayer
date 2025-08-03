@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -55,11 +56,21 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
             if (currentSlot._itemID._weaponItem != null)
             {
                 //Find weapon
-                WeaponItem _weaponItem = _gearHolder.GetHoldingWeapon(currentSlot._itemID._weaponItem.holdingType)._weaponItem;
+                WeaponItem _weaponItem = _gearHolder.GetHoldingItem(currentSlot._itemID._weaponItem.holdingType)._weaponItem;
 
                 //Destroy current holding weapon
                 if (_weaponItem != null)
                     Destroy(_weaponItem.gameObject);
+            }
+
+            if (currentSlot._itemID._toolItem != null)
+            {
+                //Find tool
+                ToolItem _toolItem = currentSlot.slotID == 1 ? _gearHolder._toolItem1._toolItem : _gearHolder._toolItem2._toolItem;
+
+                //Destroy current holding tool
+                if (_toolItem != null)
+                    Destroy(_toolItem.gameObject);
             }
         }
 
@@ -91,17 +102,15 @@ public class DragDropSlot : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
 
             //Checks if there is any armor equipped
             if (_itemID._armorItem != null && _gearHolder.GetHoldingArmor(transform.GetChild(1).GetComponent<ItemID>()._armorItem.holdingType) == null)
-            {
                 currentSlot._itemID = transform.GetChild(1).GetComponent<ItemID>();
-                currentSlot.OnDrop(eventData);
-            }
 
             //Checks if there is any weapon equipped
-            if (_itemID._weaponItem != null && _gearHolder.GetHoldingWeapon(transform.GetChild(1).GetComponent<ItemID>()._weaponItem.holdingType) == null)
-            {
+            if (_itemID._weaponItem != null && _gearHolder.GetHoldingItem(transform.GetChild(1).GetComponent<ItemID>()._weaponItem.holdingType) == null)
                 currentSlot._itemID = transform.GetChild(1).GetComponent<ItemID>();
-                currentSlot.OnDrop(eventData);
-            }
+
+            //Checks if there is any tool equipped
+            if (_itemID._toolItem != null && (_gearHolder.GetHoldingItem(HoldingType.Tool_1) == null || _gearHolder.GetHoldingItem(HoldingType.Tool_2) == null))
+                currentSlot._itemID = transform.GetChild(1).GetComponent<ItemID>();
 
             PlayerController.instance._entityInfo.UpdateStats();
         }

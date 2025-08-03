@@ -35,7 +35,7 @@ public class InventorySlotEditor : Editor
                 //Resize the array and add a new element
                 int newSize = (script.holdingTypes != null) ? script.holdingTypes.Length + 1 : 1;
                 System.Array.Resize(ref script.holdingTypes, newSize);
-                script.holdingTypes[newSize - 1] = HoldingType.Right_Hand; // Default new entry to a valid enum value
+                script.holdingTypes[newSize - 1] = HoldingType.Weapon; // Default new entry to a valid enum value
             }
 
             //Add button to allow removing the last WeaponType element

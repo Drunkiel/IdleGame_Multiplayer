@@ -12,10 +12,19 @@ public class SelectorClick : MonoBehaviour
 
         foreach (var hit in hits)
         {
-            if (hit.gameObject != gameObject)
-            {
-                Debug.Log("Zderzenie z: " + hit.gameObject.name);
-            }
+            //Should never happen but who nows
+            if (hit.gameObject.Equals(gameObject))
+                continue;
+
+            if (!hit.gameObject.TryGetComponent(out MineableObject _mineableObject))
+                continue;
+
+            //Get item and check if null
+            ItemID _toolItem = PlayerController.instance._holdingController._itemController._gearHolder.GetTool(_mineableObject.toolType);
+            if (_toolItem == null)
+                continue;
+
+            _mineableObject.TakeHit(_toolItem);
         }
     }
 }

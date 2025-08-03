@@ -15,9 +15,9 @@ public class GearHolder
     public Transform leftFeetTransform;
 
     [Header("Currently holden Items")]
-    public ItemID _weaponRight;
-    public ItemID _weaponLeft;
-    public ItemID _weaponBoth;
+    public ItemID _weaponItem;
+    public ItemID _toolItem1;
+    public ItemID _toolItem2;
 
     public ItemID _armorHead;
     public ItemID _armorChestplate;
@@ -25,32 +25,34 @@ public class GearHolder
 
     [HideInInspector] public bool isFlipped;
 
-    public void FlipItems(bool isFlipped)
+    public ItemID GetTool(ToolType toolType)
     {
-        this.isFlipped = isFlipped;
-
-        if (_weaponRight != null)
+        //When holding 2 same type tools pick one with better stats
+        if (_toolItem1 != null && _toolItem2 != null &&_toolItem1._toolItem != null && _toolItem2._toolItem != null && _toolItem1._toolItem.toolType == _toolItem2._toolItem.toolType)
         {
-            _weaponRight.transform.parent = isFlipped ? leftHandTransform : rightHandTransform;
-            _weaponRight.transform.SetLocalPositionAndRotation(new(0.3f, 0, 0), Quaternion.identity);
-            _weaponRight.transform.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder = isFlipped ? 1 : 6;
+            if (_toolItem1._toolItem.toolPower >= _toolItem2._toolItem.toolPower)
+                return _toolItem1;
+            else
+                return _toolItem2;
         }
 
-        if (_weaponLeft != null)
-        {
-            _weaponLeft.transform.parent = isFlipped ? rightHandTransform : leftHandTransform;
-            _weaponLeft.transform.SetLocalPositionAndRotation(new(0.3f, 0, 0), Quaternion.identity);
-            _weaponLeft.transform.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder = isFlipped ? 1 : 6;
-        }
+        //When 2 different tools which one correct 
+        if (_toolItem1 != null && _toolItem1._toolItem != null && _toolItem1._toolItem.toolType.Equals(toolType))
+            return _toolItem1;
+
+        if (_toolItem2 != null && _toolItem2._toolItem != null && _toolItem2._toolItem.toolType.Equals(toolType))
+            return _toolItem2;
+
+        return null;
     }
 
-    public ItemID GetHoldingWeapon(HoldingType holdingType)
+    public ItemID GetHoldingItem(HoldingType holdingType)
     {
         return holdingType switch
         {
-            HoldingType.Right_Hand => _weaponRight,
-            HoldingType.Left_Hand => _weaponLeft,
-            HoldingType.Both_Hands => _weaponBoth,
+            HoldingType.Weapon => _weaponItem,
+            HoldingType.Tool_1 => _toolItem1,
+            HoldingType.Tool_2 => _toolItem2,
             _ => null,
         };
     }
@@ -70,9 +72,9 @@ public class GearHolder
     {
         return holdingType switch
         {
-            HoldingType.Right_Hand => rightHandTransform,
-            HoldingType.Left_Hand => leftHandTransform,
-            HoldingType.Both_Hands => bothHandTransform,
+            HoldingType.Weapon => rightHandTransform,
+            HoldingType.Tool_1 => leftHandTransform,
+            HoldingType.Tool_2 => bothHandTransform,
             _ => null,
         };
     }
@@ -83,9 +85,7 @@ public class GearHolder
 
         List<ItemID> equippedItems = new()
         {
-            _weaponRight,
-            _weaponLeft,
-            _weaponBoth
+            _weaponItem
         };
 
         foreach (var item in equippedItems)
@@ -112,9 +112,9 @@ public class GearHolder
         // Lista wszystkich ItemID z gearHoldera
         List<ItemID> equippedItems = new()
         {
-            _weaponRight,
-            _weaponLeft,
-            _weaponBoth,
+            _weaponItem,
+            _toolItem1,
+            _toolItem2,
             _armorHead,
             _armorChestplate,
             _armorBoots

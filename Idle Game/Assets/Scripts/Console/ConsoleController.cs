@@ -134,8 +134,7 @@ public class ConsoleController : MonoBehaviour
             }
             catch (Exception ex)
             {
-                ChatMessage(SenderType.System, $"Command '{commandName}' failed: {ex.Message}", OutputType.Error);
-                print(ex.Message);
+                ChatMessage(SenderType.System, $"Command '{commandName}' failed: Command doesn't exist; {ex.Message}", OutputType.Error);
             }
         }
 

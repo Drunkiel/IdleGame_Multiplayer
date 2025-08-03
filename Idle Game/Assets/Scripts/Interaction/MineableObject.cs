@@ -9,7 +9,7 @@ public class MineableObject : MonoBehaviour
     public void TakeHit(ItemID _itemID)
     {
         //Check if is using correct tool
-        if (_itemID._itemData.itemType.Equals(ItemType.Tool) && _itemID._toolItem.toolType.Equals(toolType))
+        if (!_itemID._itemData.itemType.Equals(ItemType.Tool) || !_itemID._toolItem.toolType.Equals(toolType))
             return;
 
         if (_itemID._itemData.baseStat.value >= minPower)
