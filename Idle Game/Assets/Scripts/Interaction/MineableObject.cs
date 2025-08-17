@@ -5,6 +5,7 @@ public class MineableObject : MonoBehaviour
     public int hitPoints;
     public ToolType toolType;
     public int minPower;
+    public int itemID;
 
     public void TakeHit(ItemID _itemID)
     {
@@ -16,6 +17,8 @@ public class MineableObject : MonoBehaviour
             hitPoints -= _itemID._itemData.baseStat.value / minPower;
 
         if (hitPoints <= 0)
-            print('a');
+        {
+            PlayerController.instance.transform.GetComponent<ItemController>().PickItem(ItemContainer.instance.GetItemByID(itemID));        
+        }
     }
 }

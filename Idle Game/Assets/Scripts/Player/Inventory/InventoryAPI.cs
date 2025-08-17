@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
-using Unity.VisualScripting;
 
 [Serializable]
 public class AdditionalAttributeStatsDTO
@@ -132,15 +131,14 @@ public class InventoryAPI : MonoBehaviour
 
         foreach (var slot in InventoryController.instance._inventorySlots)
         {
-            InventorySlotData slotData = new InventorySlotData
+            InventorySlotData slotData = new()
             {
                 slotID = slot.slotID
             };
 
+            //Empty slot
             if (slot._itemID == null)
-            {
-                slotData.itemID = null; // pusty slot
-            }
+                slotData.itemID = null;
             else
             {
                 var itemData = slot._itemID._itemData;

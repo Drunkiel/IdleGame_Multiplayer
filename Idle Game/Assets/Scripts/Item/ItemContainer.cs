@@ -79,25 +79,28 @@ public class ItemContainer : MonoBehaviour
         _itemCopy.spriteIcon = _itemData.spriteIcon;
         _itemCopy.additionalAttributeStats = new();
 
-        //Give basic stats
-        switch (_itemData.itemType)
-        {
-            case ItemType.Weapon:
-                _itemCopy.baseStat = new()
-                {
-                    baseStats = BaseStats.Damage,
-                    value = Mathf.CeilToInt(2 * Mathf.Pow(_entityInfo.currentLevel, 1.2f))
-                };
-                break;
+        if (_itemData.itemType == ItemType.Collectable)
+            return _itemCopy;
 
-            case ItemType.Armor:
-                _itemCopy.baseStat = new()
-                {
-                    baseStats = BaseStats.Protection,
-                    value = Mathf.CeilToInt(1 * Mathf.Pow(_entityInfo.currentLevel, 1.2f))
-                };
-                break;
-        }
+        //Give basic stats
+            switch (_itemData.itemType)
+            {
+                case ItemType.Weapon:
+                    _itemCopy.baseStat = new()
+                    {
+                        baseStats = BaseStats.Damage,
+                        value = Mathf.CeilToInt(2 * Mathf.Pow(_entityInfo.currentLevel, 1.2f))
+                    };
+                    break;
+
+                case ItemType.Armor:
+                    _itemCopy.baseStat = new()
+                    {
+                        baseStats = BaseStats.Protection,
+                        value = Mathf.CeilToInt(1 * Mathf.Pow(_entityInfo.currentLevel, 1.2f))
+                    };
+                    break;
+            }
 
         //Add attribute stats
         int totalPoints = Mathf.CeilToInt(5 * Mathf.Pow(_entityInfo.currentLevel, 1.05f));

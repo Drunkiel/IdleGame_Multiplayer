@@ -99,11 +99,26 @@ public class InventoryController : MonoBehaviour
             }
         }
 
-        //ConsoleController.instance.ChatMessage(SenderType.System, $"Item: <color=red>{itemID}</color> is not found in the inventory", OutputType.Error);
+        ConsoleController.instance.ChatMessage(SenderType.System, $"Item: <color=red>{itemID}</color> is not found in the inventory", OutputType.Error);
     }
 
-    public int GetAvailableSlotIndex()
+    public int GetAvailableSlotIndex(ItemID _itemID)
     {
+        //Check if item is collectable if yes quantity go up
+        if (_itemID._itemData.itemType.Equals(ItemType.Collectable))
+        {
+            for (int i = 6; i < countOfSlots; i++)
+            {
+                if (_inventorySlots[i]._itemID != null && _itemID._itemData.ID.Equals(_inventorySlots[i]._itemID._itemData.ID))
+                {
+                    _inventorySlots[i]._itemID._itemData.baseStat.value += 1;
+                    UpdateSlots();
+                    return -1;
+                }
+            }
+        }
+
+        //If not collectable just look for any empty space
         for (int i = 6; i < countOfSlots; i++)
         {
             if (_inventorySlots[i]._itemID == null)

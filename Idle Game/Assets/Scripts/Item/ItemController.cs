@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum ToolType
 {
@@ -40,7 +41,7 @@ public class ItemController : MonoBehaviour
         InventoryController _inventoryController = InventoryController.instance;
 
         //Looking for available slot in inventory
-        int availableSlot = _inventoryController.GetAvailableSlotIndex();
+        int availableSlot = _inventoryController.GetAvailableSlotIndex(_itemID);
 
         if (availableSlot == -1)
             return false;
