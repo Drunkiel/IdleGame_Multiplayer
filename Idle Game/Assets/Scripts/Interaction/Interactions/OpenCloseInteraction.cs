@@ -4,11 +4,11 @@ public class OpenCloseInteraction : MonoBehaviour
 {
     public void Open(int index)
     {
-        InteractionSystem.instance.allUI[index].SetActive(true);
+        UIController.instance.Open(index);
     }
 
     public void Close(int index)
     {
-        InteractionSystem.instance.allUI[index].SetActive(false);
+        UIController.instance.Close(index);
     }
 }

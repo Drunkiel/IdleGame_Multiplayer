@@ -72,8 +72,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -347478009
-  m_SortingLayer: 2
-  m_SortingOrder: 0
+  m_SortingLayer: 3
+  m_SortingOrder: 2
   m_Sprite: {fileID: -525230444, guid: e38085ab918d03f4ab88e55be23ca61a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -419,9 +419,9 @@ MonoBehaviour:
     bodyTransform: {fileID: 487270153157877573}
     rightFeetTransform: {fileID: 487270152146776683}
     leftFeetTransform: {fileID: 487270153007983802}
-    _weaponRight: {fileID: 0}
-    _weaponLeft: {fileID: 0}
-    _weaponBoth: {fileID: 0}
+    _weaponItem: {fileID: 0}
+    _toolItem1: {fileID: 0}
+    _toolItem2: {fileID: 0}
     _armorHead: {fileID: 0}
     _armorChestplate: {fileID: 0}
     _armorBoots: {fileID: 0}
@@ -707,7 +707,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -347478009
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -1386451008, guid: 995c7fa20adb7954482b8271561d0cf2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

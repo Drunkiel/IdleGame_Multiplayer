@@ -26,7 +26,7 @@ public class PlacableObject : MonoBehaviour
 
     private void CalculateSizeInCells()
     {
-        BoxCollider collider = gameObject.GetComponent<BoxCollider>();
+        BoxCollider2D collider = gameObject.GetComponent<BoxCollider2D>();
         sizeInCells = new(Mathf.RoundToInt(collider.size.x), Mathf.RoundToInt(collider.size.y));
     }
 }

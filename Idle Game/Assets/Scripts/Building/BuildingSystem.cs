@@ -1,16 +1,32 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+[Serializable]
+public class Building
+{
+    public BuildingID _buildingID;
+    public List<BuildingRecipe> _buildingRecipes;
+}
+
+[Serializable]
+public class BuildingRecipe
+{
+    public short itemID;
+    public int quantity;
+}
 
 public class BuildingSystem : MonoBehaviour
 {
     public static BuildingSystem instance;
     public static bool inBuildingMode;
 
-    [SerializeField] private Grid grid;
+    public List<Building> _buildings;
+    public Grid grid;
     public Vector2 mapSize;
 
-    [SerializeField] private GameObject buildingPanel;
-    [SerializeField] private GameObject buildingUI;
+    [SerializeField] private GameObject decisionPanel;
     public PlacableObject _objectToPlace;
 
     void Awake()
@@ -18,10 +34,10 @@ public class BuildingSystem : MonoBehaviour
         instance = this;
     }
 
-    public void BuildingManager()
+    public void BuildingManager(int index)
     {
-        inBuildingMode = !inBuildingMode;
-        buildingUI.SetActive(inBuildingMode);
+        InitializeWithObject(_buildings[index]._buildingID.gameObject);
+        UIController.instance.Close(3);
     }
 
     public Vector3 SnapCoordinateToGrid(Vector3 position)
@@ -41,7 +57,7 @@ public class BuildingSystem : MonoBehaviour
 
     public void InitializeWithObject(GameObject prefab)
     {
-        if (inBuildingMode) 
+        if (inBuildingMode)
             return;
 
         inBuildingMode = true;
@@ -57,46 +73,50 @@ public class BuildingSystem : MonoBehaviour
     public void OpenUI(bool destroy)
     {
         //UI
-        buildingPanel.SetActive(true);
+        decisionPanel.SetActive(true);
+        Button acceptButton = decisionPanel.transform.GetChild(0).GetComponent<Button>();
+        Button declineButton = decisionPanel.transform.GetChild(1).GetComponent<Button>();
 
         //Removing listeners
-        buildingPanel.transform.GetChild(0).GetComponent<Button>().onClick.RemoveAllListeners();
-        buildingPanel.transform.GetChild(1).GetComponent<Button>().onClick.RemoveAllListeners();
+        acceptButton.onClick.RemoveAllListeners();
+        declineButton.onClick.RemoveAllListeners();
 
         //Adding new listeners
-        buildingPanel.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => PlaceButton());
+        acceptButton.onClick.AddListener(() => PlaceButton());
 
-        if (destroy) 
-            buildingPanel.transform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => 
-            { 
-                Destroy(_objectToPlace.gameObject); 
-                buildingPanel.SetActive(false); 
+        if (destroy)
+            declineButton.onClick.AddListener(() =>
+            {
+                Destroy(_objectToPlace.gameObject);
+                decisionPanel.SetActive(false);
                 inBuildingMode = false;
             });
         else
         {
             Vector3 oldPosition = _objectToPlace.transform.position;
-            buildingPanel.transform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => 
+            declineButton.onClick.AddListener(() =>
             {
-                _objectToPlace.transform.position = oldPosition; PlaceButton();
+                _objectToPlace.transform.position = oldPosition;
+                PlaceButton();
             });
         }
     }
 
     public void PlaceButton()
     {
-        if (CanBePlaced()) 
+        if (CanBePlaced())
             _objectToPlace.Place();
         else
             Destroy(_objectToPlace.gameObject);
 
-        buildingPanel.SetActive(false);
+        decisionPanel.SetActive(false);
         inBuildingMode = false;
+        UIController.instance.Open(3);
     }
 
     private bool CanBePlaced()
     {
-        if (_objectToPlace == null) 
+        if (_objectToPlace == null)
             return false;
 
         return _objectToPlace.transform.GetComponent<TriggerController>().isTriggered;

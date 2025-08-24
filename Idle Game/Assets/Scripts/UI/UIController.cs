@@ -28,4 +28,22 @@ public class UIController : MonoBehaviour
         panelObjects[index].isOn = !panelObjects[index].isOn;
         panelObjects[index].panelObject.SetActive(panelObjects[index].isOn);
     }
+
+    public void Open(int index)
+    {
+        if (index >= panelObjects.Count || index < 0)
+            return;
+
+        panelObjects[index].isOn = true;
+        panelObjects[index].panelObject.SetActive(true);
+    }
+
+    public void Close(int index)
+    {
+        if (index >= panelObjects.Count || index < 0)
+            return;
+
+        panelObjects[index].isOn = false;
+        panelObjects[index].panelObject.SetActive(false);
+    }
 }
