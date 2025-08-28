@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 using UnityEngine.UI;
 
 [Serializable]
@@ -27,7 +28,9 @@ public class BuildingSystem : MonoBehaviour
     public Vector2 mapSize;
 
     [SerializeField] private GameObject decisionPanel;
+    [SerializeField] private GameObject colliderPrefab;
     public PlacableObject _objectToPlace;
+    private GameObject objectCollider;
 
     void Awake()
     {
@@ -52,7 +55,7 @@ public class BuildingSystem : MonoBehaviour
             ) return SnapCoordinateToGrid(Vector3.zero);
 
         position = grid.GetCellCenterWorld(cellPosition);
-        return new(position.x, _objectToPlace.transform.position.y, position.z);
+        return new(position.x, position.y, 0);
     }
 
     public void InitializeWithObject(GameObject prefab)
@@ -66,6 +69,7 @@ public class BuildingSystem : MonoBehaviour
         _objectToPlace = newObject.GetComponent<PlacableObject>();
         newObject.transform.position = SnapCoordinateToGrid(transform.position);
         newObject.AddComponent<ObjectDrag>();
+        objectCollider = Instantiate(colliderPrefab, newObject.transform);
 
         OpenUI(true);
     }
@@ -111,6 +115,7 @@ public class BuildingSystem : MonoBehaviour
 
         decisionPanel.SetActive(false);
         inBuildingMode = false;
+        Destroy(objectCollider);
         UIController.instance.Open(3);
     }
 
@@ -120,5 +125,13 @@ public class BuildingSystem : MonoBehaviour
             return false;
 
         return _objectToPlace.transform.GetComponent<TriggerController>().isTriggered;
+    }
+
+    public void ModifyCollider(bool value)
+    {
+        if (value)
+            objectCollider.GetComponent<SpriteRenderer>().color = Color.green;
+        else
+            objectCollider.GetComponent<SpriteRenderer>().color = Color.red;
     }
 }

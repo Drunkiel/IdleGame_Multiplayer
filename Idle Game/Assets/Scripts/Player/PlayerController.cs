@@ -51,7 +51,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerAPI _playerAPI;
     public HoldingController _holdingController;
 
-    private bool isFlipped;
     public float speedForce;
     private Vector2 movement;
 
@@ -99,11 +98,20 @@ public class PlayerController : MonoBehaviour
             anim.SetFloat("LastHorizontal", isStopped ? 0 : movement.x);
         }
 
+        //Stopping player
         if (string.IsNullOrEmpty(playerId) || isStopped || GameController.isPaused)
+        {
+            rgBody.velocity = Vector2.zero;
             return;
+        }
 
-        Vector3 moveDelta = speedForce * Time.deltaTime * (Vector3)movement;
-        transform.Translate(moveDelta);
+        MovePlayer();
+    }
+
+    private void MovePlayer()
+    {
+        Vector2 moveDir = movement.normalized;
+        rgBody.velocity = moveDir * speedForce;
     }
 
     public void MovementInput(InputAction.CallbackContext context)

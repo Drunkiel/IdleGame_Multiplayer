@@ -13,6 +13,11 @@ public class BuildingUI : MonoBehaviour
 
     public RecipeItemUI recipeItemPrefab;
 
+    void Start()
+    {
+        ChangeDisplay(0);
+    }
+
     public void EnterBuildingMode()
     {
         BuildingSystem.instance.BuildingManager(displayedBuildingID);

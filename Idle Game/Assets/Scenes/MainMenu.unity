@@ -4081,6 +4081,7 @@ MonoBehaviour:
   grid: {fileID: 0}
   mapSize: {x: 20, y: 20}
   decisionPanel: {fileID: 265780586}
+  colliderPrefab: {fileID: 6839724386759532309, guid: 03b4ad0c6cafebba9b8a7a6072334a37, type: 3}
   _objectToPlace: {fileID: 0}
 --- !u!1 &377598430
 GameObject:

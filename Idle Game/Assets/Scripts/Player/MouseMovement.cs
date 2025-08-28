@@ -2,7 +2,14 @@ using UnityEngine;
 
 public class MouseMovement : MonoBehaviour
 {
+    public static MouseMovement instance;
+
     private Vector2 offset = new(0, 0.5f);
+
+    void Awake()
+    {
+        instance = this;
+    }
 
     void Update()
     {
@@ -17,5 +24,10 @@ public class MouseMovement : MonoBehaviour
 
         Vector2Int nextGridPos = currentGridPos + new Vector2Int(moveX, moveY);
         transform.position = new Vector3(nextGridPos.x, nextGridPos.y, transform.position.z) + (Vector3)offset;
+    }
+
+    public Vector3 GetPosition()
+    {
+        return transform.position;        
     }
 }
