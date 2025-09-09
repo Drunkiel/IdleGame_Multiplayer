@@ -12,7 +12,7 @@ public class ObjectDrag : MonoBehaviour
     private void OnMouseDrag()
     {
         Vector3 mousePosition = MouseMovement.instance.GetPosition();
-        Vector3 position = mousePosition + new Vector3(offSet.x, offSet.y, 0);
+        Vector3 position = mousePosition + new Vector3(offSet.x, offSet.y, transform.position.z);
         transform.position = BuildingSystem.instance.SnapCoordinateToGrid(position);
         BuildingSystem.instance.ModifyCollider(GetComponent<TriggerController>().isTriggered);
     }

@@ -4079,7 +4079,7 @@ MonoBehaviour:
     - itemID: 0
       quantity: 2
   grid: {fileID: 0}
-  mapSize: {x: 20, y: 20}
+  mapSize: {x: 15, y: 15}
   decisionPanel: {fileID: 265780586}
   colliderPrefab: {fileID: 6839724386759532309, guid: 03b4ad0c6cafebba9b8a7a6072334a37, type: 3}
   _objectToPlace: {fileID: 0}
@@ -5779,9 +5779,6 @@ MonoBehaviour:
   - spawnPosition: {x: 0, y: -3}
     cameraFollowX: 0
     cameraFollowY: 1
-  - spawnPosition: {x: -7.5, y: -3}
-    cameraFollowX: 1
-    cameraFollowY: 0
   - spawnPosition: {x: 0, y: -3}
     cameraFollowX: 1
     cameraFollowY: 1

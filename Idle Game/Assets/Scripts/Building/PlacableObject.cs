@@ -17,6 +17,7 @@ public class PlacableObject : MonoBehaviour
         Destroy(GetComponent<ObjectDrag>());
         Destroy(GetComponent<TriggerController>());
         BuildingSystem.instance._objectToPlace = null;
+        transform.position = new(transform.position.x, transform.position.y, 0);
 
         if (objectToManipulate != null)
             objectToManipulate.SetActive(true);

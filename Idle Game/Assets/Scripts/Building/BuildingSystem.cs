@@ -55,7 +55,7 @@ public class BuildingSystem : MonoBehaviour
             ) return SnapCoordinateToGrid(Vector3.zero);
 
         position = grid.GetCellCenterWorld(cellPosition);
-        return new(position.x, position.y, 0);
+        return new(position.x, position.y, -1);
     }
 
     public void InitializeWithObject(GameObject prefab)
